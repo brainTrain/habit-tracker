@@ -11,15 +11,21 @@ const AUTH_LOADED_ERROR = 'auth-loaded-error';
 
 function App() {
   const [authState, setAuthState] = useState(AUTH_LOADING);
+  const [userID, setUserID] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      console.log('user', user);
       if (user) {
+        console.log(user);
         setAuthState(AUTH_LOADED_AUTHENTICATED);
+        setUserID(user.uid);
+        setUserEmail(user.email);
       } else {
+        setUserID('');
         setAuthState(AUTH_LOADED_NOT_AUTHENTICATED);
+        setUserEmail('');
       }
     });
   }, []);
@@ -58,6 +64,7 @@ function App() {
   return (
     <div className="App">
       <main>
+        {userEmail ? <p>ohhai {userEmail}!</p> : null}
         {{
           [AUTH_LOADING]: <p>loading...</p>,
           [AUTH_LOADED_AUTHENTICATED]: <p>ohhai user</p>,

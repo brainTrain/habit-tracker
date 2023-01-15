@@ -11,8 +11,7 @@ function Login({ onLoginSuccess, onLoginError }) {
       const password = event.target.querySelector(
         `#${PASSWORD_INPUT_ID}`,
       ).value;
-      console.log('email:login', email);
-      console.log('password:login', password);
+
       loginUserEmail(email, password)
         .then((userCredential) => {
           onLoginSuccess(userCredential);

@@ -6,15 +6,14 @@ const PASSWORD_INPUT_ID = 'register-password-input';
 function Register({ onRegisterSuccess, onRegisterError }) {
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log('event:register', event);
+
     const isFormValid = event.target.checkValidity();
+
     if (isFormValid) {
       const email = event.target.querySelector(`#${EMAIL_INPUT_ID}`).value;
       const password = event.target.querySelector(
         `#${PASSWORD_INPUT_ID}`,
       ).value;
-      console.log('email:login', email);
-      console.log('password:login', password);
       registerUserEmail(email, password)
         .then((userCredential) => {
           onRegisterSuccess(userCredential);

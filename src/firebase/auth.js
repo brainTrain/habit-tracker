@@ -16,6 +16,5 @@ export function loginUserEmail(email, password) {
 
 export function getIsLoggedIn() {
   const auth = getAuth();
-  console.log('auth', auth);
   return auth.currentUser;
 }
