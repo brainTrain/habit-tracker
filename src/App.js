@@ -1,22 +1,27 @@
-import logo from './logo.svg';
 import './App.css';
+import { getIsLoggedIn } from './firebase/auth';
+import Login from './Login';
+import Register from './Register';
 
 function App() {
+  const isLoggedIn = getIsLoggedIn();
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
+      {isLoggedIn ? (
+        <p>ohhai user</p>
+      ) : (
+        <main>
+          <section>
+            <h3>Login</h3>
+            <Login />
+          </section>
+          <section>
+            <h3>Register</h3>
+            <Register />
+          </section>
+        </main>
+      )}
     </div>
   );
 }

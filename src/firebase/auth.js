@@ -1,4 +1,8 @@
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 
 export function registerUserEmail(email, password) {
   const auth = getAuth();
@@ -25,4 +29,9 @@ export function loginUserEmail(email, password) {
       const errorCode = error.code;
       const errorMessage = error.message;
     });
+}
+
+export function getIsLoggedIn() {
+  const auth = getAuth();
+  return auth.currentUser;
 }
