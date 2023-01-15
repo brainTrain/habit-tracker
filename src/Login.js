@@ -13,7 +13,7 @@ function Login() {
       ).value;
       console.log('email:login', email);
       console.log('password:login', password);
-      // loginUserEmail(email, password);
+      loginUserEmail(email, password);
     }
   };
 

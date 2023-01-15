@@ -15,7 +15,7 @@ function Register() {
       ).value;
       console.log('email:login', email);
       console.log('password:login', password);
-      // registerUserEmail(email, password);
+      registerUserEmail(email, password);
     }
   };
 

@@ -5,6 +5,7 @@ import Register from './Register';
 
 function App() {
   const isLoggedIn = getIsLoggedIn();
+  console.log('isLoggedIn', isLoggedIn);
 
   return (
     <div className="App">
