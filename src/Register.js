@@ -3,7 +3,7 @@ import { registerUserEmail } from './firebase/auth';
 const EMAIL_INPUT_ID = 'register-email-input';
 const PASSWORD_INPUT_ID = 'register-password-input';
 
-function Register() {
+function Register({ onRegisterSuccess, onRegisterError }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log('event:register', event);
@@ -15,7 +15,13 @@ function Register() {
       ).value;
       console.log('email:login', email);
       console.log('password:login', password);
-      registerUserEmail(email, password);
+      registerUserEmail(email, password)
+        .then((userCredential) => {
+          onRegisterSuccess(userCredential);
+        })
+        .catch((error) => {
+          onRegisterError(error);
+        });
     }
   };
 

@@ -2,7 +2,7 @@ import { loginUserEmail } from './firebase/auth';
 const EMAIL_INPUT_ID = 'login-email-input';
 const PASSWORD_INPUT_ID = 'login-password-input';
 
-function Login() {
+function Login({ onLoginSuccess, onLoginError }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const isFormValid = event.target.checkValidity();
@@ -13,7 +13,13 @@ function Login() {
       ).value;
       console.log('email:login', email);
       console.log('password:login', password);
-      loginUserEmail(email, password);
+      loginUserEmail(email, password)
+        .then((userCredential) => {
+          onLoginSuccess(userCredential);
+        })
+        .catch((error) => {
+          onLoginError(error);
+        });
     }
   };
 
