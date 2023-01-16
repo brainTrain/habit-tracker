@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import styled from 'styled-components';
 import './App.css';
 import Login from './Login';
 import Register from './Register';
@@ -9,6 +10,10 @@ const AUTH_LOADING = 'auth-loading';
 const AUTH_LOADED_AUTHENTICATED = 'auth-loaded-authenticated';
 const AUTH_LOADED_NOT_AUTHENTICATED = 'auth-loaded-not-authenticated';
 const AUTH_LOADED_ERROR = 'auth-loaded-error';
+
+const AppWrapper = styled.main`
+  padding: 0 2rem;
+`;
 
 function App() {
   const [authState, setAuthState] = useState(AUTH_LOADING);
@@ -63,7 +68,7 @@ function App() {
 
   return (
     <div className="App">
-      <main>
+      <AppWrapper>
         {{
           [AUTH_LOADING]: <p>loading...</p>,
           [AUTH_LOADED_AUTHENTICATED]: (
@@ -93,7 +98,7 @@ function App() {
             logout
           </button>
         ) : null}
-      </main>
+      </AppWrapper>
     </div>
   );
 }
