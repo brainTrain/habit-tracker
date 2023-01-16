@@ -3,6 +3,7 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import './App.css';
 import Login from './Login';
 import Register from './Register';
+import Habits from './Habits';
 
 const AUTH_LOADING = 'auth-loading';
 const AUTH_LOADED_AUTHENTICATED = 'auth-loaded-authenticated';
@@ -18,7 +19,6 @@ function App() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user);
         setAuthState(AUTH_LOADED_AUTHENTICATED);
         setUserID(user.uid);
         setUserEmail(user.email);
@@ -64,10 +64,11 @@ function App() {
   return (
     <div className="App">
       <main>
-        {userEmail ? <p>ohhai {userEmail}!</p> : null}
         {{
           [AUTH_LOADING]: <p>loading...</p>,
-          [AUTH_LOADED_AUTHENTICATED]: <p>ohhai user</p>,
+          [AUTH_LOADED_AUTHENTICATED]: (
+            <Habits userID={userID} userEmail={userEmail} />
+          ),
           [AUTH_LOADED_NOT_AUTHENTICATED]: (
             <>
               <section>
@@ -88,7 +89,9 @@ function App() {
           ),
         }[authState] || <p>Error</p>}
         {authState === AUTH_LOADED_AUTHENTICATED ? (
-          <button onClick={handleLogout}>logout</button>
+          <button onClick={handleLogout} style={{ marginTop: '20rem' }}>
+            logout
+          </button>
         ) : null}
       </main>
     </div>
