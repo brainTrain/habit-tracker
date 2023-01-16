@@ -129,6 +129,10 @@ function Habits({ userID, userEmail, onLogout }) {
     onLogout();
   }, [onLogout]);
 
+  const handleDeleteHabit = useCallback(() => {
+    handleFetchHabits();
+  }, [handleFetchHabits]);
+
   useEffect(() => {
     handleFetchHabits();
   }, [handleFetchHabits]);
@@ -158,6 +162,7 @@ function Habits({ userID, userEmail, onLogout }) {
                       totalCount={habit?.totalCount}
                       habitLabel={habitKey}
                       habitsList={habit?.data}
+                      onDeleteHabit={handleDeleteHabit}
                     />
                     <ChartWrapper>
                       <VictoryChart domainPadding={20}>
