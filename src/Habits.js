@@ -1,5 +1,6 @@
 // libraries
 import { useCallback, useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import groupBy from 'lodash/groupBy';
 import { VictoryBar, VictoryChart, VictoryTooltip } from 'victory';
@@ -223,5 +224,21 @@ function Habits({ userID, userEmail, onLogout }) {
     </PageWrapper>
   );
 }
+
+Habits.propTypes = {
+  userID: PropTypes.string,
+  userEmail: PropTypes.string,
+  onLogout: PropTypes.func,
+};
+
+Habits.defaultProps = {
+  userID: '',
+  userEmail: '',
+  onLogout: function () {
+    console.warn(
+      'onLogout() prop in <Habits /> component called without a value',
+    );
+  },
+};
 
 export default Habits;

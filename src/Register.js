@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { registerUserEmail } from './firebase/auth';
 
 const EMAIL_INPUT_ID = 'register-email-input';
@@ -46,5 +47,23 @@ function Register({ onRegisterSuccess, onRegisterError }) {
     </div>
   );
 }
+
+Register.propTypes = {
+  onRegisterSuccess: PropTypes.func,
+  onRegisterSuccess: PropTypes.func,
+};
+
+Login.defaultProps = {
+  onRegisterSuccess: function () {
+    console.warn(
+      'onRegisterSuccess() prop in <Register /> component called without a value',
+    );
+  },
+  onRegisterError: function () {
+    console.warn(
+      'onRegisterError() prop in <Register /> component called without a value',
+    );
+  },
+};
 
 export default Register;

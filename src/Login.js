@@ -1,5 +1,6 @@
 // libraries
 import { useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { loginUserEmail } from './firebase/auth';
 // constants
 const EMAIL_INPUT_ID = 'login-email-input';
@@ -50,5 +51,23 @@ function Login({ onLoginSuccess, onLoginError }) {
     </div>
   );
 }
+
+Login.propTypes = {
+  onLoginSuccess: PropTypes.func,
+  onLoginError: PropTypes.func,
+};
+
+Login.defaultProps = {
+  onLoginSuccess: function () {
+    console.warn(
+      'onLoginSuccess() prop in <Login /> component called without a value',
+    );
+  },
+  onLoginError: function () {
+    console.warn(
+      'onLoginError() prop in <Login /> component called without a value',
+    );
+  },
+};
 
 export default Login;

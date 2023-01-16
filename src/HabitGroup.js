@@ -1,5 +1,6 @@
 // libraries
 import { useCallback, useState } from 'react';
+import PropTypes from 'prop-types';
 
 function HabitGroup({ habitLabel, habitsList = [], totalCount = 0 }) {
   const [shouldShowDetails, setShouldShowDetails] = useState(false);
@@ -47,5 +48,17 @@ function HabitGroup({ habitLabel, habitsList = [], totalCount = 0 }) {
     </section>
   );
 }
+
+HabitGroup.propTypes = {
+  habitLabel: PropTypes.string,
+  habitsList: PropTypes.array,
+  totalCount: PropTypes.number,
+};
+
+HabitGroup.defaultProps = {
+  habitLabel: '',
+  habitsList: [],
+  totalCount: 0,
+};
 
 export default HabitGroup;
