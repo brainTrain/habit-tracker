@@ -1,7 +1,7 @@
 // libraries
 import { useCallback, useState } from 'react';
 
-function HabitGroup({ habitLabel, habitsList }) {
+function HabitGroup({ habitLabel, habitsList = [], totalCount = 0 }) {
   const [shouldShowDetails, setShouldShowDetails] = useState(false);
 
   const handleShowDetails = useCallback(() => {
@@ -15,6 +15,7 @@ function HabitGroup({ habitLabel, habitsList }) {
   return (
     <section>
       <h3>{habitLabel}</h3>
+      <p>total: {totalCount}</p>
       {shouldShowDetails ? (
         <button onClick={handleHideDetails}>hide details</button>
       ) : (

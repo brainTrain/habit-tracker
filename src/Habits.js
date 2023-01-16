@@ -103,7 +103,22 @@ function Habits({ userID, userEmail, onLogout }) {
           ];
         });
 
-        setHabitsGroups(groupBy(newHabits, 'habitLabel'));
+        const simpleGroupByHabits = groupBy(newHabits, 'habitLabel');
+        let newGroupByHabits = {};
+        Object.keys(simpleGroupByHabits).forEach((habitKey) => {
+          const data = simpleGroupByHabits[habitKey] || [];
+
+          const totalCount = data.reduce((previousCount, { count }) => {
+            return previousCount + Number(count);
+          }, 0);
+
+          newGroupByHabits[habitKey] = {
+            totalCount,
+            habitLabel: habitKey,
+            data,
+          };
+        });
+        setHabitsGroups(newGroupByHabits);
         setHabitsChartDataGroups(groupBy(newHabitsChartData, 'habitLabel'));
 
         clearInputs();
@@ -180,11 +195,13 @@ function Habits({ userID, userEmail, onLogout }) {
           [HABITS_LOADED]: (
             <section>
               {Object.keys(habitsGroups).map((habitKey) => {
+                const habit = habitsGroups[habitKey];
                 return (
                   <HabitWrapper key={habitKey}>
                     <HabitGroup
+                      totalCount={habit?.totalCount}
                       habitLabel={habitKey}
-                      habitsList={habitsGroups[habitKey]}
+                      habitsList={habit?.data}
                     />
                     <ChartWrapper>
                       <VictoryChart domainPadding={20}>
