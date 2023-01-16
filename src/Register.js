@@ -53,7 +53,7 @@ Register.propTypes = {
   onRegisterSuccess: PropTypes.func,
 };
 
-Login.defaultProps = {
+Register.defaultProps = {
   onRegisterSuccess: function () {
     console.warn(
       'onRegisterSuccess() prop in <Register /> component called without a value',
