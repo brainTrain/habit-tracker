@@ -1,17 +1,16 @@
 // libraries
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import groupBy from 'lodash/groupBy';
 import { VictoryBar, VictoryChart, VictoryTooltip } from 'victory';
 // utils
-import { fetchHabits, saveHabit } from './firebase/firestore';
+import { fetchHabits } from './firebase/firestore';
 import { appGutterPadding } from './styles/layout';
 // components
 import HabitGroup from './HabitGroup';
+import HabitsForm from './HabitsForm';
 // constants
-const COUNT_INPUT_ID = 'habit-count-input';
-const LABEL_INPUT_ID = 'habit-label-input';
 const HABITS_LOADING = 'habits-loading';
 const HABITS_LOADED = 'habits-loaded';
 const HABITS_LOADED_ERROR = 'habits-loaded-error';
@@ -65,17 +64,6 @@ function Habits({ userID, userEmail, onLogout }) {
   const [habitsChartDataGroups, setHabitsChartDataGroups] = useState({});
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
 
-  const labelInputRef = useRef(null);
-  const countInputRef = useRef(null);
-
-  const clearInputs = useCallback(() => {
-    const labelEl = labelInputRef?.current;
-    const countEl = countInputRef?.current;
-
-    labelEl.value = '';
-    countEl.value = '';
-  }, []);
-
   const handleFetchHabits = useCallback(() => {
     fetchHabits(userID)
       .then((habitsResponse) => {
@@ -122,34 +110,13 @@ function Habits({ userID, userEmail, onLogout }) {
         setHabitsGroups(newGroupByHabits);
         setHabitsChartDataGroups(groupBy(newHabitsChartData, 'habitLabel'));
 
-        clearInputs();
         setHabitsLoadState(HABITS_LOADED);
       })
       .catch((error) => {
         console.error('error fetching habits', error);
         setHabitsLoadState(HABITS_LOADED_ERROR);
       });
-  }, [userID, clearInputs]);
-
-  const handleSubmit = useCallback(
-    (event) => {
-      event.preventDefault();
-      const isFormValid = event.target.checkValidity();
-      if (isFormValid) {
-        const label = labelInputRef?.current?.value;
-        const count = countInputRef?.current?.value;
-
-        saveHabit(label, count, userID)
-          .then((response) => {
-            handleFetchHabits(userID);
-          })
-          .catch((error) => {
-            console.error('error saving habit');
-          });
-      }
-    },
-    [handleFetchHabits, userID],
-  );
+  }, [userID]);
 
   // TODO: make this header section its own component and raise it up a level broooooo
   const handleLogout = useCallback(() => {
@@ -168,25 +135,7 @@ function Habits({ userID, userEmail, onLogout }) {
           <button onClick={handleLogout}>logout</button>
         </AppHeaderTopSection>
         <HabitFormWrapper>
-          <form id="habit-form" onSubmit={handleSubmit}>
-            <input
-              ref={labelInputRef}
-              id={LABEL_INPUT_ID}
-              name="habit-label"
-              placeholder="Habit label"
-              required
-            />
-            <input
-              ref={countInputRef}
-              id={COUNT_INPUT_ID}
-              name="habit-count"
-              type="number"
-              placeholder="Habit count"
-              min={0}
-              required
-            />
-            <button type="submit">submit habit</button>
-          </form>
+          <HabitsForm userID={userID} onFetchHabits={handleFetchHabits} />
         </HabitFormWrapper>
       </AppHeader>
       <ContentWrapper>
