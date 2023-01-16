@@ -90,6 +90,7 @@ function Habits({ userID, userEmail }) {
         {Object.keys(habitsGroups).map((habitKey) => {
           return (
             <HabitGroup
+              key={habitKey}
               habitLabel={habitKey}
               habitsList={habitsGroups[habitKey]}
             />
