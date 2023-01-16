@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+// libraries
+import { useCallback, useState } from 'react';
 
 function HabitGroup({ habitLabel, habitsList }) {
   const [shouldShowDetails, setShouldShowDetails] = useState(false);

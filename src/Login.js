@@ -1,26 +1,32 @@
+// libraries
+import { useCallback } from 'react';
 import { loginUserEmail } from './firebase/auth';
+// constants
 const EMAIL_INPUT_ID = 'login-email-input';
 const PASSWORD_INPUT_ID = 'login-password-input';
 
 function Login({ onLoginSuccess, onLoginError }) {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const isFormValid = event.target.checkValidity();
-    if (isFormValid) {
-      const email = event.target.querySelector(`#${EMAIL_INPUT_ID}`).value;
-      const password = event.target.querySelector(
-        `#${PASSWORD_INPUT_ID}`,
-      ).value;
+  const handleSubmit = useCallback(
+    (event) => {
+      event.preventDefault();
+      const isFormValid = event.target.checkValidity();
+      if (isFormValid) {
+        const email = event.target.querySelector(`#${EMAIL_INPUT_ID}`).value;
+        const password = event.target.querySelector(
+          `#${PASSWORD_INPUT_ID}`,
+        ).value;
 
-      loginUserEmail(email, password)
-        .then((userCredential) => {
-          onLoginSuccess(userCredential);
-        })
-        .catch((error) => {
-          onLoginError(error);
-        });
-    }
-  };
+        loginUserEmail(email, password)
+          .then((userCredential) => {
+            onLoginSuccess(userCredential);
+          })
+          .catch((error) => {
+            onLoginError(error);
+          });
+      }
+    },
+    [onLoginSuccess, onLoginError],
+  );
 
   return (
     <div>

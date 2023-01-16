@@ -1,12 +1,13 @@
 import {
-  getFirestore,
-  collection,
-  addDoc,
   Timestamp,
+  addDoc,
+  collection,
+  getDocs,
+  getFirestore,
   query,
   where,
-  getDocs,
 } from 'firebase/firestore';
+import { nanoid } from 'nanoid';
 import app from './';
 
 export const db = getFirestore(app);
@@ -19,6 +20,7 @@ export function saveHabit(habitLabel, count, userID) {
     habitLabel,
     count,
     datetime: Timestamp.now(),
+    publicID: nanoid(),
   });
 }
 

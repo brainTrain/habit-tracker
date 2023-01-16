@@ -1,19 +1,19 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+// libraries
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import groupBy from 'lodash/groupBy';
 import { VictoryBar, VictoryChart, VictoryTooltip } from 'victory';
-
-import { saveHabit, fetchHabits } from './firebase/firestore';
-
+// utils
+import { fetchHabits, saveHabit } from './firebase/firestore';
+// components
 import HabitGroup from './HabitGroup';
-
-const LABEL_INPUT_ID = 'habit-label-input';
+// constants
 const COUNT_INPUT_ID = 'habit-count-input';
-
+const LABEL_INPUT_ID = 'habit-label-input';
+// styles
 const ChartWrapper = styled.div`
   width: 100%;
   height: 20rem;
-  border: 1px solid red;
 `;
 
 const HabitWrapper = styled.article`
@@ -80,22 +80,25 @@ function Habits({ userID, userEmail }) {
     handleFetchHabits();
   }, [handleFetchHabits]);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const isFormValid = event.target.checkValidity();
-    if (isFormValid) {
-      const label = labelInputRef?.current?.value;
-      const count = countInputRef?.current?.value;
+  const handleSubmit = useCallback(
+    (event) => {
+      event.preventDefault();
+      const isFormValid = event.target.checkValidity();
+      if (isFormValid) {
+        const label = labelInputRef?.current?.value;
+        const count = countInputRef?.current?.value;
 
-      saveHabit(label, count, userID)
-        .then((response) => {
-          handleFetchHabits(userID);
-        })
-        .catch((error) => {
-          console.error('error saving habit');
-        });
-    }
-  };
+        saveHabit(label, count, userID)
+          .then((response) => {
+            handleFetchHabits(userID);
+          })
+          .catch((error) => {
+            console.error('error saving habit');
+          });
+      }
+    },
+    [handleFetchHabits, userID],
+  );
 
   return (
     <div>
