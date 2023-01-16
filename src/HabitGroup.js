@@ -25,7 +25,8 @@ function HabitGroup({ habitLabel, habitsList }) {
           <section>
             {habitsList
               .sort((a, b) => {
-                return a?.datetime?.getTime() - b?.datetime?.getTime();
+                // TODO: sort in render? luuul #webscale
+                return b?.datetime?.getTime() - a?.datetime?.getTime();
               })
               .map((habit) => {
                 const { id, count, datetime } = habit;

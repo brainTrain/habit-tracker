@@ -16,8 +16,8 @@ const AUTH_LOADED_NOT_AUTHENTICATED = 'auth-loaded-not-authenticated';
 const AUTH_LOADED_ERROR = 'auth-loaded-error';
 // styles
 const AppWrapper = styled.main`
-  padding: 0 2rem;
   text-align: center;
+  height: 100%;
 `;
 
 function App() {
@@ -74,39 +74,36 @@ function App() {
   return (
     <>
       <GlobalStyle />
-      <div className="App">
-        <AppWrapper>
-          {{
-            [AUTH_LOADING]: <p>loading...</p>,
-            [AUTH_LOADED_AUTHENTICATED]: (
-              <Habits userID={userID} userEmail={userEmail} />
-            ),
-            [AUTH_LOADED_NOT_AUTHENTICATED]: (
-              <>
-                <section>
-                  <h3>Login</h3>
-                  <Login
-                    onLoginSuccess={handleLoginSuccess}
-                    onLoginError={handleLoginError}
-                  />
-                </section>
-                <section>
-                  <h3>Register</h3>
-                  <Register
-                    onRegisterSuccess={handleRegisterSuccess}
-                    onRegisterError={handleRegisterError}
-                  />
-                </section>
-              </>
-            ),
-          }[authState] || <p>Error</p>}
-          {authState === AUTH_LOADED_AUTHENTICATED ? (
-            <button onClick={handleLogout} style={{ marginTop: '20rem' }}>
-              logout
-            </button>
-          ) : null}
-        </AppWrapper>
-      </div>
+      <AppWrapper>
+        {{
+          [AUTH_LOADING]: <p>loading...</p>,
+          [AUTH_LOADED_AUTHENTICATED]: (
+            <Habits
+              userID={userID}
+              userEmail={userEmail}
+              onLogout={handleLogout}
+            />
+          ),
+          [AUTH_LOADED_NOT_AUTHENTICATED]: (
+            <>
+              <section>
+                <h3>Login</h3>
+                <Login
+                  onLoginSuccess={handleLoginSuccess}
+                  onLoginError={handleLoginError}
+                />
+              </section>
+              <section>
+                <h3>Register</h3>
+                <Register
+                  onRegisterSuccess={handleRegisterSuccess}
+                  onRegisterError={handleRegisterError}
+                />
+              </section>
+            </>
+          ),
+        }[authState] || <p>Error</p>}
+      </AppWrapper>
     </>
   );
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 // eslint-disable-next-line no-undef
 import './firebase';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
