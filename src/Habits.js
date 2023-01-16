@@ -70,18 +70,20 @@ function Habits({ userID, userEmail, onLogout }) {
         let newHabits = [];
         let newHabitsChartData = [];
         habitsResponse.forEach((doc) => {
-          const { count, datetime, habitLabel } = doc.data();
+          const { count, datetime, habitLabel, publicID } = doc.data();
+          const parsedCount = Number(count);
           const newHabit = {
-            count,
+            count: parsedCount,
             datetime: datetime.toDate(),
             habitLabel,
+            publicID,
             id: doc.id,
           };
           newHabits = [...newHabits, { ...newHabit }];
 
           const newHabitChartData = {
             habitLabel,
-            count,
+            count: parsedCount,
             datetime: datetime.toDate(),
             label: `${count} at ${datetime.toDate().toLocaleTimeString()}`,
           };
@@ -95,10 +97,13 @@ function Habits({ userID, userEmail, onLogout }) {
         const simpleGroupByHabits = groupBy(newHabits, 'habitLabel');
         let newGroupByHabits = {};
         Object.keys(simpleGroupByHabits).forEach((habitKey) => {
-          const data = simpleGroupByHabits[habitKey] || [];
+          const data =
+            simpleGroupByHabits[habitKey].sort((a, b) => {
+              return b?.datetime?.getTime() - a?.datetime?.getTime();
+            }) || [];
 
           const totalCount = data.reduce((previousCount, { count }) => {
-            return previousCount + Number(count);
+            return previousCount + count;
           }, 0);
 
           newGroupByHabits[habitKey] = {
@@ -107,6 +112,7 @@ function Habits({ userID, userEmail, onLogout }) {
             data,
           };
         });
+
         setHabitsGroups(newGroupByHabits);
         setHabitsChartDataGroups(groupBy(newHabitsChartData, 'habitLabel'));
 
