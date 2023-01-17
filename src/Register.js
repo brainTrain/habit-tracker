@@ -50,7 +50,7 @@ function Register({ onRegisterSuccess, onRegisterError }) {
 
 Register.propTypes = {
   onRegisterSuccess: PropTypes.func,
-  onRegisterSuccess: PropTypes.func,
+  onRegisterError: PropTypes.func,
 };
 
 Register.defaultProps = {

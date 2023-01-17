@@ -14,7 +14,11 @@ const COUNT_INPUT_BASE_COPY = 'Habit count';
 function HabitsForm({ userID, onAddHabit, habitLabel }) {
   const [formSubmissionState, setFormSubmissionState] = useState(FORM_INITIAL);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
-  const hasHabitLabel = Boolean(habitLabel);
+  const [hasHabitLabel, setHasHabitLabel] = useState(false);
+
+  useEffect(() => {
+    setHasHabitLabel(Boolean(habitLabel));
+  }, [habitLabel]);
 
   useEffect(() => {
     if (formSubmissionState === FORM_SUBMITTED) {
@@ -35,7 +39,7 @@ function HabitsForm({ userID, onAddHabit, habitLabel }) {
       labelEl.value = '';
     }
     countEl.value = '';
-  }, []);
+  }, [hasHabitLabel]);
 
   const handleSubmit = useCallback(
     (event) => {
