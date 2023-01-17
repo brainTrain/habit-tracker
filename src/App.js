@@ -13,6 +13,7 @@ import Habits from './Habits';
 const AUTH_LOADING = 'auth-loading';
 const AUTH_LOADED_AUTHENTICATED = 'auth-loaded-authenticated';
 const AUTH_LOADED_NOT_AUTHENTICATED = 'auth-loaded-not-authenticated';
+// TODO: need to figure out if I need this, wanna have this general error state
 const AUTH_LOADED_ERROR = 'auth-loaded-error';
 // styles
 const AppWrapper = styled.main`
@@ -24,6 +25,8 @@ function App() {
   const [authState, setAuthState] = useState(AUTH_LOADING);
   const [userID, setUserID] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [hasLoginError, setHasLoginError] = useState(false);
+  const [hasRegisterError, setHasRegisterError] = useState(false);
 
   useEffect(() => {
     const auth = getAuth();
@@ -42,21 +45,22 @@ function App() {
 
   const handleLoginSuccess = useCallback(() => {
     setAuthState(AUTH_LOADED_AUTHENTICATED);
+    setHasLoginError(false);
   }, []);
 
   const handleLoginError = useCallback((error) => {
-    console.error('login error', error);
-    setAuthState(AUTH_LOADED_ERROR);
+    console.error('login error', error.message);
+    setHasLoginError(true);
   }, []);
 
   const handleRegisterSuccess = useCallback(() => {
     setAuthState(AUTH_LOADED_AUTHENTICATED);
-    setAuthState(AUTH_LOADED_AUTHENTICATED);
+    setHasLoginError(false);
   }, []);
 
   const handleRegisterError = useCallback((error) => {
-    console.error('register error', error);
-    setAuthState(AUTH_LOADED_ERROR);
+    console.error('register error', error.message);
+    setHasLoginError(true);
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -66,7 +70,7 @@ function App() {
         setAuthState(AUTH_LOADED_NOT_AUTHENTICATED);
       })
       .catch((error) => {
-        console.error('logout error', error);
+        console.error('logout error', error.message);
         setAuthState(AUTH_LOADED_ERROR);
       });
   }, []);
@@ -92,6 +96,7 @@ function App() {
                   onLoginSuccess={handleLoginSuccess}
                   onLoginError={handleLoginError}
                 />
+                {hasLoginError ? <p>Error logging in :(</p> : null}
               </section>
               <section>
                 <h3>Register</h3>
@@ -99,10 +104,11 @@ function App() {
                   onRegisterSuccess={handleRegisterSuccess}
                   onRegisterError={handleRegisterError}
                 />
+                {hasRegisterError ? <p>Error logging in :(</p> : null}
               </section>
             </>
           ),
-        }[authState] || <p>Error</p>}
+        }[authState] || <p>Error :(</p>}
       </AppWrapper>
     </>
   );

@@ -41,7 +41,7 @@ function HabitsForm({ userID, onFetchHabits }) {
       const isFormValid = event.target.checkValidity();
       if (isFormValid) {
         const label = labelInputRef?.current?.value;
-        const count = countInputRef?.current?.value;
+        const count = Number(countInputRef?.current?.value);
 
         saveHabit(label, count, userID)
           .then((response) => {
@@ -50,7 +50,7 @@ function HabitsForm({ userID, onFetchHabits }) {
             clearInputs();
           })
           .catch((error) => {
-            console.error('error saving habit');
+            console.error('error saving habit', error.message);
             setFormSubmissionState(FORM_SUBMITTED_ERROR);
           });
       }
@@ -98,3 +98,14 @@ HabitsForm.defaultProps = {
 };
 
 export default HabitsForm;
+
+/*
+ FFFF not working this shit is helllla lame
+
+      allow write: if isSignedIn() &&
+      	request.resource.data.count is number &&
+        request.resouce.data.count >= 0 &&
+        request.resouce.data.userID == request.auth.uid;
+
+
+*/
