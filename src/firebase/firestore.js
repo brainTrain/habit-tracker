@@ -28,7 +28,6 @@ export function saveHabit(habitLabel, count, userID) {
 
 export function fetchHabits(userID) {
   const habitRef = collection(db, HABIT_COLLECTION);
-
   const q = query(habitRef, where('userID', '==', userID));
 
   return getDocs(q);

@@ -98,14 +98,3 @@ HabitsForm.defaultProps = {
 };
 
 export default HabitsForm;
-
-/*
- FFFF not working this shit is helllla lame
-
-      allow write: if isSignedIn() &&
-      	request.resource.data.count is number &&
-        request.resouce.data.count >= 0 &&
-        request.resouce.data.userID == request.auth.uid;
-
-
-*/
