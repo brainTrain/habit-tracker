@@ -6,12 +6,18 @@ import { useDetectClickOutside } from 'react-detect-click-outside';
 // utils
 import { deleteHabit } from './firebase/firestore';
 // components
+import HabitsForm from './HabitsForm';
+// constants
 const TABLE_COLUMNS = ['Count', 'Time', 'Date'];
 // styles
 const MenuHeader = styled.section`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+
+const FormWrapper = styled.section`
+  padding: 1rem;
 `;
 
 const MenuWrapper = styled.section`
@@ -47,9 +53,29 @@ const TableWrapper = styled.section`
 
 const Table = styled.table`
   width: 100%;
+  text-align: left;
+  border: 1px solid;
+  border-collapse: collapse;
 `;
 
-function HabitGroup({ habitLabel, habitsList, totalCount, onDeleteHabit }) {
+const Th = styled.th`
+  border: 1px solid;
+  padding: 0.5rem;
+`;
+
+const Td = styled.td`
+  border: 1px solid;
+  padding: 0.5rem;
+`;
+
+function HabitGroup({
+  habitLabel,
+  habitsList,
+  totalCount,
+  onDeleteHabit,
+  onAddHabit,
+  userID,
+}) {
   const [areDetailsShown, setAreDetailsShown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const handleToggleDetails = useCallback(() => {
@@ -93,6 +119,13 @@ function HabitGroup({ habitLabel, habitsList, totalCount, onDeleteHabit }) {
     <section>
       <MenuHeader>
         <h3>{habitLabel}</h3>
+        <FormWrapper>
+          <HabitsForm
+            userID={userID}
+            habitLabel={habitLabel}
+            onAddHabit={onAddHabit}
+          />
+        </FormWrapper>
         <MenuWrapper ref={menuWrapperRef}>
           <MenuButton onClick={handleMenuButtonClick}>
             {menuButtonContent}
@@ -110,11 +143,11 @@ function HabitGroup({ habitLabel, habitsList, totalCount, onDeleteHabit }) {
       <button onClick={handleToggleDetails}>{toggleDetailsText}</button>
       {areDetailsShown ? (
         <TableWrapper>
-          <Table>
+          <Table border={1}>
             <thead>
               <tr>
                 {TABLE_COLUMNS.map((columnName) => {
-                  return <th key={columnName}>{columnName}</th>;
+                  return <Th key={columnName}>{columnName}</Th>;
                 })}
               </tr>
             </thead>
@@ -123,9 +156,9 @@ function HabitGroup({ habitLabel, habitsList, totalCount, onDeleteHabit }) {
                 const { id, count, datetime } = habit;
                 return (
                   <tr key={id}>
-                    <td>{count}</td>
-                    <td>{datetime.toLocaleTimeString()}</td>
-                    <td>{datetime.toLocaleDateString()}</td>
+                    <Td>{count}</Td>
+                    <Td>{datetime.toLocaleTimeString()}</Td>
+                    <Td>{datetime.toLocaleDateString()}</Td>
                   </tr>
                 );
               })}
@@ -142,17 +175,24 @@ HabitGroup.propTypes = {
   habitsList: PropTypes.array,
   onDeleteHabit: PropTypes.func,
   totalCount: PropTypes.number,
+  userID: PropTypes.string,
 };
 
 HabitGroup.defaultProps = {
   habitLabel: '',
   habitsList: [],
+  onAddHabit: function () {
+    console.warn(
+      'onAddHabit() prop in <HabitGroup /> component called without a value',
+    );
+  },
   onDeleteHabit: function () {
     console.warn(
       'onDeleteHabit() prop in <HabitGroup /> component called without a value',
     );
   },
   totalCount: 0,
+  userID: '',
 };
 
 export default HabitGroup;

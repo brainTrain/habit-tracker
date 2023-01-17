@@ -145,7 +145,7 @@ function Habits({ userID, userEmail, onLogout }) {
           <button onClick={handleLogout}>logout</button>
         </AppHeaderTopSection>
         <HabitFormWrapper>
-          <HabitsForm userID={userID} onFetchHabits={handleFetchHabits} />
+          <HabitsForm userID={userID} onAddHabit={handleFetchHabits} />
         </HabitFormWrapper>
       </AppHeader>
       <ContentWrapper>
@@ -159,10 +159,12 @@ function Habits({ userID, userEmail, onLogout }) {
                 return (
                   <HabitWrapper key={habitKey}>
                     <HabitGroup
+                      userID={userID}
                       totalCount={habit?.totalCount}
                       habitLabel={habitKey}
                       habitsList={habit?.data}
                       onDeleteHabit={handleDeleteHabit}
+                      onAddHabit={handleFetchHabits}
                     />
                     <ChartWrapper>
                       <VictoryChart domainPadding={20}>

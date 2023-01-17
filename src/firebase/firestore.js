@@ -17,13 +17,15 @@ export const db = getFirestore(app);
 const HABIT_COLLECTION = 'habit';
 
 export function saveHabit(habitLabel, count, userID) {
-  return addDoc(collection(db, HABIT_COLLECTION), {
+  const data = {
     userID,
     habitLabel,
     count,
     datetime: Timestamp.now(),
     publicID: nanoid(),
-  });
+  };
+
+  return addDoc(collection(db, HABIT_COLLECTION), data);
 }
 
 export function fetchHabits(userID) {
