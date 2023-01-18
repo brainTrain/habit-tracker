@@ -1,5 +1,5 @@
 // libraries
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
@@ -61,6 +61,14 @@ const DetailsContainer = styled.section`
   padding-bottom: 1rem;
 `;
 
+const DatesContainer = styled.div`
+  width: 100%;
+  overflow: auto;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+`;
+
 const TableWrapper = styled.section`
   width: 100%;
   max-height: 20rem;
@@ -90,17 +98,36 @@ const ChartWrapper = styled.div`
 `;
 
 function HabitGroup({
+  habitData,
   habitLabel,
-  habitsList,
-  habitChartData,
-  totalCount,
-  onDeleteHabit,
   onAddHabit,
+  onDeleteHabit,
   userID,
 }) {
   const [areDetailsShown, setAreDetailsShown] = useState(false);
   const [isChartShown, setIsChartShown] = useState(false);
+  const [datesList, setDatesList] = useState([]);
+  const [currentDate, setCurrentDate] = useState('');
+  const [habitChartData, setHabitChartData] = useState([]);
+  const [habitsList, setHabitsList] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const datesList = habitData.dateOrder || [];
+    setDatesList(datesList);
+    setCurrentDate(datesList[0]);
+  }, [habitData.dateOrder]);
+
+  useEffect(() => {
+    const currentChartData = habitData?.data[currentDate]?.chartList || [];
+    const currentTableData = habitData?.data[currentDate]?.tableList || [];
+    const currentTotalCount = habitData?.data[currentDate]?.totalCount || 0;
+
+    setHabitChartData(currentChartData);
+    setHabitsList(currentTableData);
+    setTotalCount(currentTotalCount);
+  }, [currentDate, habitData?.data]);
 
   const handleToggleDetails = useCallback(() => {
     setAreDetailsShown((prev) => {
@@ -112,6 +139,10 @@ function HabitGroup({
     setIsChartShown((prev) => {
       return !prev;
     });
+  }, []);
+
+  const handleDateButtonClick = useCallback((newDate) => {
+    setCurrentDate(newDate);
   }, []);
 
   const toggleDetailsText = areDetailsShown ? 'hide details' : 'show details';
@@ -170,6 +201,19 @@ function HabitGroup({
           ) : null}
         </MenuWrapper>
       </MenuHeader>
+      <DatesContainer>
+        {datesList.map((date) => {
+          return (
+            <button
+              key={date}
+              onClick={() => {
+                handleDateButtonClick(date);
+              }}>
+              {date}
+            </button>
+          );
+        })}
+      </DatesContainer>
       <DetailsContainer>
         <p>total: {totalCount}</p>
         <button onClick={handleToggleDetails}>{toggleDetailsText}</button>
@@ -217,17 +261,18 @@ function HabitGroup({
 }
 
 HabitGroup.propTypes = {
+  // TODO: defined shape
+  habitData: PropTypes.object,
   habitLabel: PropTypes.string,
-  habitsList: PropTypes.array,
+  onAddHabit: PropTypes.func,
   onDeleteHabit: PropTypes.func,
-  totalCount: PropTypes.number,
   userID: PropTypes.string,
-  habitChartData: PropTypes.object,
 };
 
 HabitGroup.defaultProps = {
+  // TODO: set empty values for keys here
+  habitData: {},
   habitLabel: '',
-  habitsList: [],
   onAddHabit: function () {
     console.warn(
       'onAddHabit() prop in <HabitGroup /> component called without a value',
@@ -238,9 +283,7 @@ HabitGroup.defaultProps = {
       'onDeleteHabit() prop in <HabitGroup /> component called without a value',
     );
   },
-  totalCount: 0,
   userID: '',
-  habitChartData: {},
 };
 
 export default HabitGroup;

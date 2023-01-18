@@ -56,14 +56,13 @@ const ContentWrapper = styled.section`
 
 function Habits({ userID, userEmail, onLogout }) {
   const [habitsGroups, setHabitsGroups] = useState({});
-  const [habitsChartDataGroups, setHabitsChartDataGroups] = useState({});
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
 
   const handleFetchHabits = useCallback(() => {
     fetchHabits(userID)
       .then((habitsResponse) => {
         let newHabits = [];
-        let newHabitsChartData = [];
+
         habitsResponse.forEach((doc) => {
           const { count, datetime, habitLabel, publicID } = doc.data();
           const parsedCount = Number(count);
@@ -74,42 +73,63 @@ function Habits({ userID, userEmail, onLogout }) {
             publicID,
             id: doc.id,
           };
-          newHabits = [...newHabits, { ...newHabit }];
-
-          const newHabitChartData = {
-            habitLabel,
-            count: parsedCount,
-            datetime: datetime.toDate(),
-            label: `${count} at ${datetime.toDate().toLocaleTimeString()}`,
-          };
-
-          newHabitsChartData = [
-            ...newHabitsChartData,
-            { ...newHabitChartData },
-          ];
+          newHabits.push(newHabit);
         });
 
-        const simpleGroupByHabits = groupBy(newHabits, 'habitLabel');
-        let newGroupByHabits = {};
-        Object.keys(simpleGroupByHabits).forEach((habitKey) => {
-          const data =
-            simpleGroupByHabits[habitKey].sort((a, b) => {
-              return b?.datetime?.getTime() - a?.datetime?.getTime();
-            }) || [];
+        const groupedNewHabits = groupBy(newHabits, 'habitLabel');
+        const formattedHabits = {};
+        Object.keys(groupedNewHabits).forEach((newHabitLabel) => {
+          const groupedNewHabitsList = groupedNewHabits[newHabitLabel]?.sort(
+            (a, b) => {
+              return b?.datetime - a?.datetime;
+            },
+          );
+          const groupedByDate = {};
+          const dateOrder = [];
+          // date grouping
+          groupedNewHabitsList.forEach((newHabit) => {
+            const { datetime, count } = newHabit;
+            const newHabitDateString = datetime.toLocaleDateString();
+            const tableHabit = {
+              ...newHabit,
+            };
+            const chartHabit = {
+              ...{
+                count,
+                datetime,
+                label: `${count} at ${datetime.toLocaleTimeString()}`,
+              },
+            };
 
-          const totalCount = data.reduce((previousCount, { count }) => {
-            return previousCount + count;
-          }, 0);
+            if (!groupedByDate[newHabitDateString]) {
+              dateOrder.push(newHabitDateString);
+              groupedByDate[newHabitDateString] = {
+                totalCount: 0,
+                tableList: [tableHabit],
+                chartList: [chartHabit],
+              };
+            } else {
+              groupedByDate[newHabitDateString].tableList.push(tableHabit);
+              groupedByDate[newHabitDateString].chartList.push(chartHabit);
+            }
+          });
+          // get total counts for each date and update the totalCount value for each
+          Object.keys(groupedByDate).forEach((dateString) => {
+            const data = groupedByDate[dateString].tableList;
+            const totalCount = data.reduce((previousCount, { count }) => {
+              return previousCount + count;
+            }, 0);
+            groupedByDate[dateString].totalCount = totalCount;
+          });
 
-          newGroupByHabits[habitKey] = {
-            totalCount,
-            habitLabel: habitKey,
-            data,
+          // get total for date group?
+          formattedHabits[newHabitLabel] = {
+            data: groupedByDate,
+            dateOrder,
           };
         });
 
-        setHabitsGroups(newGroupByHabits);
-        setHabitsChartDataGroups(groupBy(newHabitsChartData, 'habitLabel'));
+        setHabitsGroups(formattedHabits);
 
         setHabitsLoadState(HABITS_LOADED);
       })
@@ -123,7 +143,7 @@ function Habits({ userID, userEmail, onLogout }) {
   const handleLogout = useCallback(() => {
     onLogout();
   }, [onLogout]);
-
+  // TODO: try to just pass handleFetchHabits to the delete function prop
   const handleDeleteHabit = useCallback(() => {
     handleFetchHabits();
   }, [handleFetchHabits]);
@@ -152,19 +172,16 @@ function Habits({ userID, userEmail, onLogout }) {
           [HABITS_LOADED_ERROR]: <p>Error loading habits.</p>,
           [HABITS_LOADED]: (
             <section>
-              {Object.keys(habitsGroups).map((habitKey) => {
-                const habit = habitsGroups[habitKey];
-                const habitChartData = habitsChartDataGroups[habitKey];
+              {Object.keys(habitsGroups).map((habitLabel) => {
+                const habitData = habitsGroups[habitLabel];
                 return (
-                  <HabitWrapper key={habitKey}>
+                  <HabitWrapper key={habitLabel}>
                     <HabitGroup
-                      userID={userID}
-                      totalCount={habit?.totalCount}
-                      habitLabel={habitKey}
-                      habitsList={habit?.data}
-                      habitChartData={habitChartData}
-                      onDeleteHabit={handleDeleteHabit}
+                      habitData={habitData}
+                      habitLabel={habitLabel}
                       onAddHabit={handleFetchHabits}
+                      onDeleteHabit={handleDeleteHabit}
+                      userID={userID}
                     />
                   </HabitWrapper>
                 );
