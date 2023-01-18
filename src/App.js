@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import styled from 'styled-components';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+// import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 // utils
 import GlobalStyle from './styles/globalStyles';
 // components
@@ -55,12 +55,12 @@ function App() {
 
   const handleRegisterSuccess = useCallback(() => {
     setAuthState(AUTH_LOADED_AUTHENTICATED);
-    setHasLoginError(false);
+    setHasRegisterError(false);
   }, []);
 
   const handleRegisterError = useCallback((error) => {
     console.error('register error', error.message);
-    setHasLoginError(true);
+    setHasRegisterError(true);
   }, []);
 
   const handleLogout = useCallback(() => {
