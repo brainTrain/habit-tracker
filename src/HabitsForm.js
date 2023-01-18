@@ -34,7 +34,11 @@ function HabitsForm({ userID, onAddHabit, habitLabel }) {
   const clearInputs = useCallback(() => {
     const labelEl = labelInputRef?.current;
     const countEl = countInputRef?.current;
-
+    // TODO: this is a big magical right now, we're conditionally
+    // rendering this form field so we can have a generic/global
+    // form for creation/edit and a simpler form on the habit
+    // detail view what we should really do is figure out how we
+    // can have multiple forms share the same validation/styles etc
     if (!hasHabitLabel) {
       labelEl.value = '';
     }

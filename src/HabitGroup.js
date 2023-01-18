@@ -47,8 +47,16 @@ const MenuContent = styled.section`
   right: 0;
 `;
 
+const DetailsContainer = styled.section`
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+  padding: 1rem;
+`;
+
 const TableWrapper = styled.section`
   width: 100%;
+  max-height: 20rem;
+  overflow: auto;
 `;
 
 const Table = styled.table`
@@ -139,33 +147,35 @@ function HabitGroup({
           ) : null}
         </MenuWrapper>
       </MenuHeader>
-      <p>total: {totalCount}</p>
-      <button onClick={handleToggleDetails}>{toggleDetailsText}</button>
-      {areDetailsShown ? (
-        <TableWrapper>
-          <Table border={1}>
-            <thead>
-              <tr>
-                {TABLE_COLUMNS.map((columnName) => {
-                  return <Th key={columnName}>{columnName}</Th>;
+      <DetailsContainer>
+        <p>total: {totalCount}</p>
+        <button onClick={handleToggleDetails}>{toggleDetailsText}</button>
+        {areDetailsShown ? (
+          <TableWrapper>
+            <Table border={1}>
+              <thead>
+                <tr>
+                  {TABLE_COLUMNS.map((columnName) => {
+                    return <Th key={columnName}>{columnName}</Th>;
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {habitsList.map((habit) => {
+                  const { id, count, datetime } = habit;
+                  return (
+                    <tr key={id}>
+                      <Td>{count}</Td>
+                      <Td>{datetime.toLocaleTimeString()}</Td>
+                      <Td>{datetime.toLocaleDateString()}</Td>
+                    </tr>
+                  );
                 })}
-              </tr>
-            </thead>
-            <tbody>
-              {habitsList.map((habit) => {
-                const { id, count, datetime } = habit;
-                return (
-                  <tr key={id}>
-                    <Td>{count}</Td>
-                    <Td>{datetime.toLocaleTimeString()}</Td>
-                    <Td>{datetime.toLocaleDateString()}</Td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        </TableWrapper>
-      ) : null}
+              </tbody>
+            </Table>
+          </TableWrapper>
+        ) : null}
+      </DetailsContainer>
     </section>
   );
 }
