@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import groupBy from 'lodash/groupBy';
-import { VictoryBar, VictoryChart, VictoryTooltip } from 'victory';
 // utils
 import { fetchHabits } from './firebase/firestore';
 import { appGutterPadding } from './styles/layout';
@@ -15,11 +14,6 @@ const HABITS_LOADING = 'habits-loading';
 const HABITS_LOADED = 'habits-loaded';
 const HABITS_LOADED_ERROR = 'habits-loaded-error';
 // styles
-const ChartWrapper = styled.div`
-  width: 100%;
-  height: 20rem;
-`;
-
 const HabitWrapper = styled.article`
   border: 1px solid;
   margin-bottom: 2rem;
@@ -160,6 +154,7 @@ function Habits({ userID, userEmail, onLogout }) {
             <section>
               {Object.keys(habitsGroups).map((habitKey) => {
                 const habit = habitsGroups[habitKey];
+                const habitChartData = habitsChartDataGroups[habitKey];
                 return (
                   <HabitWrapper key={habitKey}>
                     <HabitGroup
@@ -167,19 +162,10 @@ function Habits({ userID, userEmail, onLogout }) {
                       totalCount={habit?.totalCount}
                       habitLabel={habitKey}
                       habitsList={habit?.data}
+                      habitChartData={habitChartData}
                       onDeleteHabit={handleDeleteHabit}
                       onAddHabit={handleFetchHabits}
                     />
-                    <ChartWrapper>
-                      <VictoryChart domainPadding={20}>
-                        <VictoryBar
-                          labelComponent={<VictoryTooltip />}
-                          data={habitsChartDataGroups[habitKey]}
-                          x="datetime"
-                          y="count"
-                        />
-                      </VictoryChart>
-                    </ChartWrapper>
                   </HabitWrapper>
                 );
               })}

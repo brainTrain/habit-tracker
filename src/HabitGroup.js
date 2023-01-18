@@ -3,8 +3,9 @@ import { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
+import { VictoryBar, VictoryChart, VictoryTooltip } from 'victory';
 // utils
-import { appGutterPadding, habitDetailsGutterPadding } from './styles/layout';
+import { habitDetailsGutterPadding } from './styles/layout';
 import { deleteHabit } from './firebase/firestore';
 // components
 import HabitsForm from './HabitsForm';
@@ -83,23 +84,38 @@ const Td = styled.td`
   padding: 0.5rem;
 `;
 
+const ChartWrapper = styled.div`
+  width: 100%;
+  height: 20rem;
+`;
+
 function HabitGroup({
   habitLabel,
   habitsList,
+  habitChartData,
   totalCount,
   onDeleteHabit,
   onAddHabit,
   userID,
 }) {
   const [areDetailsShown, setAreDetailsShown] = useState(false);
+  const [isChartShown, setIsChartShown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const handleToggleDetails = useCallback(() => {
     setAreDetailsShown((prev) => {
       return !prev;
     });
   }, []);
 
+  const handleToggleChart = useCallback(() => {
+    setIsChartShown((prev) => {
+      return !prev;
+    });
+  }, []);
+
   const toggleDetailsText = areDetailsShown ? 'hide details' : 'show details';
+  const toggleChartText = isChartShown ? 'hide chart' : 'show chart';
   const handleDeleteLabel = useCallback(() => {
     if (
       window.confirm(
@@ -182,6 +198,19 @@ function HabitGroup({
             </Table>
           </TableWrapper>
         ) : null}
+        <button onClick={handleToggleChart}>{toggleChartText}</button>
+        {isChartShown ? (
+          <ChartWrapper>
+            <VictoryChart domainPadding={20}>
+              <VictoryBar
+                labelComponent={<VictoryTooltip />}
+                data={habitChartData}
+                x="datetime"
+                y="count"
+              />
+            </VictoryChart>
+          </ChartWrapper>
+        ) : null}
       </DetailsContainer>
     </section>
   );
@@ -193,6 +222,7 @@ HabitGroup.propTypes = {
   onDeleteHabit: PropTypes.func,
   totalCount: PropTypes.number,
   userID: PropTypes.string,
+  habitChartData: PropTypes.object,
 };
 
 HabitGroup.defaultProps = {
@@ -210,6 +240,7 @@ HabitGroup.defaultProps = {
   },
   totalCount: 0,
   userID: '',
+  habitChartData: {},
 };
 
 export default HabitGroup;
