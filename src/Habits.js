@@ -23,7 +23,7 @@ const ChartWrapper = styled.div`
 const HabitWrapper = styled.article`
   border: 1px solid;
   margin-bottom: 2rem;
-  padding: 1rem;
+  padding: 1rem 0;
   border-radius: 0.2rem;
 `;
 
@@ -42,9 +42,10 @@ const AppHeader = styled.header`
 `;
 
 const AppHeaderTopSection = styled.section`
-  display: felx;
+  display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 `;
 
 const HabitFormWrapper = styled.section`
@@ -141,7 +142,10 @@ function Habits({ userID, userEmail, onLogout }) {
     <PageWrapper>
       <AppHeader>
         <AppHeaderTopSection>
-          <h1>Habits for {userEmail}</h1>
+          <span>
+            <h1>Habits for:</h1>
+            <span>{userEmail}</span>
+          </span>
           <button onClick={handleLogout}>logout</button>
         </AppHeaderTopSection>
         <HabitFormWrapper>

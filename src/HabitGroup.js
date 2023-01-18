@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 // utils
+import { appGutterPadding, habitDetailsGutterPadding } from './styles/layout';
 import { deleteHabit } from './firebase/firestore';
 // components
 import HabitsForm from './HabitsForm';
@@ -14,6 +15,8 @@ const MenuHeader = styled.section`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  ${habitDetailsGutterPadding};
 `;
 
 const FormWrapper = styled.section`
@@ -45,12 +48,16 @@ const MenuContent = styled.section`
   position: absolute;
   top: 100%;
   right: 0;
+  background-color: #fff;
 `;
 
 const DetailsContainer = styled.section`
+  ${habitDetailsGutterPadding};
   border-top: 1px solid;
   border-bottom: 1px solid;
-  padding: 1rem;
+
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 `;
 
 const TableWrapper = styled.section`
