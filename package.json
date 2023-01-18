@@ -1,6 +1,6 @@
 {
   "name": "habit-tracker",
-  "homepage": "braintrain.github.io/habit-tracker",
+  "homepage": "/habit-tracker/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
