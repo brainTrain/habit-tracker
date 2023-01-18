@@ -18,6 +18,14 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
+
+  form input {
+    font-size: 16px;
+  }
+
+  form button {
+    font-size: 16px;
+  }
 `;
 
 export default GlobalStyle;
