@@ -20,4 +20,4 @@ jobs:
     - name: Configure Git
       run: git config --local user.email "abductee@gmail.com" && git config --local user.name "brainTrain"
     - name: Deploy
-      run: yarn run deploy
+      run: yarn deploy
