@@ -19,5 +19,7 @@ jobs:
       run: yarn install
     - name: Configure Git
       run: git config user.email "abductee@gmail.com" && git config user.name "braintrain"
+    - name: Try git stuffs
+      run: git remote -v
     - name: Deploy
       run: yarn deploy
