@@ -23,3 +23,5 @@ jobs:
       run: pwd
     - name: Deploy
       run: yarn deploy
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
