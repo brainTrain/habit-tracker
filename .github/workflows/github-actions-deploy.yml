@@ -15,6 +15,10 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 14
+    - name: Setup SSH key
+      uses: actions/setup-ssh@v1
+      with:
+        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Github pingzs
       run: ssh -T git@github.com
     - name: Install dependencies
