@@ -19,5 +19,7 @@ jobs:
       run: yarn install
     - name: Configure Git
       run: git config --local user.email "abductee@gmail.com" && git config --local user.name "brainTrain"
+    - name: Check the current working directory
+      run: pwd
     - name: Deploy
       run: yarn deploy
