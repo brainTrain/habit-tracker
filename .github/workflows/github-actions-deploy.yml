@@ -19,9 +19,5 @@ jobs:
       run: yarn install
     - name: Configure Git
       run: git config user.email "abductee@gmail.com" && git config user.name "braintrain"
-    - name: Check the current working directory
-      run: pwd
     - name: Deploy
       run: yarn deploy
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
