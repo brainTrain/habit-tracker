@@ -66,7 +66,6 @@ const DatesContainer = styled.div`
   overflow: auto;
   display: flex;
   gap: 0.5rem;
-  justify-content: center;
 `;
 
 const TableWrapper = styled.section`
