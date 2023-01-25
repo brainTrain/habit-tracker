@@ -14,31 +14,51 @@ const TABLE_COLUMNS = ['Count', 'Time', 'Date'];
 // styles
 const MenuHeader = styled.section`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
 
   ${habitDetailsGutterPadding};
+  padding-bottom: 1rem;
 `;
 
+const MenuHeaderTop = styled.section`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const HabitLabel = styled.h3`
+  margin: 0;
+`;
+
+const HabitCurrentDate = styled.h4`
+  margin: 0;
+`;
+
+const MenuHeaderBottom = styled.section``;
+
+const TitleWrapper = styled.section``;
+
 const FormWrapper = styled.section`
-  padding: 1rem;
+  margin-top: 1rem;
 `;
 
 const MenuWrapper = styled.section`
   display: flex;
   flex-direction: column;
+  height: 100%;
   position: relative;
 `;
 
 const MenuButton = styled.button`
-  cursor: pointer;
   font-size: 1rem;
   height: 2rem;
   width: 2rem;
 `;
 
+const DateButton = styled.button`
+  ${({ isActive }) => isActive && 'background-color: #FFF'};
+`;
+
 const DeleteButton = styled.button`
-  cursor: pointer;
   white-space: nowrap;
 `;
 
@@ -50,12 +70,14 @@ const MenuContent = styled.section`
   top: 100%;
   right: 0;
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 `;
 
 const DetailsContainer = styled.section`
   ${habitDetailsGutterPadding};
   border-top: 1px solid;
-  border-bottom: 1px solid;
 
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -66,6 +88,9 @@ const DatesContainer = styled.div`
   overflow: auto;
   display: flex;
   gap: 0.5rem;
+
+  ${habitDetailsGutterPadding};
+  padding-bottom: 0.5rem;
 `;
 
 const TableWrapper = styled.section`
@@ -109,6 +134,7 @@ function HabitGroup({
   const [currentDate, setCurrentDate] = useState('');
   const [habitChartData, setHabitChartData] = useState([]);
   const [habitsList, setHabitsList] = useState([]);
+  const [allHabitsList, setAllHabitsList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -146,10 +172,10 @@ function HabitGroup({
 
   const toggleDetailsText = areDetailsShown ? 'hide details' : 'show details';
   const toggleChartText = isChartShown ? 'hide chart' : 'show chart';
-  const handleDeleteLabel = useCallback(() => {
+  const handleDeleteHabitByDay = useCallback(() => {
     if (
       window.confirm(
-        `Are you sure you want to delete this entire ${habitLabel} habit?`,
+        `Are you sure you want to delete all ${habitLabel} habits for ${currentDate}?`,
       )
     ) {
       deleteHabit(habitsList)
@@ -161,6 +187,29 @@ function HabitGroup({
         });
     }
   }, [habitLabel, habitsList, onDeleteHabit]);
+
+  const handleDeleteEntireHabit = useCallback(() => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete this entire ${habitLabel} habit?`,
+      )
+    ) {
+      const flatHabits = Object.keys(habitData?.data || []).reduce(
+        (prev, habitDate) => {
+          const habits = habitData?.data[habitDate]?.tableList || [];
+          return habits;
+        },
+        [],
+      );
+      deleteHabit(flatHabits)
+        .then(() => {
+          onDeleteHabit(flatHabits);
+        })
+        .catch((error) => {
+          console.error('error deleting habit', error);
+        });
+    }
+  }, [habitLabel, habitData, onDeleteHabit]);
 
   const handleMenuButtonClick = useCallback(() => {
     setIsMenuOpen((prev) => {
@@ -179,37 +228,49 @@ function HabitGroup({
   return (
     <section>
       <MenuHeader>
-        <h3>{habitLabel}</h3>
-        <FormWrapper>
-          <HabitsForm
-            userID={userID}
-            habitLabel={habitLabel}
-            onAddHabit={onAddHabit}
-          />
-        </FormWrapper>
-        <MenuWrapper ref={menuWrapperRef}>
-          <MenuButton onClick={handleMenuButtonClick}>
-            {menuButtonContent}
-          </MenuButton>
-          {isMenuOpen ? (
-            <MenuContent>
-              <DeleteButton onClick={handleDeleteLabel}>
-                delete habit
-              </DeleteButton>
-            </MenuContent>
-          ) : null}
-        </MenuWrapper>
+        <MenuHeaderTop>
+          <TitleWrapper>
+            <HabitLabel>{habitLabel}</HabitLabel>
+            <HabitCurrentDate>{currentDate}</HabitCurrentDate>
+          </TitleWrapper>
+          <MenuWrapper ref={menuWrapperRef}>
+            <MenuButton onClick={handleMenuButtonClick}>
+              {menuButtonContent}
+            </MenuButton>
+            {isMenuOpen ? (
+              <MenuContent>
+                <DeleteButton onClick={handleDeleteHabitByDay}>
+                  delete habits for {currentDate}
+                </DeleteButton>
+                <DeleteButton onClick={handleDeleteEntireHabit}>
+                  delete entire habit
+                </DeleteButton>
+              </MenuContent>
+            ) : null}
+          </MenuWrapper>
+        </MenuHeaderTop>
+        <MenuHeaderBottom>
+          <FormWrapper>
+            <HabitsForm
+              userID={userID}
+              habitLabel={habitLabel}
+              onAddHabit={onAddHabit}
+            />
+          </FormWrapper>
+        </MenuHeaderBottom>
       </MenuHeader>
       <DatesContainer>
         {datesList.map((date) => {
+          const isAtive = date === currentDate;
           return (
-            <button
+            <DateButton
               key={date}
+              isActive={isAtive}
               onClick={() => {
                 handleDateButtonClick(date);
               }}>
               {date}
-            </button>
+            </DateButton>
           );
         })}
       </DatesContainer>
@@ -260,7 +321,7 @@ function HabitGroup({
 }
 
 HabitGroup.propTypes = {
-  // TODO: defined shape
+  // TODO: define shape
   habitData: PropTypes.object,
   habitLabel: PropTypes.string,
   onAddHabit: PropTypes.func,

@@ -17,7 +17,6 @@ const AUTH_LOADED_NOT_AUTHENTICATED = 'auth-loaded-not-authenticated';
 const AUTH_LOADED_ERROR = 'auth-loaded-error';
 // styles
 const AppWrapper = styled.main`
-  text-align: center;
   height: 100%;
 `;
 
