@@ -43,7 +43,7 @@ const AppHeaderTopSection = styled.section`
 `;
 
 const HabitFormWrapper = styled.section`
-  padding: 1rem;
+  padding: 1rem 0;
 `;
 
 const ContentWrapper = styled.section`
