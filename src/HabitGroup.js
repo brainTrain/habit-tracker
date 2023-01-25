@@ -134,7 +134,6 @@ function HabitGroup({
   const [currentDate, setCurrentDate] = useState('');
   const [habitChartData, setHabitChartData] = useState([]);
   const [habitsList, setHabitsList] = useState([]);
-  const [allHabitsList, setAllHabitsList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -186,7 +185,7 @@ function HabitGroup({
           console.error('error deleting habit', error);
         });
     }
-  }, [habitLabel, habitsList, onDeleteHabit]);
+  }, [habitLabel, habitsList, onDeleteHabit, currentDate]);
 
   const handleDeleteEntireHabit = useCallback(() => {
     if (
