@@ -29,10 +29,13 @@ const PageWrapper = styled.section`
 
 const AppHeader = styled.header`
   ${appGutterPadding};
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 
   border-bottom: 1px solid;
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 `;
 
 const AppHeaderTopSection = styled.section`
@@ -40,6 +43,10 @@ const AppHeaderTopSection = styled.section`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+`;
+
+const AppHeaderTitle = styled.h1`
+  margin: 0;
 `;
 
 const HabitFormWrapper = styled.section`
@@ -57,6 +64,7 @@ const ContentWrapper = styled.section`
 function Habits({ userID, userEmail, onLogout }) {
   const [habitsGroups, setHabitsGroups] = useState({});
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
+  const [isCreateFormShown, setIsCreateFormShown] = useState(false);
 
   const handleFetchHabits = useCallback(() => {
     fetchHabits(userID)
@@ -148,6 +156,10 @@ function Habits({ userID, userEmail, onLogout }) {
     handleFetchHabits();
   }, [handleFetchHabits]);
 
+  const handleToggleCreateFormClick = useCallback(() => {
+    setIsCreateFormShown((prev) => !prev);
+  }, []);
+
   useEffect(() => {
     handleFetchHabits();
   }, [handleFetchHabits]);
@@ -157,14 +169,22 @@ function Habits({ userID, userEmail, onLogout }) {
       <AppHeader>
         <AppHeaderTopSection>
           <span>
-            <h1>Habits for:</h1>
+            <AppHeaderTitle>Habits for:</AppHeaderTitle>
             <span>{userEmail}</span>
           </span>
           <button onClick={handleLogout}>logout</button>
         </AppHeaderTopSection>
-        <HabitFormWrapper>
-          <HabitsForm userID={userID} onAddHabit={handleFetchHabits} />
-        </HabitFormWrapper>
+        <section>
+          <label>Create Habit Form: </label>
+          <button onClick={handleToggleCreateFormClick}>
+            {isCreateFormShown ? 'hide' : 'show'}
+          </button>
+          {isCreateFormShown ? (
+            <HabitFormWrapper>
+              <HabitsForm userID={userID} onAddHabit={handleFetchHabits} />
+            </HabitFormWrapper>
+          ) : null}
+        </section>
       </AppHeader>
       <ContentWrapper>
         {{
