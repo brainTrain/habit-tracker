@@ -50,7 +50,7 @@ const AppHeaderTitle = styled.h1`
 `;
 
 const HabitFormWrapper = styled.section`
-  padding: 1rem 0;
+  padding-top: 0.5rem;
 `;
 
 const ContentWrapper = styled.section`
