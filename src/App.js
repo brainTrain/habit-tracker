@@ -5,6 +5,7 @@ import styled from 'styled-components';
 // import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 // utils
 import GlobalStyle from './styles/globalStyles';
+import { appGutterPadding } from './styles/layout';
 // components
 import Login from './Login';
 import Register from './Register';
@@ -18,6 +19,14 @@ const AUTH_LOADED_ERROR = 'auth-loaded-error';
 // styles
 const AppWrapper = styled.main`
   height: 100%;
+`;
+
+const LoggedOutPageWrapper = styled.section`
+  ${appGutterPadding};
+
+  padding-top: 2rem;
+  height: 100%;
+  overflow: auto;
 `;
 
 function App() {
@@ -79,7 +88,11 @@ function App() {
       <GlobalStyle />
       <AppWrapper>
         {{
-          [AUTH_LOADING]: <p>loading...</p>,
+          [AUTH_LOADING]: (
+            <LoggedOutPageWrapper>
+              <p>loading...</p>
+            </LoggedOutPageWrapper>
+          ),
           [AUTH_LOADED_AUTHENTICATED]: (
             <Habits
               userID={userID}
@@ -88,7 +101,7 @@ function App() {
             />
           ),
           [AUTH_LOADED_NOT_AUTHENTICATED]: (
-            <>
+            <LoggedOutPageWrapper>
               <section>
                 <h3>Login</h3>
                 <Login
@@ -105,9 +118,13 @@ function App() {
                 />
                 {hasRegisterError ? <p>Error logging in :(</p> : null}
               </section>
-            </>
+            </LoggedOutPageWrapper>
           ),
-        }[authState] || <p>Error :(</p>}
+        }[authState] || (
+          <LoggedOutPageWrapper>
+            <p>Error :(</p>
+          </LoggedOutPageWrapper>
+        )}
       </AppWrapper>
     </>
   );
