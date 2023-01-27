@@ -15,8 +15,9 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 14
-    - name: Setup SSH key
-      uses: actions/setup-ssh@v1
+    - name: Setup SSH Action
+      uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
+
       with:
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Github pingzs
