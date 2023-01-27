@@ -61,7 +61,7 @@ const ContentWrapper = styled.section`
   overflow: auto;
 `;
 
-function Habits({ userID, userEmail, onLogout }) {
+function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsGroups, setHabitsGroups] = useState({});
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
@@ -214,20 +214,20 @@ function Habits({ userID, userEmail, onLogout }) {
   );
 }
 
-Habits.propTypes = {
+HabitsPage.propTypes = {
   userID: PropTypes.string,
   userEmail: PropTypes.string,
   onLogout: PropTypes.func,
 };
 
-Habits.defaultProps = {
+HabitsPage.defaultProps = {
   userID: '',
   userEmail: '',
   onLogout: function () {
     console.warn(
-      'onLogout() prop in <Habits /> component called without a value',
+      'onLogout() prop in <HabitsPage /> component called without a value',
     );
   },
 };
 
-export default Habits;
+export default HabitsPage;

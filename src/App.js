@@ -9,7 +9,7 @@ import { appGutterPadding } from './styles/layout';
 // components
 import Login from './Login';
 import Register from './Register';
-import Habits from './Habits';
+import HabitsPage from './HabitsPage';
 // constants
 const AUTH_LOADING = 'auth-loading';
 const AUTH_LOADED_AUTHENTICATED = 'auth-loaded-authenticated';
@@ -94,7 +94,7 @@ function App() {
             </LoggedOutPageWrapper>
           ),
           [AUTH_LOADED_AUTHENTICATED]: (
-            <Habits
+            <HabitsPage
               userID={userID}
               userEmail={userEmail}
               onLogout={handleLogout}
