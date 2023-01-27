@@ -19,7 +19,7 @@ jobs:
       uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
 
       with:
-        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSHKEY: ${{ secrets.SSH }}
     - name: Github pingzs
       run: ssh -T git@github.com
     - name: Install dependencies
