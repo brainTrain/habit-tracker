@@ -14,7 +14,7 @@ const FORM_SUBMITTED = 'form-submitted';
 const FORM_SUBMITTED_ERROR = 'form-submitted-error';
 const COUNT_INPUT_BASE_COPY = 'Habit count';
 
-function HabitsForm({ userID, onAddHabit, habitLabel }) {
+function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
   const [formSubmissionState, setFormSubmissionState] = useState(FORM_INITIAL);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
   const [hasHabitLabel, setHasHabitLabel] = useState(false);
@@ -83,7 +83,7 @@ function HabitsForm({ userID, onAddHabit, habitLabel }) {
         const count = Number(countInputRef?.current?.value);
         const newDateObj = Boolean(dateTime) ? new Date(dateTime) : null;
 
-        saveHabit(label, count, userID, newDateObj)
+        saveHabit(label, count, userID, newDateObj, habitID)
           .then((response) => {
             onAddHabit(userID);
             setFormSubmissionState(FORM_INITIAL);
@@ -95,7 +95,7 @@ function HabitsForm({ userID, onAddHabit, habitLabel }) {
           });
       }
     },
-    [onAddHabit, userID, clearInputs, habitLabel, dateTime],
+    [onAddHabit, userID, clearInputs, habitLabel, dateTime, habitID],
   );
 
   const handleShowDateTimeInput = useCallback(() => {
@@ -154,11 +154,13 @@ HabitsForm.propTypes = {
   userID: PropTypes.string,
   onAddHabit: PropTypes.func,
   habitLabel: PropTypes.string,
+  habitID: PropTypes.string,
 };
 
 HabitsForm.defaultProps = {
   userID: '',
   habitLabel: '',
+  habitID: '',
   onAddHabit: function () {
     console.warn(
       'onAddHabit() prop in <HabitsForm /> component called without a value',

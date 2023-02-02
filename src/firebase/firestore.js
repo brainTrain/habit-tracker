@@ -16,8 +16,9 @@ export const db = getFirestore(app);
 
 const HABIT_COLLECTION = 'habit';
 
-export function saveHabit(habitLabel, count, userID, date) {
+export function saveHabit(habitLabel, count, userID, date, habitID) {
   const datetime = date ? Timestamp.fromDate(date) : Timestamp.now();
+  const hasHabitID = Boolean(habitID);
 
   const data = {
     userID,
@@ -25,6 +26,7 @@ export function saveHabit(habitLabel, count, userID, date) {
     count,
     datetime,
     publicID: nanoid(),
+    habitID: hasHabitID ? habitID : nanoid(),
   };
 
   return addDoc(collection(db, HABIT_COLLECTION), data);
@@ -37,10 +39,19 @@ export function fetchHabits(userID) {
   return getDocs(q);
 }
 
-export function deleteHabit(habitsList) {
+export function updateHabit(habitItems, key, value) {
+  const batch = writeBatch(db);
+  habitItems.forEach(({ id }) => {
+    batch.update(doc(db, HABIT_COLLECTION, id), { [key]: value });
+  });
+
+  return batch.commit();
+}
+
+export function deleteHabit(habitItems) {
   const batch = writeBatch(db);
 
-  habitsList.forEach(({ id }) => {
+  habitItems.forEach(({ id }) => {
     batch.delete(doc(db, HABIT_COLLECTION, id));
   });
 

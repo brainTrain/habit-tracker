@@ -73,23 +73,29 @@ function HabitsPage({ userID, userEmail, onLogout }) {
         let newHabits = [];
 
         habitsResponse.forEach((doc) => {
-          const { count, datetime, habitLabel, publicID } = doc.data();
+          const { count, datetime, habitLabel, publicID, habitID } = doc.data();
           const parsedCount = Number(count);
           const newHabit = {
             count: parsedCount,
             datetime: datetime.toDate(),
             habitLabel,
+            habitID,
             publicID,
             id: doc.id,
           };
           newHabits.push(newHabit);
         });
 
-        const groupedNewHabits = groupBy(newHabits, 'habitLabel');
+        const groupedNewHabits = groupBy(newHabits, 'habitID');
         const formattedHabits = {};
-        console.log('groupedNewHabits', groupedNewHabits);
-        Object.keys(groupedNewHabits).forEach((newHabitLabel) => {
-          const groupedNewHabitsList = groupedNewHabits[newHabitLabel]?.sort(
+
+        Object.keys(groupedNewHabits).forEach((newHabitID) => {
+          const { habitLabel, habitID } = groupedNewHabits[newHabitID][0] || {
+            habitLabel: '',
+            habitID: '',
+          };
+
+          const groupedNewHabitsList = groupedNewHabits[newHabitID]?.sort(
             (a, b) => {
               return b?.datetime - a?.datetime;
             },
@@ -137,7 +143,9 @@ function HabitsPage({ userID, userEmail, onLogout }) {
           });
 
           // get total for date group?
-          formattedHabits[newHabitLabel] = {
+          formattedHabits[newHabitID] = {
+            habitLabel,
+            habitID,
             data: groupedByDate,
             dateOrder,
           };
@@ -198,13 +206,16 @@ function HabitsPage({ userID, userEmail, onLogout }) {
           [HABITS_LOADED_ERROR]: <p>Error loading habits.</p>,
           [HABITS_LOADED]: (
             <section>
-              {Object.keys(habitsGroups).map((habitLabel) => {
-                const habitData = habitsGroups[habitLabel];
+              {Object.keys(habitsGroups).map((key) => {
+                const { habitID, habitLabel, dateOrder, data } =
+                  habitsGroups[key];
                 return (
-                  <HabitWrapper key={habitLabel}>
+                  <HabitWrapper key={key}>
                     <HabitGroup
-                      habitData={habitData}
+                      groupedData={data}
+                      dateOrder={dateOrder}
                       habitLabel={habitLabel}
+                      habitID={habitID}
                       onAddHabit={handleFetchHabits}
                       onDeleteHabit={handleDeleteHabit}
                       userID={userID}

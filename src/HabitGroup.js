@@ -7,6 +7,7 @@ import { VictoryBar, VictoryChart, VictoryTooltip } from 'victory';
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { deleteHabit } from './firebase/firestore';
+import { flattenHabitItems } from './parsers/habit';
 // components
 import HabitsForm from './HabitsForm';
 // constants
@@ -125,7 +126,9 @@ const ChartWrapper = styled.div`
 `;
 
 function HabitGroup({
-  habitData,
+  groupedData,
+  dateOrder,
+  habitID,
   habitLabel,
   onAddHabit,
   onDeleteHabit,
@@ -136,25 +139,25 @@ function HabitGroup({
   const [datesList, setDatesList] = useState([]);
   const [currentDate, setCurrentDate] = useState('');
   const [habitChartData, setHabitChartData] = useState([]);
-  const [habitsList, setHabitsList] = useState([]);
+  const [habitItems, setHabitItems] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    const datesList = habitData.dateOrder || [];
+    const datesList = dateOrder;
     setDatesList(datesList);
     setCurrentDate(datesList[0]);
-  }, [habitData.dateOrder]);
+  }, [dateOrder]);
 
   useEffect(() => {
-    const currentChartData = habitData?.data[currentDate]?.chartList || [];
-    const currentTableData = habitData?.data[currentDate]?.tableList || [];
-    const currentTotalCount = habitData?.data[currentDate]?.totalCount || 0;
+    const currentChartData = groupedData[currentDate]?.chartList || [];
+    const currentTableData = groupedData[currentDate]?.tableList || [];
+    const currentTotalCount = groupedData[currentDate]?.totalCount || 0;
 
     setHabitChartData(currentChartData);
-    setHabitsList(currentTableData);
+    setHabitItems(currentTableData);
     setTotalCount(currentTotalCount);
-  }, [currentDate, habitData?.data]);
+  }, [currentDate, groupedData]);
 
   const handleToggleDetails = useCallback(() => {
     setAreDetailsShown((prev) => {
@@ -180,15 +183,16 @@ function HabitGroup({
         `Are you sure you want to delete all ${habitLabel} habits for ${currentDate}?`,
       )
     ) {
-      deleteHabit(habitsList)
+      deleteHabit(habitItems)
         .then(() => {
-          onDeleteHabit(habitsList);
+          onDeleteHabit();
+          setIsMenuOpen(false);
         })
         .catch((error) => {
           console.error('error deleting habit', error);
         });
     }
-  }, [habitLabel, habitsList, onDeleteHabit, currentDate]);
+  }, [habitLabel, habitItems, onDeleteHabit, currentDate]);
 
   const handleDeleteEntireHabit = useCallback(() => {
     if (
@@ -196,22 +200,18 @@ function HabitGroup({
         `Are you sure you want to delete this entire ${habitLabel} habit?`,
       )
     ) {
-      const flatHabits = Object.keys(habitData?.data || []).reduce(
-        (prev, habitDate) => {
-          const habits = habitData?.data[habitDate]?.tableList || [];
-          return habits;
-        },
-        [],
-      );
-      deleteHabit(flatHabits)
+      const flatHabit = flattenHabitItems(groupedData);
+
+      deleteHabit(flatHabit)
         .then(() => {
-          onDeleteHabit(flatHabits);
+          onDeleteHabit();
+          setIsMenuOpen(false);
         })
         .catch((error) => {
           console.error('error deleting habit', error);
         });
     }
-  }, [habitLabel, habitData, onDeleteHabit]);
+  }, [habitLabel, groupedData, onDeleteHabit]);
 
   const handleMenuButtonClick = useCallback(() => {
     setIsMenuOpen((prev) => {
@@ -255,6 +255,7 @@ function HabitGroup({
           <FormWrapper>
             <HabitsForm
               userID={userID}
+              habitID={habitID}
               habitLabel={habitLabel}
               onAddHabit={onAddHabit}
             />
@@ -290,7 +291,7 @@ function HabitGroup({
                 </tr>
               </thead>
               <tbody>
-                {habitsList.map((habit) => {
+                {habitItems.map((habit) => {
                   const { id, count, datetime } = habit;
                   return (
                     <tr key={id}>
@@ -324,8 +325,10 @@ function HabitGroup({
 
 HabitGroup.propTypes = {
   // TODO: define shape
-  habitData: PropTypes.object,
+  groupedData: PropTypes.object,
+  habitID: PropTypes.string,
   habitLabel: PropTypes.string,
+  dateOrder: PropTypes.array,
   onAddHabit: PropTypes.func,
   onDeleteHabit: PropTypes.func,
   userID: PropTypes.string,
@@ -333,8 +336,10 @@ HabitGroup.propTypes = {
 
 HabitGroup.defaultProps = {
   // TODO: set empty values for keys here
-  habitData: {},
+  groupedData: {},
+  habitID: '',
   habitLabel: '',
+  dateOrder: [],
   onAddHabit: function () {
     console.warn(
       'onAddHabit() prop in <HabitGroup /> component called without a value',
