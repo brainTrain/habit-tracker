@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import groupBy from 'lodash/groupBy';
+import { subMinutes } from 'date-fns';
 // utils
 import { fetchHabits } from './firebase/firestore';
 import { appGutterPadding } from './styles/layout';
@@ -86,6 +87,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
 
         const groupedNewHabits = groupBy(newHabits, 'habitLabel');
         const formattedHabits = {};
+        console.log('groupedNewHabits', groupedNewHabits);
         Object.keys(groupedNewHabits).forEach((newHabitLabel) => {
           const groupedNewHabitsList = groupedNewHabits[newHabitLabel]?.sort(
             (a, b) => {
@@ -97,7 +99,11 @@ function HabitsPage({ userID, userEmail, onLogout }) {
           // date grouping
           groupedNewHabitsList.forEach((newHabit) => {
             const { datetime, count } = newHabit;
-            const newHabitDateString = datetime.toLocaleDateString();
+            const newHabitTimeString = datetime.toLocaleTimeString();
+            // for now add a 4 hour shift that's hard coded
+            const updatedDate = subMinutes(datetime, 240);
+            const updatedDateLocale = updatedDate.toLocaleDateString();
+
             const tableHabit = {
               ...newHabit,
             };
@@ -105,20 +111,20 @@ function HabitsPage({ userID, userEmail, onLogout }) {
               ...{
                 count,
                 datetime,
-                label: `${count} at ${datetime.toLocaleTimeString()}`,
+                label: `${count} at ${newHabitTimeString}}`,
               },
             };
 
-            if (!groupedByDate[newHabitDateString]) {
-              dateOrder.push(newHabitDateString);
-              groupedByDate[newHabitDateString] = {
+            if (!groupedByDate[updatedDateLocale]) {
+              dateOrder.push(updatedDateLocale);
+              groupedByDate[updatedDateLocale] = {
                 totalCount: 0,
                 tableList: [tableHabit],
                 chartList: [chartHabit],
               };
             } else {
-              groupedByDate[newHabitDateString].tableList.push(tableHabit);
-              groupedByDate[newHabitDateString].chartList.push(chartHabit);
+              groupedByDate[updatedDateLocale].tableList.push(tableHabit);
+              groupedByDate[updatedDateLocale].chartList.push(chartHabit);
             }
           });
           // get total counts for each date and update the totalCount value for each
