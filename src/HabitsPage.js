@@ -117,7 +117,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
               ...{
                 count,
                 datetime,
-                label: `${count} at ${newHabitTimeString}}`,
+                label: `${count} at ${newHabitTimeString}`,
               },
             };
 
