@@ -48,6 +48,23 @@ export function updateHabit(habitItems, key, value) {
   return batch.commit();
 }
 
+/*
+example usage of above api
+const handleUpdate = () => {
+  const flatHabit = flattenHabitItems(groupedData);
+  const ID = nanoid();
+
+  updateHabit(flatHabit, 'habitID', ID)
+    .then(() => {
+      onDeleteHabit();
+      setIsMenuOpen(false);
+    })
+    .catch((error) => {
+      console.error('error deleting habit', error);
+    });
+};
+*/
+
 export function deleteHabit(habitItems) {
   const batch = writeBatch(db);
 
