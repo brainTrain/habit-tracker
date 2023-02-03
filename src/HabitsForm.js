@@ -136,7 +136,6 @@ function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
             id={DATE_TIME_INPUT_ID}
             name="habit-date-time"
             type="datetime-local"
-            step="60000"
             onChange={handleDateTimeChange}
             value={dateTime}
             required
