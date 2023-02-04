@@ -9,7 +9,7 @@ import { habitDetailsGutterPadding } from './styles/layout';
 import { deleteHabit } from './firebase/firestore';
 import { flattenHabitItems } from './parsers/habit';
 // components
-import HabitsForm from './HabitsForm';
+import HabitForm from './HabitForm';
 // constants
 const TABLE_COLUMNS = ['Count', 'Time', 'Date'];
 // styles
@@ -253,7 +253,7 @@ function HabitGroup({
         </MenuHeaderTop>
         <MenuHeaderBottom>
           <FormWrapper>
-            <HabitsForm
+            <HabitForm
               userID={userID}
               habitID={habitID}
               habitLabel={habitLabel}

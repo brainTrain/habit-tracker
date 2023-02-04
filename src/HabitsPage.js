@@ -9,7 +9,7 @@ import { fetchHabits } from './firebase/firestore';
 import { appGutterPadding } from './styles/layout';
 // components
 import HabitGroup from './HabitGroup';
-import HabitsForm from './HabitsForm';
+import HabitForm from './HabitForm';
 // constants
 const HABITS_LOADING = 'habits-loading';
 const HABITS_LOADED = 'habits-loaded';
@@ -64,8 +64,15 @@ const ContentWrapper = styled.section`
 
 function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsGroups, setHabitsGroups] = useState({});
+  const [habitOptions, setHabitOptions] = useState({});
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
+
+  // TODO: probably need a fetch/fetches/api layer for these promises
+  // cause we'll want to fetch options first, then fetch habits
+  // this might also be a good time to move this parsing logic into
+  // a parsing layer
+  const handleFetchHabtOptinos = useCallback(() => {}, []);
 
   const handleFetchHabits = useCallback(() => {
     fetchHabits(userID)
@@ -195,7 +202,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
           </button>
           {isCreateFormShown ? (
             <HabitFormWrapper>
-              <HabitsForm userID={userID} onAddHabit={handleFetchHabits} />
+              <HabitForm userID={userID} onAddHabit={handleFetchHabits} />
             </HabitFormWrapper>
           ) : null}
         </section>

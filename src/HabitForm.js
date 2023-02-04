@@ -14,7 +14,7 @@ const FORM_SUBMITTED = 'form-submitted';
 const FORM_SUBMITTED_ERROR = 'form-submitted-error';
 const COUNT_INPUT_BASE_COPY = 'Habit count';
 
-function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
+function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
   const [formSubmissionState, setFormSubmissionState] = useState(FORM_INITIAL);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
   const [hasHabitLabel, setHasHabitLabel] = useState(false);
@@ -149,22 +149,22 @@ function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
   );
 }
 
-HabitsForm.propTypes = {
+HabitForm.propTypes = {
   userID: PropTypes.string,
   onAddHabit: PropTypes.func,
   habitLabel: PropTypes.string,
   habitID: PropTypes.string,
 };
 
-HabitsForm.defaultProps = {
+HabitForm.defaultProps = {
   userID: '',
   habitLabel: '',
   habitID: '',
   onAddHabit: function () {
     console.warn(
-      'onAddHabit() prop in <HabitsForm /> component called without a value',
+      'onAddHabit() prop in <HabitForm /> component called without a value',
     );
   },
 };
 
-export default HabitsForm;
+export default HabitForm;

@@ -1,6 +1,7 @@
 import {
   Timestamp,
   addDoc,
+  updateDoc,
   collection,
   getDocs,
   getFirestore,
@@ -15,7 +16,9 @@ import app from './';
 export const db = getFirestore(app);
 
 const HABIT_COLLECTION = 'habit';
+const HABIT_OPTIONS_COLLECTION = 'habit-options';
 
+// Habit methods
 export function saveHabit(habitLabel, count, userID, date, habitID) {
   const datetime = date ? Timestamp.fromDate(date) : Timestamp.now();
   const hasHabitID = Boolean(habitID);
@@ -73,4 +76,75 @@ export function deleteHabit(habitItems) {
   });
 
   return batch.commit();
+}
+
+// Habit Option methods
+export function saveHabitOptions(params) {
+  const { habitID, userID, negativeTimeShift, habitOptionsID } = params;
+  const hasHabitOptionsID = Boolean(habitOptionsID);
+
+  const optionsData = {
+    // keep this in hours for now
+    negativeTimeShift,
+  };
+
+  if (hasHabitOptionsID) {
+    updateHabitOptions(optionsData);
+  } else {
+    const data = {
+      userID,
+      habitID,
+      habitOptionsID: nanoid(),
+      ...optionsData,
+    };
+    addHabitOptions(data);
+  }
+}
+
+/*
+  habits by user
+  {
+    [habitID]: {
+      userID,
+      habitLabel,
+      count,
+      datetime,
+      publicID,
+      habitID,
+    }
+  }
+
+  habit options by user 
+  // iterate over array, make object with habitID as key
+  // 1:1 habitOptionsID to habitID
+  {
+    [habitID]: {
+      userID,
+      habitID,
+      habitOptionsID,
+      negativeTimeShift,
+    }
+  }
+
+*/
+
+function addHabitOptions(data) {
+  // return addDoc(collection(db, HABIT_OPTIONS_COLLECTION), data);
+}
+
+function updateHabitOptions(optionsData) {
+  // const washingtonRef = doc(db, 'cities', 'DC');
+  // Set the "capital" field of the city 'DC'
+  /*
+  updateDoc(washingtonRef, {
+    capital: true,
+  });
+  */
+}
+
+export function fetchHabitOptions(userID) {
+  const habitRef = collection(db, HABIT_OPTIONS_COLLECTION);
+  const q = query(habitRef, where('userID', '==', userID));
+
+  return getDocs(q);
 }
