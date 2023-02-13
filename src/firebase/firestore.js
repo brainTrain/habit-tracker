@@ -82,12 +82,16 @@ export function deleteHabit(habitItems) {
 
 // Habit Option methods
 export function saveHabitOptions(params) {
-  const { habitID, userID, negativeTimeShift, habitOptionsID } = params;
+  return new Promise((resolve, reject) => {
+    reject({ message: 'nope' });
+  });
+  /*
+  const { habitID, userID, negativeTimeOffset, habitOptionsID } = params;
   const hasHabitOptionsID = Boolean(habitOptionsID);
 
   const optionsData = {
     // keep this in hours for now
-    negativeTimeShift,
+    negativeTimeOffset,
   };
 
   if (hasHabitOptionsID) {
@@ -101,6 +105,7 @@ export function saveHabitOptions(params) {
     };
     addHabitOptions(data);
   }
+  */
 }
 
 /*
@@ -124,7 +129,7 @@ export function saveHabitOptions(params) {
       userID,
       habitID,
       habitOptionsID,
-      negativeTimeShift,
+      negativeTimeOffset,
     }
   }
 
@@ -155,12 +160,12 @@ export function fetchHabitOptions(userID) {
 // FAKE DATA
 const FAKE_HABIT_OPTION_1 = {
   habitID: '01NO9xdlKLTm00zaP2uG_',
-  timeOffset: 240,
+  negativeTimeOffset: 240,
   habitOptionID: 'fasdfasdfsdf',
 };
 const FAKE_HABIT_OPTION_2 = {
   habitID: 'lWAdZdHp8TCARciRnd8tO',
-  timeOffset: 240,
+  negativeTimeOffset: 240,
   habitOptionID: 'uhhhhhhhhhhh',
 };
 const FAKE_HABIT_OPTIONS = [FAKE_HABIT_OPTION_1, FAKE_HABIT_OPTION_2];

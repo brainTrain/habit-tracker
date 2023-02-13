@@ -5,7 +5,7 @@ import { subMinutes } from 'date-fns';
 // constants
 export const HABIT_OPTION_EMPTY = {
   habitID: '',
-  timeOffset: 0,
+  negativeTimeOffset: 0,
   habitOptionID: '',
   id: '',
 };
@@ -54,11 +54,11 @@ export function formatHabitGroups(params) {
     // date grouping
     groupedNewHabitsList.forEach((newHabit) => {
       const { datetime, count } = newHabit;
-      const { timeOffset } = habitOptions[habitID] || {
+      const { negativeTimeOffset } = habitOptions[habitID] || {
         ...HABIT_OPTION_EMPTY,
       };
       const newHabitTimeString = datetime.toLocaleTimeString();
-      const updatedDate = subMinutes(datetime, timeOffset);
+      const updatedDate = subMinutes(datetime, negativeTimeOffset);
       const updatedDateLocale = updatedDate.toLocaleDateString();
 
       const tableHabit = {
@@ -110,11 +110,11 @@ export function formatHabitOptions(params) {
   let newHabitOptions = [];
 
   habitOptionsResponse.forEach((doc) => {
-    // const { habitID, habitOptionID, timeOffset } = doc.data();
-    const { habitID, habitOptionID, timeOffset } = doc;
-    const parsedTimeOffset = Number(timeOffset);
+    // const { habitID, habitOptionID, negativeTimeOffset } = doc.data();
+    const { habitID, habitOptionID, negativeTimeOffset } = doc;
+    const parsedTimeOffset = Number(negativeTimeOffset);
     const newHabitOption = {
-      timeOffset: parsedTimeOffset,
+      negativeTimeOffset: parsedTimeOffset,
       habitID,
       habitOptionID,
       id: doc.id || 'TODO',

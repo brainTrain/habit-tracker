@@ -116,7 +116,7 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
           <input
             ref={labelInputRef}
             id={LABEL_INPUT_ID}
-            name="habit-label"
+            name={LABEL_INPUT_ID}
             placeholder="Habit label"
             required
           />
@@ -124,7 +124,7 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
         <input
           ref={countInputRef}
           id={COUNT_INPUT_ID}
-          name="habit-count"
+          name={COUNT_INPUT_ID}
           type="number"
           placeholder={habitCountPlaceholder}
           min={0}
@@ -134,7 +134,7 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
           <input
             ref={dateTimeInputRef}
             id={DATE_TIME_INPUT_ID}
-            name="habit-date-time"
+            name={DATE_TIME_INPUT_ID}
             type="datetime-local"
             onChange={handleDateTimeChange}
             value={dateTime}

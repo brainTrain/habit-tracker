@@ -262,7 +262,6 @@ function HabitGroup({
         <MenuHeaderBottom>
           <section>
             <span>options:</span>
-            <span>{habitOptions.timeOffset}</span>
             <HabitOptionsForm
               userID={userID}
               habitID={habitID}

@@ -94,7 +94,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
       });
 
       setHabitOptions(formattedHabitOptions);
-      // TODO: flatten this baby xmas tree
+      // TODO: flatten this bby xmas tree
       handleFetchHabits(formattedHabitOptions);
     });
   }, [handleFetchHabits, userID]);
