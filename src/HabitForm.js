@@ -17,7 +17,7 @@ const COUNT_INPUT_BASE_COPY = 'Habit count';
 function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
   const [formSubmissionState, setFormSubmissionState] = useState(FORM_INITIAL);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
-  const [hasHabitLabel, setHasHabitLabel] = useState(false);
+  const [hasHabitID, setHasHabitID] = useState(false);
   const [dateTime, setDateTime] = useState('');
   const [showDateTimeInput, setShowDateTimeInput] = useState(false);
 
@@ -35,8 +35,8 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
   }, [showDateTimeInput]);
 
   useEffect(() => {
-    setHasHabitLabel(Boolean(habitLabel));
-  }, [habitLabel]);
+    setHasHabitID(Boolean(habitID));
+  }, [habitID]);
 
   useEffect(() => {
     if (formSubmissionState === FORM_SUBMITTED) {
@@ -58,13 +58,13 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
     // form for creation/edit and a simpler form on the habit
     // detail view what we should really do is figure out how we
     // can have multiple forms share the same validation/styles etc
-    if (!hasHabitLabel) {
+    if (!hasHabitID) {
       labelEl.value = '';
     }
     countEl.value = '';
     // hide date time input on submit so we re-init the localized time
     setShowDateTimeInput(false);
-  }, [hasHabitLabel]);
+  }, [hasHabitID]);
 
   const handleDateTimeChange = useCallback((event) => {
     const dateTimeValue = event?.target?.value || '';
@@ -102,7 +102,7 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
     setShowDateTimeInput((prev) => !prev);
   }, []);
 
-  const habitCountPlaceholder = hasHabitLabel
+  const habitCountPlaceholder = hasHabitID
     ? `${habitLabel} ${COUNT_INPUT_BASE_COPY}`
     : COUNT_INPUT_BASE_COPY;
 
@@ -111,8 +111,8 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
       <button onClick={handleShowDateTimeInput}>
         {showDateTimeInput ? 'Hide' : 'Show'} date time input
       </button>
-      <form id={`habit-form-${habitLabel || 'main'}`} onSubmit={handleSubmit}>
-        {!hasHabitLabel ? (
+      <form id={`habit-form-${habitID || 'main'}`} onSubmit={handleSubmit}>
+        {!hasHabitID ? (
           <input
             ref={labelInputRef}
             id={LABEL_INPUT_ID}
