@@ -256,24 +256,27 @@ function HabitGroup({
     });
   }, []);
 
-  const handleDeleteHabitRecord = useCallback((habit) => {
-    const { count, datetime } = habit;
-    const recordDate = datetime.toLocaleTimeString();
+  const handleDeleteHabitRecord = useCallback(
+    (habit) => {
+      const { count, datetime } = habit;
+      const recordDate = datetime.toLocaleTimeString();
 
-    if (
-      window.confirm(
-        `Are you sure you want to delete the record that has a count of ${count} and was recorded at ${recordDate}?`,
-      )
-    ) {
-      deleteHabit([habit])
-        .then(() => {
-          onDeleteHabit();
-        })
-        .catch((error) => {
-          console.error('error deleting habit record', error);
-        });
-    }
-  }, []);
+      if (
+        window.confirm(
+          `Are you sure you want to delete the record that has a count of ${count} and was recorded at ${recordDate}?`,
+        )
+      ) {
+        deleteHabit([habit])
+          .then(() => {
+            onDeleteHabit();
+          })
+          .catch((error) => {
+            console.error('error deleting habit record', error);
+          });
+      }
+    },
+    [onDeleteHabit],
+  );
 
   const menuWrapperRef = useDetectClickOutside({
     onTriggered: () => {
