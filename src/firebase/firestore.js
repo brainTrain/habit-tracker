@@ -1,7 +1,8 @@
 import {
   Timestamp,
   addDoc,
-  updateDoc,
+  // TODO: bring back (or not?)
+  // updateDoc,
   collection,
   getDocs,
   getFirestore,
@@ -16,7 +17,8 @@ import app from './';
 export const db = getFirestore(app);
 
 const HABIT_COLLECTION = 'habit';
-const HABIT_OPTIONS_COLLECTION = 'habit-options';
+// TODO: bring back when we hook up habit options for realz
+// const HABIT_OPTIONS_COLLECTION = 'habit-options';
 
 // Habit methods
 export function saveHabit(habitLabel, count, userID, date, habitID) {

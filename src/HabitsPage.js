@@ -61,38 +61,11 @@ const ContentWrapper = styled.section`
   overflow: auto;
 `;
 
-// -= fetch flow =-
-// * fetch options
-// * then fetch habits
-// * then formmat habits based on options
-// * if options are updated/added re-format habits
-// * if habits are updated/added re-fetch habits
-
 function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsGroups, setHabitsGroups] = useState({});
   const [habitOptions, setHabitOptions] = useState({});
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
-
-  const handleHabitFetches = useCallback(() => {
-    handleFetchHabitOptions();
-  }, []);
-
-  // TODO: probably need a fetch/fetches/api layer for these promises
-  // cause we'll want to fetch options first, then fetch habits
-  // this might also be a good time to move this parsing logic into
-  // a parsing layer
-  const handleFetchHabitOptions = useCallback(() => {
-    fetchHabitOptions(userID).then((habitOptionsResponse) => {
-      const formattedHabitOptions = formatHabitOptions({
-        habitOptionsResponse,
-      });
-
-      setHabitOptions(formattedHabitOptions);
-      // TODO: flatten this baby xmas tree
-      handleFetchHabits(formattedHabitOptions);
-    });
-  }, []);
 
   const handleFetchHabits = useCallback(
     (formattedHabitOptions) => {
@@ -113,6 +86,22 @@ function HabitsPage({ userID, userEmail, onLogout }) {
     },
     [userID],
   );
+
+  const handleFetchHabitOptions = useCallback(() => {
+    fetchHabitOptions(userID).then((habitOptionsResponse) => {
+      const formattedHabitOptions = formatHabitOptions({
+        habitOptionsResponse,
+      });
+
+      setHabitOptions(formattedHabitOptions);
+      // TODO: flatten this baby xmas tree
+      handleFetchHabits(formattedHabitOptions);
+    });
+  }, [handleFetchHabits, userID]);
+
+  const handleHabitFetches = useCallback(() => {
+    handleFetchHabitOptions();
+  }, [handleFetchHabitOptions]);
 
   // TODO: make this header section its own component and raise it up a level broooooo
   const handleLogout = useCallback(() => {
