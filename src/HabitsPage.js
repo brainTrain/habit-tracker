@@ -67,41 +67,31 @@ function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
 
-  const handleFetchHabits = useCallback(
-    (formattedHabitOptions) => {
-      fetchHabits(userID)
-        .then((habitsResponse) => {
-          const formattedHabits = formatHabitGroups({
-            habitsResponse,
-            habitOptions: formattedHabitOptions,
-          });
-
-          setHabitsGroups(formattedHabits);
-          setHabitsLoadState(HABITS_LOADED);
-        })
-        .catch((error) => {
-          console.error('error fetching habits', error);
-          setHabitsLoadState(HABITS_LOADED_ERROR);
-        });
-    },
-    [userID],
-  );
-
-  const handleFetchHabitOptions = useCallback(() => {
-    fetchHabitOptions(userID).then((habitOptionsResponse) => {
+  const handleFetchHabitData = useCallback(async () => {
+    try {
+      const habitOptionsResponse = await fetchHabitOptions(userID);
       const formattedHabitOptions = formatHabitOptions({
         habitOptionsResponse,
       });
 
+      const habitsResponse = await fetchHabits(userID);
+      const formattedHabits = formatHabitGroups({
+        habitsResponse,
+        habitOptions: formattedHabitOptions,
+      });
+
       setHabitOptions(formattedHabitOptions);
-      // TODO: flatten this bby xmas tree
-      handleFetchHabits(formattedHabitOptions);
-    });
-  }, [handleFetchHabits, userID]);
+      setHabitsGroups(formattedHabits);
+      setHabitsLoadState(HABITS_LOADED);
+    } catch (error) {
+      console.error('error fetching habits and options', error);
+      setHabitsLoadState(HABITS_LOADED_ERROR);
+    }
+  }, [userID]);
 
   const handleHabitFetches = useCallback(() => {
-    handleFetchHabitOptions();
-  }, [handleFetchHabitOptions]);
+    handleFetchHabitData();
+  }, [handleFetchHabitData]);
 
   // TODO: make this header section its own component and raise it up a level broooooo
   const handleLogout = useCallback(() => {

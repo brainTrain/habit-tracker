@@ -37,7 +37,7 @@ export function saveHabit(habitLabel, count, userID, date, habitID) {
   return addDoc(collection(db, HABIT_COLLECTION), data);
 }
 
-export function fetchHabits(userID) {
+export async function fetchHabits(userID) {
   const habitRef = collection(db, HABIT_COLLECTION);
   const q = query(habitRef, where('userID', '==', userID));
 
@@ -145,7 +145,7 @@ function updateHabitOptions(optionsData) {
   */
 }
 /*
-export function fetchHabitOptions(userID) {
+export async function fetchHabitOptions(userID) {
   const habitRef = collection(db, HABIT_OPTIONS_COLLECTION);
   const q = query(habitRef, where('userID', '==', userID));
 
@@ -166,7 +166,7 @@ const FAKE_HABIT_OPTION_2 = {
 };
 const FAKE_HABIT_OPTIONS = [FAKE_HABIT_OPTION_1, FAKE_HABIT_OPTION_2];
 
-export function fetchHabitOptions(userID) {
+export async function fetchHabitOptions(userID) {
   const fakeFetch = new Promise((resolve) => {
     setTimeout(() => {
       resolve([...FAKE_HABIT_OPTIONS]);
