@@ -1,5 +1,5 @@
 // libraries
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 // utils
@@ -55,7 +55,7 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID, habitOptions }) {
           });
       }
     },
-    [onAddHabitOption, userID, habitID, habitOptions],
+    [onAddHabitOption, userID, habitID, habitOptions, negativeTimeOffset],
   );
 
   return (
