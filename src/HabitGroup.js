@@ -64,6 +64,10 @@ const MenuButton = styled.button`
   align-items: center;
 `;
 
+const DeleteRecordButton = styled(MenuButton)`
+  margin-left: auto;
+`;
+
 const DateButton = styled.button`
   ${({ isActive }) => isActive && 'background-color: #FFF'};
 `;
@@ -252,6 +256,25 @@ function HabitGroup({
     });
   }, []);
 
+  const handleDeleteHabitRecord = useCallback((habit) => {
+    const { count, datetime } = habit;
+    const recordDate = datetime.toLocaleTimeString();
+
+    if (
+      window.confirm(
+        `Are you sure you want to delete the record that has a count of ${count} and was recorded at ${recordDate}?`,
+      )
+    ) {
+      deleteHabit([habit])
+        .then(() => {
+          onDeleteHabit();
+        })
+        .catch((error) => {
+          console.error('error deleting habit record', error);
+        });
+    }
+  }, []);
+
   const menuWrapperRef = useDetectClickOutside({
     onTriggered: () => {
       setIsMenuOpen(false);
@@ -334,6 +357,7 @@ function HabitGroup({
                     {TABLE_COLUMNS.map((columnName) => {
                       return <Th key={columnName}>{columnName}</Th>;
                     })}
+                    <Th>Delete</Th>
                   </tr>
                 </thead>
                 <tbody>
@@ -344,6 +368,12 @@ function HabitGroup({
                         <Td>{count}</Td>
                         <Td>{datetime.toLocaleTimeString()}</Td>
                         <Td>{datetime.toLocaleDateString()}</Td>
+                        <Td>
+                          <DeleteRecordButton
+                            onClick={() => handleDeleteHabitRecord(habit)}>
+                            x
+                          </DeleteRecordButton>
+                        </Td>
                       </Tr>
                     );
                   })}
