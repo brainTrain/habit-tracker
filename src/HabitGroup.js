@@ -109,18 +109,26 @@ const TableWrapper = styled.section`
   width: 100%;
   max-height: 20rem;
   overflow: auto;
+  border-bottom: 1px solid;
 `;
 
 const Table = styled.table`
   width: 100%;
   text-align: left;
-  border: 1px solid;
   border-collapse: collapse;
 `;
 
 const Th = styled.th`
   border: 1px solid;
   padding: 0.5rem;
+`;
+
+const Tr = styled.tr`
+  &:last-of-type {
+    td {
+      border-bottom: none;
+    }
+  }
 `;
 
 const Td = styled.td`
@@ -321,11 +329,11 @@ function HabitGroup({
                   {habitItems.map((habit) => {
                     const { id, count, datetime } = habit;
                     return (
-                      <tr key={id}>
+                      <Tr key={id}>
                         <Td>{count}</Td>
                         <Td>{datetime.toLocaleTimeString()}</Td>
                         <Td>{datetime.toLocaleDateString()}</Td>
-                      </tr>
+                      </Tr>
                     );
                   })}
                 </tbody>
