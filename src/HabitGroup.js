@@ -61,7 +61,6 @@ const MenuButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 0;
 `;
 
 const DeleteRecordButton = styled(MenuButton)`
