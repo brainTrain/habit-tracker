@@ -6,7 +6,7 @@ import { subMinutes } from 'date-fns';
 export const HABIT_OPTION_EMPTY = {
   habitID: '',
   negativeTimeOffset: 0,
-  habitOptionID: '',
+  habitOptionsID: '',
   id: '',
 };
 
@@ -110,13 +110,13 @@ export function formatHabitOptions(params) {
   let newHabitOptions = [];
 
   habitOptionsResponse.forEach((doc) => {
-    // const { habitID, habitOptionID, negativeTimeOffset } = doc.data();
-    const { habitID, habitOptionID, negativeTimeOffset } = doc;
+    // const { habitID, habitOptionsID, negativeTimeOffset } = doc.data();
+    const { habitID, habitOptionsID, negativeTimeOffset } = doc;
     const parsedTimeOffset = Number(negativeTimeOffset);
     const newHabitOption = {
       negativeTimeOffset: parsedTimeOffset,
       habitID,
-      habitOptionID,
+      habitOptionsID,
       id: doc.id || 'TODO',
     };
     newHabitOptions.push(newHabitOption);

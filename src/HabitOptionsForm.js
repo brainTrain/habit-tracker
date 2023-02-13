@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 // utils
 import { saveHabitOptions } from './firebase/firestore';
 import { HABIT_OPTION_EMPTY } from './parsers/habit';
+import { minutesToHours, hoursToMinutes } from './formatters/datetime';
 // constants
 const NEGATIVE_TIME_OFFSET_INPUT = 'negative-time-offset-input';
 const FORM_INITIAL = 'form-initial';
@@ -15,7 +16,7 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID, habitOptions }) {
   const [formSubmissionState, setFormSubmissionState] = useState(FORM_INITIAL);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
   const [negativeTimeOffset, setNegativeTimeOffset] = useState(
-    Number(habitOptions.negativeTimeOffset),
+    minutesToHours(Number(habitOptions?.negativeTimeOffset || 0)),
   );
 
   useEffect(() => {
@@ -36,9 +37,10 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID, habitOptions }) {
     (event) => {
       event.preventDefault();
       setFormSubmissionState(FORM_SUBMITTED);
+      const formattedNegativeTimeOffset = hoursToMinutes(negativeTimeOffset);
 
       const newHabitOptions = {
-        negativeTimeOffset,
+        negativeTimeOffset: formattedNegativeTimeOffset,
       };
 
       const isFormValid = event.target.checkValidity();
@@ -73,6 +75,7 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID, habitOptions }) {
           type="number"
           placeholder={'negative time shift in hours'}
           min={0}
+          step={0.5}
           required
         />
         <button type="submit" disabled={isFormDisabled}>

@@ -82,26 +82,24 @@ export function deleteHabit(habitItems) {
 
 // Habit Option methods
 export function saveHabitOptions(params) {
-  return new Promise((resolve, reject) => {
-    reject({ message: 'nope' });
-  });
-  /*
   const { habitID, userID, habitOptions, habitOptionsID } = params;
   const hasHabitOptionsID = Boolean(habitOptionsID);
   const data = {
     userID,
     habitID,
     ...habitOptions,
-  }
+  };
 
   if (hasHabitOptionsID) {
     updateHabitOptions(data);
   } else {
     data.habitOptionsID = nanoid();
-
     addHabitOptions(data);
   }
-  */
+
+  return new Promise((resolve, reject) => {
+    reject({ message: 'nope' });
+  });
 }
 
 /*
@@ -132,10 +130,12 @@ export function saveHabitOptions(params) {
 */
 
 function addHabitOptions(data) {
+  console.log('create', data);
   // return addDoc(collection(db, HABIT_OPTIONS_COLLECTION), data);
 }
 
-function updateHabitOptions(optionsData) {
+function updateHabitOptions(data) {
+  console.log('update', data);
   // const washingtonRef = doc(db, 'cities', 'DC');
   // Set the "capital" field of the city 'DC'
   /*
@@ -157,12 +157,12 @@ export async function fetchHabitOptions(userID) {
 const FAKE_HABIT_OPTION_1 = {
   habitID: '01NO9xdlKLTm00zaP2uG_',
   negativeTimeOffset: 240,
-  habitOptionID: 'fasdfasdfsdf',
+  habitOptionsID: 'fasdfasdfsdf',
 };
 const FAKE_HABIT_OPTION_2 = {
   habitID: 'lWAdZdHp8TCARciRnd8tO',
   negativeTimeOffset: 240,
-  habitOptionID: 'uhhhhhhhhhhh',
+  habitOptionsID: 'uhhhhhhhhhhh',
 };
 const FAKE_HABIT_OPTIONS = [FAKE_HABIT_OPTION_1, FAKE_HABIT_OPTION_2];
 
