@@ -88,6 +88,9 @@ const MenuContent = styled.section`
 const DetailsContainer = styled.section`
   ${habitDetailsGutterPadding};
   border-top: 1px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -126,10 +129,24 @@ const Td = styled.td`
   padding: 0.5rem;
 `;
 
-const ChartWrapper = styled.div`
-  width: 100%;
+const ChartWrapper = styled.section`
+  width: auto;
   height: 20rem;
   user-select: none;
+  display: inline-block;
+  border: 1px solid;
+`;
+
+const DetailsTopContainer = styled.section`
+  width: 100%;
+`;
+
+const DetailsBottomContainer = styled.section`
+  width: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 function HabitGroup({
@@ -295,48 +312,52 @@ function HabitGroup({
         })}
       </DatesContainer>
       <DetailsContainer>
-        <p>total: {totalCount}</p>
-        <button onClick={handleToggleDetails}>{toggleDetailsText}</button>
-        {areDetailsShown ? (
-          <TableWrapper>
-            <Table border={1}>
-              <thead>
-                <tr>
-                  {TABLE_COLUMNS.map((columnName) => {
-                    return <Th key={columnName}>{columnName}</Th>;
+        <DetailsTopContainer>
+          <p>total: {totalCount}</p>
+          <button onClick={handleToggleDetails}>{toggleDetailsText}</button>
+          <button onClick={handleToggleChart}>{toggleChartText}</button>
+        </DetailsTopContainer>
+        <DetailsBottomContainer>
+          {areDetailsShown ? (
+            <TableWrapper>
+              <Table border={1}>
+                <thead>
+                  <tr>
+                    {TABLE_COLUMNS.map((columnName) => {
+                      return <Th key={columnName}>{columnName}</Th>;
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {habitItems.map((habit) => {
+                    const { id, count, datetime } = habit;
+                    return (
+                      <tr key={id}>
+                        <Td>{count}</Td>
+                        <Td>{datetime.toLocaleTimeString()}</Td>
+                        <Td>{datetime.toLocaleDateString()}</Td>
+                      </tr>
+                    );
                   })}
-                </tr>
-              </thead>
-              <tbody>
-                {habitItems.map((habit) => {
-                  const { id, count, datetime } = habit;
-                  return (
-                    <tr key={id}>
-                      <Td>{count}</Td>
-                      <Td>{datetime.toLocaleTimeString()}</Td>
-                      <Td>{datetime.toLocaleDateString()}</Td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </TableWrapper>
-        ) : null}
-        <button onClick={handleToggleChart}>{toggleChartText}</button>
-        {isChartShown ? (
-          <ChartWrapper>
-            <VictoryChart
-              domainPadding={20}
-              containerComponent={<VictoryZoomContainer />}>
-              <VictoryBar
-                labelComponent={<VictoryTooltip />}
-                data={habitChartData}
-                x="datetime"
-                y="count"
-              />
-            </VictoryChart>
-          </ChartWrapper>
-        ) : null}
+                </tbody>
+              </Table>
+            </TableWrapper>
+          ) : null}
+          {isChartShown ? (
+            <ChartWrapper>
+              <VictoryChart
+                domainPadding={20}
+                containerComponent={<VictoryZoomContainer />}>
+                <VictoryBar
+                  labelComponent={<VictoryTooltip />}
+                  data={habitChartData}
+                  x="datetime"
+                  y="count"
+                />
+              </VictoryChart>
+            </ChartWrapper>
+          ) : null}
+        </DetailsBottomContainer>
       </DetailsContainer>
     </section>
   );
