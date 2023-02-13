@@ -37,13 +37,17 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID, habitOptions }) {
       event.preventDefault();
       setFormSubmissionState(FORM_SUBMITTED);
 
+      const newHabitOptions = {
+        negativeTimeOffset,
+      };
+
       const isFormValid = event.target.checkValidity();
       if (isFormValid) {
         saveHabitOptions({
           userID,
           habitID,
           habitOptionsID: habitOptions.habitOptionsID,
-          negativeTimeOffset,
+          habitOptions: newHabitOptions,
         })
           .then((response) => {
             onAddHabitOption();

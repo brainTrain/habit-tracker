@@ -86,23 +86,19 @@ export function saveHabitOptions(params) {
     reject({ message: 'nope' });
   });
   /*
-  const { habitID, userID, negativeTimeOffset, habitOptionsID } = params;
+  const { habitID, userID, habitOptions, habitOptionsID } = params;
   const hasHabitOptionsID = Boolean(habitOptionsID);
-
-  const optionsData = {
-    // keep this in hours for now
-    negativeTimeOffset,
-  };
+  const data = {
+    userID,
+    habitID,
+    ...habitOptions,
+  }
 
   if (hasHabitOptionsID) {
-    updateHabitOptions(optionsData);
+    updateHabitOptions(data);
   } else {
-    const data = {
-      userID,
-      habitID,
-      habitOptionsID: nanoid(),
-      ...optionsData,
-    };
+    data.habitOptionsID = nanoid();
+
     addHabitOptions(data);
   }
   */
