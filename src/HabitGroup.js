@@ -3,7 +3,12 @@ import { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
-import { VictoryBar, VictoryChart, VictoryTooltip } from 'victory';
+import {
+  VictoryBar,
+  VictoryChart,
+  VictoryTooltip,
+  VictoryZoomContainer,
+} from 'victory';
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { deleteHabit } from './firebase/firestore';
@@ -309,7 +314,9 @@ function HabitGroup({
         <button onClick={handleToggleChart}>{toggleChartText}</button>
         {isChartShown ? (
           <ChartWrapper>
-            <VictoryChart domainPadding={20}>
+            <VictoryChart
+              domainPadding={20}
+              containerComponent={<VictoryZoomContainer />}>
               <VictoryBar
                 labelComponent={<VictoryTooltip />}
                 data={habitChartData}
