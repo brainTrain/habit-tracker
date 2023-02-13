@@ -15,6 +15,7 @@ import { deleteHabit } from './firebase/firestore';
 import { flattenHabitItems, HABIT_OPTION_EMPTY } from './parsers/habit';
 // components
 import HabitForm from './HabitForm';
+import HabitOptionsForm from './HabitOptionsForm';
 // constants
 const TABLE_COLUMNS = ['Count', 'Time', 'Date'];
 // styles
@@ -260,12 +261,14 @@ function HabitGroup({
         </MenuHeaderTop>
         <MenuHeaderBottom>
           <section>
-            <span>
-              <p>options:</p>
-            </span>
-            <span>
-              <p>{habitOptions.timeOffset}</p>
-            </span>
+            <span>options:</span>
+            <span>{habitOptions.timeOffset}</span>
+            <HabitOptionsForm
+              userID={userID}
+              habitID={habitID}
+              habitOptions={habitOptions}
+              onAddHabitOption={onAddHabit}
+            />
           </section>
           <FormWrapper>
             <HabitForm

@@ -1,20 +1,19 @@
 // libraries
 import { useCallback, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { utcToZonedTime, format } from 'date-fns-tz';
 
 // utils
 import { saveHabitOptions } from './firebase/firestore';
+import { HABIT_OPTION_EMPTY } from './parsers/habit';
 // constants
 const NEGATIVE_TIME_SHIFT_INPUT = 'negative-time-shift-input';
 const FORM_INITIAL = 'form-initial';
 const FORM_SUBMITTED = 'form-submitted';
 const FORM_SUBMITTED_ERROR = 'form-submitted-error';
 
-function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
+function HabitOptionsForm({ userID, onAddHabitOption, habitID, habitOptions }) {
   const [formSubmissionState, setFormSubmissionState] = useState(FORM_INITIAL);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
-  const [hasHabitLabel, setHasHabitLabel] = useState(false);
 
   useEffect(() => {
     if (formSubmissionState === FORM_SUBMITTED) {
@@ -24,14 +23,11 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
     }
   }, [formSubmissionState]);
 
-  const labelInputRef = useRef(null);
-  const countInputRef = useRef(null);
-  const dateTimeInputRef = useRef(null);
+  const negativeTimeShiftRef = useRef(null);
 
   const clearInputs = useCallback(() => {
-    const labelEl = labelInputRef?.current;
-    const countEl = countInputRef?.current;
-    countEl.value = '';
+    const negativeTimeShiftEl = negativeTimeShiftRef?.current;
+    negativeTimeShiftEl.value = '';
   }, []);
 
   const handleSubmit = useCallback(
@@ -41,12 +37,16 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
 
       const isFormValid = event.target.checkValidity();
       if (isFormValid) {
-        const label = habitLabel || labelInputRef?.current?.value;
-        const count = Number(countInputRef?.current?.value);
+        const negativeTimeShift = Number(negativeTimeShiftRef?.current?.value);
 
-        saveHabitOptions({ userID, habitID, habitOptionsID, negativeTimeShift })
+        saveHabitOptions({
+          userID,
+          habitID,
+          habitOptionsID: habitOptions.habitOptionsID,
+          negativeTimeShift,
+        })
           .then((response) => {
-            onAddHabit(userID);
+            onAddHabitOption();
             setFormSubmissionState(FORM_INITIAL);
             clearInputs();
           })
@@ -56,16 +56,16 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
           });
       }
     },
-    [onAddHabitOption, userID, clearInputs, habitID],
+    [onAddHabitOption, userID, clearInputs, habitID, habitOptions],
   );
 
   return (
     <section>
-      <form id={`habit-form-${habitLabel || 'main'}`} onSubmit={handleSubmit}>
+      <form id={`habit-form-${habitID || 'main'}`} onSubmit={handleSubmit}>
         <input
-          ref={countInputRef}
-          id={COUNT_INPUT_ID}
-          name="habit-count"
+          ref={negativeTimeShiftRef}
+          id={NEGATIVE_TIME_SHIFT_INPUT}
+          name={NEGATIVE_TIME_SHIFT_INPUT}
           type="number"
           placeholder={'negative time shift in hours'}
           min={0}
@@ -79,22 +79,23 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
   );
 }
 
-HabitForm.propTypes = {
+HabitOptionsForm.propTypes = {
   userID: PropTypes.string,
-  onAddHabit: PropTypes.func,
-  habitLabel: PropTypes.string,
   habitID: PropTypes.string,
+  onAddHabit: PropTypes.func,
+  // TODO: define shape
+  habitOptions: PropTypes.object,
 };
 
-HabitForm.defaultProps = {
+HabitOptionsForm.defaultProps = {
   userID: '',
-  habitLabel: '',
   habitID: '',
-  onAddHabit: function () {
+  habitOptions: { ...HABIT_OPTION_EMPTY },
+  onAddHabitOption: function () {
     console.warn(
-      'onAddHabit() prop in <HabitForm /> component called without a value',
+      'onAddHabitOption() prop in <HabitOptionsForm /> component called without a value',
     );
   },
 };
 
-export default HabitForm;
+export default HabitOptionsForm;
