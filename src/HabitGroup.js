@@ -12,7 +12,7 @@ import {
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { deleteHabit } from './firebase/firestore';
-import { flattenHabitItems } from './parsers/habit';
+import { flattenHabitItems, HABIT_OPTION_EMPTY } from './parsers/habit';
 // components
 import HabitForm from './HabitForm';
 // constants
@@ -133,6 +133,7 @@ const ChartWrapper = styled.div`
 
 function HabitGroup({
   groupedData,
+  habitOptions,
   dateOrder,
   habitID,
   habitLabel,
@@ -258,6 +259,14 @@ function HabitGroup({
           </MenuWrapper>
         </MenuHeaderTop>
         <MenuHeaderBottom>
+          <section>
+            <span>
+              <p>options:</p>
+            </span>
+            <span>
+              <p>{habitOptions.timeOffset}</p>
+            </span>
+          </section>
           <FormWrapper>
             <HabitForm
               userID={userID}
@@ -334,6 +343,7 @@ function HabitGroup({
 HabitGroup.propTypes = {
   // TODO: define shape
   groupedData: PropTypes.object,
+  habitOptions: PropTypes.object,
   habitID: PropTypes.string,
   habitLabel: PropTypes.string,
   dateOrder: PropTypes.array,
@@ -345,6 +355,7 @@ HabitGroup.propTypes = {
 HabitGroup.defaultProps = {
   // TODO: set empty values for keys here
   groupedData: {},
+  habitOptions: { ...HABIT_OPTION_EMPTY },
   habitID: '',
   habitLabel: '',
   dateOrder: [],

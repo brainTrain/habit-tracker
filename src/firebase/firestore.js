@@ -141,10 +141,34 @@ function updateHabitOptions(optionsData) {
   });
   */
 }
-
+/*
 export function fetchHabitOptions(userID) {
   const habitRef = collection(db, HABIT_OPTIONS_COLLECTION);
   const q = query(habitRef, where('userID', '==', userID));
 
   return getDocs(q);
+}
+*/
+
+// FAKE DATA
+const FAKE_HABIT_OPTION_1 = {
+  habitID: '01NO9xdlKLTm00zaP2uG_',
+  timeOffset: 240,
+  habitOptionID: 'fasdfasdfsdf',
+};
+const FAKE_HABIT_OPTION_2 = {
+  habitID: 'lWAdZdHp8TCARciRnd8tO',
+  timeOffset: 240,
+  habitOptionID: 'uhhhhhhhhhhh',
+};
+const FAKE_HABIT_OPTIONS = [FAKE_HABIT_OPTION_1, FAKE_HABIT_OPTION_2];
+
+export function fetchHabitOptions(userID) {
+  const fakeFetch = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([...FAKE_HABIT_OPTIONS]);
+    }, 500);
+  });
+
+  return fakeFetch;
 }
