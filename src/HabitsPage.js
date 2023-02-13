@@ -62,6 +62,13 @@ const ContentWrapper = styled.section`
   overflow: auto;
 `;
 
+// fetch flow
+// fetch options
+// then fetch habits
+// then formmat habits based on options
+// if options are updated/added re-format habits
+// if habits are updated/added re-fetch habits
+
 function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsGroups, setHabitsGroups] = useState({});
   const [habitOptions, setHabitOptions] = useState({});
