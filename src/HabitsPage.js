@@ -16,6 +16,7 @@ const HABITS_LOADED_ERROR = 'habits-loaded-error';
 // styles
 const PageWrapper = styled.section`
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
 `;
@@ -55,6 +56,7 @@ const HabitFormWrapper = styled.section`
 const ContentWrapper = styled.section`
   ${appGutterPadding};
 
+  width: 100%;
   padding-top: 2rem;
   height: 100%;
   overflow: auto;
@@ -62,18 +64,19 @@ const ContentWrapper = styled.section`
 
 const Content = styled.section`
   height: 100%;
+  width: 100%;
   margin: 0 auto;
   max-width: ${MAX_PAGE_WIDTH};
 `;
 
-const HabitWrapper = styled.article`
+const HabitWrapper = styled.section`
   width: 100%;
   display: grid;
   grid-gap: 0.5rem;
-  grid-template-columns: 100%;
+  grid-template-columns: minmax(0, 1fr);
 
   @media ${mediaQueryDevice.laptop} { 
-    grid-template-columns: 50% 50%;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 `;
 
