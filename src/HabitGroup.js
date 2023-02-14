@@ -115,6 +115,7 @@ const TableWrapper = styled.section`
   width: 100%;
   max-height: 20rem;
   overflow: auto;
+  border-top: 1px solid;
   border-bottom: 1px solid;
 `;
 
@@ -126,6 +127,7 @@ const Table = styled.table`
 
 const Th = styled.th`
   border: 1px solid;
+  border-top: none;
   padding: 0.5rem;
 `;
 
