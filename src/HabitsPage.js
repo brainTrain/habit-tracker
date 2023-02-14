@@ -70,10 +70,10 @@ const HabitWrapper = styled.article`
   width: 100%;
   display: grid;
   grid-gap: 0.5rem;
-  grid-template-columns: 1fr;
+  grid-template-columns: 100%;
 
   @media ${mediaQueryDevice.laptop} { 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 50% 50%;
   }
 `;
 
