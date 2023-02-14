@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 // utils
 import { saveHabitOptions } from './firebase/firestore';
-import { HABIT_OPTION_EMPTY } from './parsers/habit';
+import { HABIT_OPTION_EMPTY } from './firebase/models';
 import { minutesToHours, hoursToMinutes } from './formatters/datetime';
 // constants
 const NEGATIVE_TIME_OFFSET_INPUT = 'negative-time-offset-input';

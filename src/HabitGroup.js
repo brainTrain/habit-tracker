@@ -12,7 +12,8 @@ import {
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { deleteHabit } from './firebase/firestore';
-import { flattenHabitItems, HABIT_OPTION_EMPTY } from './parsers/habit';
+import { flattenHabitItems } from './parsers/habit';
+import { HABIT_OPTION_EMPTY } from './firebase/models';
 // components
 import HabitForm from './HabitForm';
 import HabitOptionsForm from './HabitOptionsForm';

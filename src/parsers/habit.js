@@ -1,14 +1,8 @@
 // libraries
 import groupBy from 'lodash/groupBy';
 import { subMinutes } from 'date-fns';
-
-// constants
-export const HABIT_OPTION_EMPTY = {
-  habitID: '',
-  negativeTimeOffset: 0,
-  habitOptionsID: '',
-  id: '',
-};
+// utils
+import { HABIT_OPTION_EMPTY } from '../firebase/models';
 
 export function flattenHabitItems(groupedData) {
   const flatHabitItems = Object.keys(groupedData).reduce((prev, habitDate) => {
