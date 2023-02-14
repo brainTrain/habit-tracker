@@ -80,7 +80,7 @@ export async function deleteHabit(habitItems) {
 
 // Habit Option methods
 export async function saveHabitOptions(params) {
-  const { habitID, userID, habitOptions, habitOptionsID, id } = params;
+  const { habitID, userID, habitOptions, id } = params;
   const hasID = Boolean(id);
   const data = {
     userID,

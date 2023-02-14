@@ -70,6 +70,7 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID, habitOptions }) {
   return (
     <section>
       <form id={`habit-options-form-${habitID}`} onSubmit={handleSubmit}>
+        <label htmlFor={NEGATIVE_TIME_OFFSET_INPUT}>Hours Offset</label>
         <input
           id={NEGATIVE_TIME_OFFSET_INPUT}
           name={NEGATIVE_TIME_OFFSET_INPUT}
