@@ -1,8 +1,7 @@
 import {
   Timestamp,
   addDoc,
-  // TODO: bring back (or not?)
-  // updateDoc,
+  updateDoc,
   collection,
   getDocs,
   getFirestore,
@@ -17,8 +16,7 @@ import app from './';
 export const db = getFirestore(app);
 
 const HABIT_COLLECTION = 'habit';
-// TODO: bring back when we hook up habit options for realz
-// const HABIT_OPTIONS_COLLECTION = 'habit-options';
+const HABIT_OPTIONS_COLLECTION = 'habit-options';
 
 // Habit methods
 export function saveHabit(habitLabel, count, userID, date, habitID) {
@@ -81,97 +79,37 @@ export function deleteHabit(habitItems) {
 }
 
 // Habit Option methods
-export function saveHabitOptions(params) {
-  const { habitID, userID, habitOptions, habitOptionsID } = params;
-  const hasHabitOptionsID = Boolean(habitOptionsID);
+export async function saveHabitOptions(params) {
+  const { habitID, userID, habitOptions, habitOptionsID, id } = params;
+  const hasID = Boolean(id);
   const data = {
     userID,
     habitID,
     ...habitOptions,
   };
 
-  if (hasHabitOptionsID) {
-    updateHabitOptions(data);
+  if (hasID) {
+    return updateHabitOptions(id, habitOptions);
   } else {
     data.habitOptionsID = nanoid();
-    addHabitOptions(data);
-  }
 
-  return new Promise((resolve, reject) => {
-    reject({ message: 'nope' });
-  });
+    return addHabitOptions(data);
+  }
 }
 
-/*
-  habits by user
-  {
-    [habitID]: {
-      userID,
-      habitLabel,
-      count,
-      datetime,
-      publicID,
-      habitID,
-    }
-  }
-
-  habit options by user 
-  // iterate over array, make object with habitID as key
-  // 1:1 habitOptionsID to habitID
-  {
-    [habitID]: {
-      userID,
-      habitID,
-      habitOptionsID,
-      negativeTimeOffset,
-    }
-  }
-
-*/
-
-function addHabitOptions(data) {
-  console.log('create', data);
-  // return addDoc(collection(db, HABIT_OPTIONS_COLLECTION), data);
+async function addHabitOptions(data) {
+  return addDoc(collection(db, HABIT_OPTIONS_COLLECTION), data);
 }
 
-function updateHabitOptions(data) {
-  console.log('update', data);
-  // const washingtonRef = doc(db, 'cities', 'DC');
-  // Set the "capital" field of the city 'DC'
-  /*
-  updateDoc(washingtonRef, {
-    capital: true,
-  });
-  */
+async function updateHabitOptions(id, data) {
+  const docRef = doc(db, HABIT_OPTIONS_COLLECTION, id);
+
+  return updateDoc(docRef, data);
 }
-/*
+
 export async function fetchHabitOptions(userID) {
   const habitRef = collection(db, HABIT_OPTIONS_COLLECTION);
   const q = query(habitRef, where('userID', '==', userID));
 
   return getDocs(q);
-}
-*/
-
-// FAKE DATA
-const FAKE_HABIT_OPTION_1 = {
-  habitID: '01NO9xdlKLTm00zaP2uG_',
-  negativeTimeOffset: 240,
-  habitOptionsID: 'fasdfasdfsdf',
-};
-const FAKE_HABIT_OPTION_2 = {
-  habitID: 'lWAdZdHp8TCARciRnd8tO',
-  negativeTimeOffset: 240,
-  habitOptionsID: 'uhhhhhhhhhhh',
-};
-const FAKE_HABIT_OPTIONS = [FAKE_HABIT_OPTION_1, FAKE_HABIT_OPTION_2];
-
-export async function fetchHabitOptions(userID) {
-  const fakeFetch = new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([...FAKE_HABIT_OPTIONS]);
-    }, 500);
-  });
-
-  return fakeFetch;
 }

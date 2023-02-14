@@ -104,15 +104,16 @@ export function formatHabitOptions(params) {
   let newHabitOptions = [];
 
   habitOptionsResponse.forEach((doc) => {
-    // const { habitID, habitOptionsID, negativeTimeOffset } = doc.data();
-    const { habitID, habitOptionsID, negativeTimeOffset } = doc;
+    const { habitID, habitOptionsID, negativeTimeOffset } = doc.data();
+    // const { habitID, habitOptionsID, negativeTimeOffset } = doc;
     const parsedTimeOffset = Number(negativeTimeOffset);
     const newHabitOption = {
       negativeTimeOffset: parsedTimeOffset,
       habitID,
       habitOptionsID,
-      id: doc.id || 'TODO',
+      id: doc.id,
     };
+
     newHabitOptions.push(newHabitOption);
   });
 

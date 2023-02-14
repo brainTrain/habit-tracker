@@ -45,10 +45,13 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID, habitOptions }) {
 
       const isFormValid = event.target.checkValidity();
       if (isFormValid) {
+        const { id, habitOptionsID } = habitOptions;
+
         saveHabitOptions({
+          id,
+          habitOptionsID,
           userID,
           habitID,
-          habitOptionsID: habitOptions.habitOptionsID,
           habitOptions: newHabitOptions,
         })
           .then((response) => {
