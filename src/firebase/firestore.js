@@ -19,7 +19,7 @@ const HABIT_COLLECTION = 'habit';
 const HABIT_OPTIONS_COLLECTION = 'habit-options';
 
 // Habit methods
-export function saveHabit(habitLabel, count, userID, date, habitID) {
+export async function saveHabit(habitLabel, count, userID, date, habitID) {
   const datetime = date ? Timestamp.fromDate(date) : Timestamp.now();
   const hasHabitID = Boolean(habitID);
 
@@ -42,7 +42,7 @@ export async function fetchHabits(userID) {
   return getDocs(q);
 }
 
-export function updateHabit(habitItems, key, value) {
+export async function updateHabit(habitItems, key, value) {
   const batch = writeBatch(db);
   habitItems.forEach(({ id }) => {
     batch.update(doc(db, HABIT_COLLECTION, id), { [key]: value });
@@ -68,7 +68,7 @@ const handleUpdate = () => {
 };
 */
 
-export function deleteHabit(habitItems) {
+export async function deleteHabit(habitItems) {
   const batch = writeBatch(db);
 
   habitItems.forEach(({ id }) => {
