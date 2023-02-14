@@ -14,10 +14,10 @@ const FORM_SUBMITTED = 'form-submitted';
 const FORM_SUBMITTED_ERROR = 'form-submitted-error';
 const COUNT_INPUT_BASE_COPY = 'Habit count';
 
-function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
+function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
   const [formSubmissionState, setFormSubmissionState] = useState(FORM_INITIAL);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
-  const [hasHabitLabel, setHasHabitLabel] = useState(false);
+  const [hasHabitID, setHasHabitID] = useState(false);
   const [dateTime, setDateTime] = useState('');
   const [showDateTimeInput, setShowDateTimeInput] = useState(false);
 
@@ -35,8 +35,8 @@ function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
   }, [showDateTimeInput]);
 
   useEffect(() => {
-    setHasHabitLabel(Boolean(habitLabel));
-  }, [habitLabel]);
+    setHasHabitID(Boolean(habitID));
+  }, [habitID]);
 
   useEffect(() => {
     if (formSubmissionState === FORM_SUBMITTED) {
@@ -58,13 +58,13 @@ function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
     // form for creation/edit and a simpler form on the habit
     // detail view what we should really do is figure out how we
     // can have multiple forms share the same validation/styles etc
-    if (!hasHabitLabel) {
+    if (!hasHabitID) {
       labelEl.value = '';
     }
     countEl.value = '';
     // hide date time input on submit so we re-init the localized time
     setShowDateTimeInput(false);
-  }, [hasHabitLabel]);
+  }, [hasHabitID]);
 
   const handleDateTimeChange = useCallback((event) => {
     const dateTimeValue = event?.target?.value || '';
@@ -102,7 +102,7 @@ function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
     setShowDateTimeInput((prev) => !prev);
   }, []);
 
-  const habitCountPlaceholder = hasHabitLabel
+  const habitCountPlaceholder = hasHabitID
     ? `${habitLabel} ${COUNT_INPUT_BASE_COPY}`
     : COUNT_INPUT_BASE_COPY;
 
@@ -111,12 +111,12 @@ function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
       <button onClick={handleShowDateTimeInput}>
         {showDateTimeInput ? 'Hide' : 'Show'} date time input
       </button>
-      <form id={`habit-form-${habitLabel || 'main'}`} onSubmit={handleSubmit}>
-        {!hasHabitLabel ? (
+      <form id={`habit-form-${habitID || 'main'}`} onSubmit={handleSubmit}>
+        {!hasHabitID ? (
           <input
             ref={labelInputRef}
             id={LABEL_INPUT_ID}
-            name="habit-label"
+            name={LABEL_INPUT_ID}
             placeholder="Habit label"
             required
           />
@@ -124,7 +124,7 @@ function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
         <input
           ref={countInputRef}
           id={COUNT_INPUT_ID}
-          name="habit-count"
+          name={COUNT_INPUT_ID}
           type="number"
           placeholder={habitCountPlaceholder}
           min={0}
@@ -134,7 +134,7 @@ function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
           <input
             ref={dateTimeInputRef}
             id={DATE_TIME_INPUT_ID}
-            name="habit-date-time"
+            name={DATE_TIME_INPUT_ID}
             type="datetime-local"
             onChange={handleDateTimeChange}
             value={dateTime}
@@ -149,22 +149,22 @@ function HabitsForm({ userID, onAddHabit, habitLabel, habitID }) {
   );
 }
 
-HabitsForm.propTypes = {
+HabitForm.propTypes = {
   userID: PropTypes.string,
   onAddHabit: PropTypes.func,
   habitLabel: PropTypes.string,
   habitID: PropTypes.string,
 };
 
-HabitsForm.defaultProps = {
+HabitForm.defaultProps = {
   userID: '',
   habitLabel: '',
   habitID: '',
   onAddHabit: function () {
     console.warn(
-      'onAddHabit() prop in <HabitsForm /> component called without a value',
+      'onAddHabit() prop in <HabitForm /> component called without a value',
     );
   },
 };
 
-export default HabitsForm;
+export default HabitForm;

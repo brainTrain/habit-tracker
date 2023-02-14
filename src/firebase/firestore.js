@@ -1,6 +1,7 @@
 import {
   Timestamp,
   addDoc,
+  updateDoc,
   collection,
   getDocs,
   getFirestore,
@@ -15,8 +16,10 @@ import app from './';
 export const db = getFirestore(app);
 
 const HABIT_COLLECTION = 'habit';
+const HABIT_OPTIONS_COLLECTION = 'habit-options';
 
-export function saveHabit(habitLabel, count, userID, date, habitID) {
+// Habit methods
+export async function saveHabit(habitLabel, count, userID, date, habitID) {
   const datetime = date ? Timestamp.fromDate(date) : Timestamp.now();
   const hasHabitID = Boolean(habitID);
 
@@ -32,14 +35,14 @@ export function saveHabit(habitLabel, count, userID, date, habitID) {
   return addDoc(collection(db, HABIT_COLLECTION), data);
 }
 
-export function fetchHabits(userID) {
+export async function fetchHabits(userID) {
   const habitRef = collection(db, HABIT_COLLECTION);
   const q = query(habitRef, where('userID', '==', userID));
 
   return getDocs(q);
 }
 
-export function updateHabit(habitItems, key, value) {
+export async function updateHabit(habitItems, key, value) {
   const batch = writeBatch(db);
   habitItems.forEach(({ id }) => {
     batch.update(doc(db, HABIT_COLLECTION, id), { [key]: value });
@@ -65,7 +68,7 @@ const handleUpdate = () => {
 };
 */
 
-export function deleteHabit(habitItems) {
+export async function deleteHabit(habitItems) {
   const batch = writeBatch(db);
 
   habitItems.forEach(({ id }) => {
@@ -73,4 +76,40 @@ export function deleteHabit(habitItems) {
   });
 
   return batch.commit();
+}
+
+// Habit Option methods
+export async function saveHabitOptions(params) {
+  const { habitID, userID, habitOptions, habitOptionsID, id } = params;
+  const hasID = Boolean(id);
+  const data = {
+    userID,
+    habitID,
+    ...habitOptions,
+  };
+
+  if (hasID) {
+    return updateHabitOptions(id, habitOptions);
+  } else {
+    data.habitOptionsID = nanoid();
+
+    return addHabitOptions(data);
+  }
+}
+
+async function addHabitOptions(data) {
+  return addDoc(collection(db, HABIT_OPTIONS_COLLECTION), data);
+}
+
+async function updateHabitOptions(id, data) {
+  const docRef = doc(db, HABIT_OPTIONS_COLLECTION, id);
+
+  return updateDoc(docRef, data);
+}
+
+export async function fetchHabitOptions(userID) {
+  const habitRef = collection(db, HABIT_OPTIONS_COLLECTION);
+  const q = query(habitRef, where('userID', '==', userID));
+
+  return getDocs(q);
 }

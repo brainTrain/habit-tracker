@@ -2,14 +2,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import groupBy from 'lodash/groupBy';
-import { subMinutes } from 'date-fns';
 // utils
-import { fetchHabits } from './firebase/firestore';
+import { fetchHabits, fetchHabitOptions } from './firebase/firestore';
+import { formatHabitGroups, formatHabitOptions } from './parsers/habit';
 import { appGutterPadding } from './styles/layout';
 // components
 import HabitGroup from './HabitGroup';
-import HabitsForm from './HabitsForm';
+import HabitForm from './HabitForm';
 // constants
 const HABITS_LOADING = 'habits-loading';
 const HABITS_LOADED = 'habits-loaded';
@@ -64,119 +63,52 @@ const ContentWrapper = styled.section`
 
 function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsGroups, setHabitsGroups] = useState({});
+  const [habitOptions, setHabitOptions] = useState({});
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
 
-  const handleFetchHabits = useCallback(() => {
-    fetchHabits(userID)
-      .then((habitsResponse) => {
-        let newHabits = [];
-
-        habitsResponse.forEach((doc) => {
-          const { count, datetime, habitLabel, publicID, habitID } = doc.data();
-          const parsedCount = Number(count);
-          const newHabit = {
-            count: parsedCount,
-            datetime: datetime.toDate(),
-            habitLabel,
-            habitID,
-            publicID,
-            id: doc.id,
-          };
-          newHabits.push(newHabit);
-        });
-
-        const groupedNewHabits = groupBy(newHabits, 'habitID');
-        const formattedHabits = {};
-
-        Object.keys(groupedNewHabits).forEach((newHabitID) => {
-          const { habitLabel, habitID } = groupedNewHabits[newHabitID][0] || {
-            habitLabel: '',
-            habitID: '',
-          };
-
-          const groupedNewHabitsList = groupedNewHabits[newHabitID]?.sort(
-            (a, b) => {
-              return b?.datetime - a?.datetime;
-            },
-          );
-          const groupedByDate = {};
-          const dateOrder = [];
-          // date grouping
-          groupedNewHabitsList.forEach((newHabit) => {
-            const { datetime, count } = newHabit;
-            const newHabitTimeString = datetime.toLocaleTimeString();
-            // for now add a 4 hour shift that's hard coded
-            const updatedDate = subMinutes(datetime, 240);
-            const updatedDateLocale = updatedDate.toLocaleDateString();
-
-            const tableHabit = {
-              ...newHabit,
-            };
-            const chartHabit = {
-              ...{
-                count,
-                datetime,
-                label: `${count} at ${newHabitTimeString}`,
-              },
-            };
-
-            if (!groupedByDate[updatedDateLocale]) {
-              dateOrder.push(updatedDateLocale);
-              groupedByDate[updatedDateLocale] = {
-                totalCount: 0,
-                tableList: [tableHabit],
-                chartList: [chartHabit],
-              };
-            } else {
-              groupedByDate[updatedDateLocale].tableList.push(tableHabit);
-              groupedByDate[updatedDateLocale].chartList.push(chartHabit);
-            }
-          });
-          // get total counts for each date and update the totalCount value for each
-          Object.keys(groupedByDate).forEach((dateString) => {
-            const data = groupedByDate[dateString].tableList;
-            const totalCount = data.reduce((previousCount, { count }) => {
-              return previousCount + count;
-            }, 0);
-            groupedByDate[dateString].totalCount = totalCount;
-          });
-
-          // get total for date group?
-          formattedHabits[newHabitID] = {
-            habitLabel,
-            habitID,
-            data: groupedByDate,
-            dateOrder,
-          };
-        });
-
-        setHabitsGroups(formattedHabits);
-
-        setHabitsLoadState(HABITS_LOADED);
-      })
-      .catch((error) => {
-        console.error('error fetching habits', error);
-        setHabitsLoadState(HABITS_LOADED_ERROR);
+  const handleFetchHabitData = useCallback(async () => {
+    try {
+      const habitOptionsResponse = await fetchHabitOptions(userID);
+      const formattedHabitOptions = formatHabitOptions({
+        habitOptionsResponse,
       });
+
+      const habitsResponse = await fetchHabits(userID);
+      const formattedHabits = formatHabitGroups({
+        habitsResponse,
+        habitOptions: formattedHabitOptions,
+      });
+
+      setHabitOptions(formattedHabitOptions);
+      setHabitsGroups(formattedHabits);
+      setHabitsLoadState(HABITS_LOADED);
+    } catch (error) {
+      console.error('error fetching habits and options', error);
+      setHabitsLoadState(HABITS_LOADED_ERROR);
+    }
   }, [userID]);
+
+  const handleHabitFetches = useCallback(() => {
+    handleFetchHabitData();
+  }, [handleFetchHabitData]);
 
   // TODO: make this header section its own component and raise it up a level broooooo
   const handleLogout = useCallback(() => {
     onLogout();
   }, [onLogout]);
-  // TODO: try to just pass handleFetchHabits to the delete function prop
+  // TODO: try to just pass handleHabitFetches to the delete function prop
   const handleDeleteHabit = useCallback(() => {
-    handleFetchHabits();
-  }, [handleFetchHabits]);
+    handleHabitFetches();
+  }, [handleHabitFetches]);
 
   const handleToggleCreateFormClick = useCallback(() => {
     setIsCreateFormShown((prev) => !prev);
   }, []);
 
   useEffect(() => {
-    handleFetchHabits();
-  }, [handleFetchHabits]);
+    handleHabitFetches();
+  }, [handleHabitFetches]);
 
   return (
     <PageWrapper>
@@ -195,7 +127,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
           </button>
           {isCreateFormShown ? (
             <HabitFormWrapper>
-              <HabitsForm userID={userID} onAddHabit={handleFetchHabits} />
+              <HabitForm userID={userID} onAddHabit={handleHabitFetches} />
             </HabitFormWrapper>
           ) : null}
         </section>
@@ -216,9 +148,10 @@ function HabitsPage({ userID, userEmail, onLogout }) {
                       dateOrder={dateOrder}
                       habitLabel={habitLabel}
                       habitID={habitID}
-                      onAddHabit={handleFetchHabits}
+                      onAddHabit={handleHabitFetches}
                       onDeleteHabit={handleDeleteHabit}
                       userID={userID}
+                      habitOptions={habitOptions[habitID]}
                     />
                   </HabitWrapper>
                 );

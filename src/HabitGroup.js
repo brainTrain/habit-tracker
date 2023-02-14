@@ -13,8 +13,10 @@ import {
 import { habitDetailsGutterPadding } from './styles/layout';
 import { deleteHabit } from './firebase/firestore';
 import { flattenHabitItems } from './parsers/habit';
+import { HABIT_OPTION_EMPTY } from './firebase/models';
 // components
-import HabitsForm from './HabitsForm';
+import HabitForm from './HabitForm';
+import HabitOptionsForm from './HabitOptionsForm';
 // constants
 const TABLE_COLUMNS = ['Count', 'Time', 'Date'];
 // styles
@@ -164,6 +166,7 @@ const DetailsBottomContainer = styled.section`
 
 function HabitGroup({
   groupedData,
+  habitOptions,
   dateOrder,
   habitID,
   habitLabel,
@@ -311,8 +314,17 @@ function HabitGroup({
           </MenuWrapper>
         </MenuHeaderTop>
         <MenuHeaderBottom>
+          <section>
+            <span>options:</span>
+            <HabitOptionsForm
+              userID={userID}
+              habitID={habitID}
+              habitOptions={habitOptions}
+              onAddHabitOption={onAddHabit}
+            />
+          </section>
           <FormWrapper>
-            <HabitsForm
+            <HabitForm
               userID={userID}
               habitID={habitID}
               habitLabel={habitLabel}
@@ -398,6 +410,7 @@ function HabitGroup({
 HabitGroup.propTypes = {
   // TODO: define shape
   groupedData: PropTypes.object,
+  habitOptions: PropTypes.object,
   habitID: PropTypes.string,
   habitLabel: PropTypes.string,
   dateOrder: PropTypes.array,
@@ -409,6 +422,7 @@ HabitGroup.propTypes = {
 HabitGroup.defaultProps = {
   // TODO: set empty values for keys here
   groupedData: {},
+  habitOptions: { ...HABIT_OPTION_EMPTY },
   habitID: '',
   habitLabel: '',
   dateOrder: [],
