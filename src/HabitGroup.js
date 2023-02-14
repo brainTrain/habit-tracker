@@ -10,7 +10,7 @@ import {
   VictoryZoomContainer,
 } from 'victory';
 // utils
-import { habitDetailsGutterPadding } from './styles/layout';
+import { habitDetailsGutterPadding, mediaQueryDevice } from './styles/layout';
 import { deleteHabit } from './firebase/firestore';
 import { flattenHabitItems } from './parsers/habit';
 import { HABIT_OPTION_EMPTY } from './firebase/models';
@@ -66,7 +66,7 @@ const MenuButton = styled.button`
 `;
 
 const DeleteRecordButton = styled(MenuButton)`
-  margin-left: auto;
+  margin: 0 auto;
 `;
 
 const DateButton = styled.button`
@@ -96,9 +96,12 @@ const DetailsContainer = styled.section`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
   padding-top: 1rem;
   padding-bottom: 1rem;
+`;
+
+const DetailsTopContainer = styled.section`
+  width: 100%;
 `;
 
 const DatesContainer = styled.div`
@@ -111,6 +114,18 @@ const DatesContainer = styled.div`
   padding-bottom: 0.5rem;
 `;
 
+const DetailsBottomContainer = styled.section`
+  width: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  
+  @media ${mediaQueryDevice.tablet} { 
+    flex-direction: row;
+  }
+`;
+
 const TableWrapper = styled.section`
   width: 100%;
   max-height: 20rem;
@@ -121,6 +136,7 @@ const TableWrapper = styled.section`
 
 const Table = styled.table`
   width: 100%;
+  height: 100%;
   text-align: left;
   border-collapse: collapse;
 `;
@@ -128,7 +144,7 @@ const Table = styled.table`
 const Th = styled.th`
   border: 1px solid;
   border-top: none;
-  padding: 0.5rem;
+  padding: 1rem;
 `;
 
 const Tr = styled.tr`
@@ -141,7 +157,7 @@ const Tr = styled.tr`
 
 const Td = styled.td`
   border: 1px solid;
-  padding: 0.5rem;
+  padding: 1rem;
 `;
 
 const ChartWrapper = styled.section`
@@ -150,18 +166,6 @@ const ChartWrapper = styled.section`
   user-select: none;
   display: inline-block;
   border: 1px solid;
-`;
-
-const DetailsTopContainer = styled.section`
-  width: 100%;
-`;
-
-const DetailsBottomContainer = styled.section`
-  width: 100%;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
 `;
 
 function HabitGroup({
@@ -182,12 +186,38 @@ function HabitGroup({
   const [habitItems, setHabitItems] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // const [optionsTimeRange, setOptionsTimeRange] = useState();
 
   useEffect(() => {
     const datesList = dateOrder;
     setDatesList(datesList);
     setCurrentDate(datesList[0]);
   }, [dateOrder]);
+
+  /*
+  useEffect(() => {
+   0: midnight - midnight
+   1: 1am - 1am
+   2: 2am - 2am
+   3: 3am - 3am
+   4: 4am - 4am
+   5: 5am - 5am
+   6: 6am - 6am
+   7: 7am - 7am
+   8: 8am - 8am
+   9: 9am - 9am
+   10: 10am - 10am
+   11: 11am - 11am
+   12: 12pm - 12pm
+   13: noon - noon
+   14: 1pm - 1pm
+   .
+   .
+   .
+   24: 
+    setTimeRange();
+  }, []);
+  */
 
   useEffect(() => {
     const currentChartData = groupedData[currentDate]?.chartList || [];
@@ -315,6 +345,7 @@ function HabitGroup({
         </MenuHeaderTop>
         <MenuHeaderBottom>
           <section>
+            <span>{habitOptions.negativeTimeOffset}</span>
             <span>options:</span>
             <HabitOptionsForm
               userID={userID}

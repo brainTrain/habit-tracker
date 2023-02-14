@@ -5,7 +5,7 @@ import styled from 'styled-components';
 // utils
 import { fetchHabits, fetchHabitOptions } from './firebase/firestore';
 import { formatHabitGroups, formatHabitOptions } from './parsers/habit';
-import { appGutterPadding } from './styles/layout';
+import { appGutterPadding, MAX_PAGE_WIDTH, mediaQueryDevice } from './styles/layout';
 // components
 import HabitGroup from './HabitGroup';
 import HabitForm from './HabitForm';
@@ -14,13 +14,6 @@ const HABITS_LOADING = 'habits-loading';
 const HABITS_LOADED = 'habits-loaded';
 const HABITS_LOADED_ERROR = 'habits-loaded-error';
 // styles
-const HabitWrapper = styled.article`
-  border: 1px solid;
-  margin-bottom: 2rem;
-  padding: 1rem 0;
-  border-radius: 0.2rem;
-`;
-
 const PageWrapper = styled.section`
   height: 100%;
   display: flex;
@@ -33,9 +26,15 @@ const AppHeader = styled.header`
   padding-bottom: 1rem;
 
   border-bottom: 1px solid;
+`;
+
+const AppHeaderContent = styled.header`
+  width: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  max-width: ${MAX_PAGE_WIDTH};
 `;
 
 const AppHeaderTopSection = styled.section`
@@ -59,6 +58,29 @@ const ContentWrapper = styled.section`
   padding-top: 2rem;
   height: 100%;
   overflow: auto;
+`;
+
+const Content = styled.section`
+  height: 100%;
+  margin: 0 auto;
+  max-width: ${MAX_PAGE_WIDTH};
+`;
+
+const HabitWrapper = styled.article`
+  width: 100%;
+  display: grid;
+  grid-gap: 0.5rem;
+  grid-template-columns: 1fr;
+
+  @media ${mediaQueryDevice.laptop} { 
+    grid-template-columns: 1fr 1fr;
+  }
+`;
+
+const HabitCell = styled.article`
+  padding: 1rem 0;
+  border: 1px solid;
+  border-radius: 0.2rem;
 `;
 
 function HabitsPage({ userID, userEmail, onLogout }) {
@@ -113,6 +135,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
   return (
     <PageWrapper>
       <AppHeader>
+        <AppHeaderContent>
         <AppHeaderTopSection>
           <span>
             <AppHeaderTitle>Habits for:</AppHeaderTitle>
@@ -131,18 +154,20 @@ function HabitsPage({ userID, userEmail, onLogout }) {
             </HabitFormWrapper>
           ) : null}
         </section>
+        </AppHeaderContent>
       </AppHeader>
       <ContentWrapper>
+        <Content>
         {{
           [HABITS_LOADING]: <p>loading...</p>,
           [HABITS_LOADED_ERROR]: <p>Error loading habits.</p>,
           [HABITS_LOADED]: (
-            <section>
+            <HabitWrapper>
               {Object.keys(habitsGroups).map((key) => {
                 const { habitID, habitLabel, dateOrder, data } =
                   habitsGroups[key];
                 return (
-                  <HabitWrapper key={key}>
+                  <HabitCell key={key}>
                     <HabitGroup
                       groupedData={data}
                       dateOrder={dateOrder}
@@ -153,12 +178,13 @@ function HabitsPage({ userID, userEmail, onLogout }) {
                       userID={userID}
                       habitOptions={habitOptions[habitID]}
                     />
-                  </HabitWrapper>
+                  </HabitCell>
                 );
               })}
-            </section>
+            </HabitWrapper>
           ),
         }[habitsLoadState] || <p>Error loading habits.</p>}
+        </Content>
       </ContentWrapper>
     </PageWrapper>
   );
