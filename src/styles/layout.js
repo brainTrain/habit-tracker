@@ -1,8 +1,9 @@
 import { css } from 'styled-components';
 
-const APP_GUTTER_WIDTH = '1rem';
-const HABIT_DETIALS_GUTTER_WIDTH = '1rem';
+export const APP_GUTTER_WIDTH = '1rem';
+export const HABIT_DETIALS_GUTTER_WIDTH = '1rem';
 export const MAX_PAGE_WIDTH = '1500px';
+export const TOP_BOTTOM_PAGE_GUTTER = '2rem';
 
 export const appGutterMargin = css`
   margin: 0 ${APP_GUTTER_WIDTH};

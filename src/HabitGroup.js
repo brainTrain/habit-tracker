@@ -144,7 +144,11 @@ const Table = styled.table`
 const Th = styled.th`
   border: 1px solid;
   border-top: none;
-  padding: 1rem;
+  padding: 0.5rem;
+
+  @media ${mediaQueryDevice.mobileXL} { 
+    padding: 1rem;
+  }
 `;
 
 const Tr = styled.tr`
@@ -157,8 +161,16 @@ const Tr = styled.tr`
 
 const Td = styled.td`
   border: 1px solid;
-  padding: 1rem;
+  padding: 0.5rem;
+
+  @media ${mediaQueryDevice.mobileXL} { 
+    padding: 1rem;
+  }
 `;
+
+const TableDate = styled.p``;
+const TableYear = styled.p``;
+const TableTime = styled.p``;
 
 const ChartWrapper = styled.section`
   width: auto;
@@ -166,6 +178,10 @@ const ChartWrapper = styled.section`
   user-select: none;
   display: inline-block;
   border: 1px solid;
+
+  @media ${mediaQueryDevice.laptop} { 
+    width: 100%;
+  }
 `;
 
 function HabitGroup({
@@ -345,8 +361,7 @@ function HabitGroup({
         </MenuHeaderTop>
         <MenuHeaderBottom>
           <section>
-            <span>{habitOptions.negativeTimeOffset}</span>
-            <span>options:</span>
+            <p>options:</p>
             <HabitOptionsForm
               userID={userID}
               habitID={habitID}
@@ -400,11 +415,20 @@ function HabitGroup({
                 <tbody>
                   {habitItems.map((habit) => {
                     const { id, count, datetime } = habit;
+                    const timeString = datetime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const dateString = datetime.toLocaleDateString([], { month: 'short', day: 'numeric'});
+                    const yearString = datetime.toLocaleDateString([], { year: 'numeric' });
                     return (
                       <Tr key={id}>
                         <Td>{count}</Td>
-                        <Td>{datetime.toLocaleTimeString()}</Td>
-                        <Td>{datetime.toLocaleDateString()}</Td>
+                        {/* empty array instead of locale string in first param defaults to default local */}
+                        <Td>
+                          <TableTime>{timeString}</TableTime>
+                        </Td>
+                        <Td>
+                          <TableDate>{dateString}</TableDate>
+                          <TableYear>{yearString}</TableYear>
+                        </Td>
                         <Td>
                           <DeleteRecordButton
                             onClick={() => handleDeleteHabitRecord(habit)}>

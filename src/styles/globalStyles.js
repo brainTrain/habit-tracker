@@ -30,6 +30,10 @@ const GlobalStyle = createGlobalStyle`
   button {
     cursor: pointer;
   }
+
+  p {
+    margin: 0;
+  }
 `;
 
 export default GlobalStyle;

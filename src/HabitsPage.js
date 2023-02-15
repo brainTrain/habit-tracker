@@ -5,7 +5,7 @@ import styled from 'styled-components';
 // utils
 import { fetchHabits, fetchHabitOptions } from './firebase/firestore';
 import { formatHabitGroups, formatHabitOptions } from './parsers/habit';
-import { appGutterPadding, MAX_PAGE_WIDTH, mediaQueryDevice } from './styles/layout';
+import { appGutterPadding, mediaQueryDevice, MAX_PAGE_WIDTH, TOP_BOTTOM_PAGE_GUTTER } from './styles/layout';
 // components
 import HabitGroup from './HabitGroup';
 import HabitForm from './HabitForm';
@@ -57,7 +57,7 @@ const ContentWrapper = styled.section`
   ${appGutterPadding};
 
   width: 100%;
-  padding-top: 2rem;
+  padding-top: ${TOP_BOTTOM_PAGE_GUTTER};
   height: 100%;
   overflow: auto;
 `;
@@ -74,6 +74,7 @@ const HabitWrapper = styled.section`
   display: grid;
   grid-gap: 0.5rem;
   grid-template-columns: minmax(0, 1fr);
+  padding-bottom: ${TOP_BOTTOM_PAGE_GUTTER};
 
   @media ${mediaQueryDevice.laptop} { 
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
