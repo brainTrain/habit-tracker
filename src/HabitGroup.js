@@ -168,6 +168,7 @@ const Td = styled.td`
   }
 `;
 
+const TableCount = styled.p``;
 const TableDate = styled.p``;
 const TableYear = styled.p``;
 const TableTime = styled.p``;
@@ -418,9 +419,12 @@ function HabitGroup({
                     const timeString = datetime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     const dateString = datetime.toLocaleDateString([], { month: 'short', day: 'numeric'});
                     const yearString = datetime.toLocaleDateString([], { year: 'numeric' });
+
                     return (
                       <Tr key={id}>
-                        <Td>{count}</Td>
+                        <Td>
+                          <TableCount>{count}</TableCount>
+                        </Td>
                         {/* empty array instead of locale string in first param defaults to default local */}
                         <Td>
                           <TableTime>{timeString}</TableTime>
