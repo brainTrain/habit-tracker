@@ -10,7 +10,8 @@ import {
   VictoryZoomContainer,
 } from 'victory';
 // utils
-import { habitDetailsGutterPadding, mediaQueryDevice } from './styles/layout';
+import { habitDetailsGutterPadding } from './styles/layout';
+import { mediaQueryDevice } from './styles/constants';
 import { deleteHabit } from './firebase/firestore';
 import { flattenHabitItems } from './parsers/habit';
 import { HABIT_OPTION_EMPTY } from './firebase/models';
@@ -130,8 +131,7 @@ const TableWrapper = styled.section`
   width: 100%;
   max-height: 20rem;
   overflow: auto;
-  border-top: 1px solid;
-  border-bottom: 1px solid;
+  border: 1px solid;
 `;
 
 const Table = styled.table`
@@ -146,6 +146,14 @@ const Th = styled.th`
   border-top: none;
   padding: 0.5rem;
 
+  &:first-of-type {
+    border-left: none;
+  }
+
+  &:last-of-type {
+    border-right: none;
+  }
+
   @media ${mediaQueryDevice.mobileXL} { 
     padding: 1rem;
   }
@@ -155,6 +163,16 @@ const Tr = styled.tr`
   &:last-of-type {
     td {
       border-bottom: none;
+    }
+  }
+
+  td {
+    &:first-of-type {
+      border-left: none;
+    }
+
+    &:last-of-type {
+      border-right: none;
     }
   }
 `;

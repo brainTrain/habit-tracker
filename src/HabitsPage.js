@@ -5,7 +5,8 @@ import styled from 'styled-components';
 // utils
 import { fetchHabits, fetchHabitOptions } from './firebase/firestore';
 import { formatHabitGroups, formatHabitOptions } from './parsers/habit';
-import { appGutterPadding, mediaQueryDevice, MAX_PAGE_WIDTH, TOP_BOTTOM_PAGE_GUTTER } from './styles/layout';
+import { appGutterPadding, MAX_PAGE_WIDTH, TOP_BOTTOM_PAGE_GUTTER } from './styles/layout';
+import { mediaQueryDevice } from './styles/constants';
 // components
 import HabitGroup from './HabitGroup';
 import HabitForm from './HabitForm';
