@@ -9,6 +9,7 @@ import {
   VictoryTooltip,
   VictoryZoomContainer,
 } from 'victory';
+import { format } from 'date-fns';
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
@@ -190,6 +191,7 @@ const TableCount = styled.p``;
 const TableDate = styled.p``;
 const TableYear = styled.p``;
 const TableTime = styled.p``;
+const TableAMPM = styled.p``;
 
 const ChartWrapper = styled.section`
   width: auto;
@@ -434,7 +436,9 @@ function HabitGroup({
                 <tbody>
                   {habitItems.map((habit) => {
                     const { id, count, datetime } = habit;
-                    const timeString = datetime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    const timeString = format(datetime, 'h:mm');
+                    const timeAMPMString = format(datetime, 'a');
                     const dateString = datetime.toLocaleDateString([], { month: 'short', day: 'numeric'});
                     const yearString = datetime.toLocaleDateString([], { year: 'numeric' });
 
@@ -446,6 +450,7 @@ function HabitGroup({
                         {/* empty array instead of locale string in first param defaults to default local */}
                         <Td>
                           <TableTime>{timeString}</TableTime>
+                          <TableAMPM>{timeAMPMString}</TableAMPM>
                         </Td>
                         <Td>
                           <TableDate>{dateString}</TableDate>
