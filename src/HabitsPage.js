@@ -5,7 +5,11 @@ import styled from 'styled-components';
 // utils
 import { fetchHabits, fetchHabitOptions } from './firebase/firestore';
 import { formatHabitGroups, formatHabitOptions } from './parsers/habit';
-import { appGutterPadding, MAX_PAGE_WIDTH, TOP_BOTTOM_PAGE_GUTTER } from './styles/layout';
+import {
+  appGutterPadding,
+  MAX_PAGE_WIDTH,
+  TOP_BOTTOM_PAGE_GUTTER,
+} from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
 // components
 import HabitGroup from './HabitGroup';
@@ -77,7 +81,7 @@ const HabitWrapper = styled.section`
   grid-template-columns: minmax(0, 1fr);
   padding-bottom: ${TOP_BOTTOM_PAGE_GUTTER};
 
-  @media ${mediaQueryDevice.laptop} { 
+  @media ${mediaQueryDevice.laptop} {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 `;
@@ -141,54 +145,54 @@ function HabitsPage({ userID, userEmail, onLogout }) {
     <PageWrapper>
       <AppHeader>
         <AppHeaderContent>
-        <AppHeaderTopSection>
-          <span>
-            <AppHeaderTitle>Habits for:</AppHeaderTitle>
-            <span>{userEmail}</span>
-          </span>
-          <button onClick={handleLogout}>logout</button>
-        </AppHeaderTopSection>
-        <section>
-          <label>Create Habit Form: </label>
-          <button onClick={handleToggleCreateFormClick}>
-            {isCreateFormShown ? 'hide' : 'show'}
-          </button>
-          {isCreateFormShown ? (
-            <HabitFormWrapper>
-              <HabitForm userID={userID} onAddHabit={handleHabitFetches} />
-            </HabitFormWrapper>
-          ) : null}
-        </section>
+          <AppHeaderTopSection>
+            <span>
+              <AppHeaderTitle>Habits for:</AppHeaderTitle>
+              <span>{userEmail}</span>
+            </span>
+            <button onClick={handleLogout}>logout</button>
+          </AppHeaderTopSection>
+          <section>
+            <label>Create Habit Form: </label>
+            <button onClick={handleToggleCreateFormClick}>
+              {isCreateFormShown ? 'hide' : 'show'}
+            </button>
+            {isCreateFormShown ? (
+              <HabitFormWrapper>
+                <HabitForm userID={userID} onAddHabit={handleHabitFetches} />
+              </HabitFormWrapper>
+            ) : null}
+          </section>
         </AppHeaderContent>
       </AppHeader>
       <ContentWrapper>
         <Content>
-        {{
-          [HABITS_LOADING]: <p>loading...</p>,
-          [HABITS_LOADED_ERROR]: <p>Error loading habits.</p>,
-          [HABITS_LOADED]: (
-            <HabitWrapper>
-              {Object.keys(habitsGroups).map((key) => {
-                const { habitID, habitLabel, dateOrder, data } =
-                  habitsGroups[key];
-                return (
-                  <HabitCell key={key}>
-                    <HabitGroup
-                      groupedData={data}
-                      dateOrder={dateOrder}
-                      habitLabel={habitLabel}
-                      habitID={habitID}
-                      onAddHabit={handleHabitFetches}
-                      onDeleteHabit={handleDeleteHabit}
-                      userID={userID}
-                      habitOptions={habitOptions[habitID]}
-                    />
-                  </HabitCell>
-                );
-              })}
-            </HabitWrapper>
-          ),
-        }[habitsLoadState] || <p>Error loading habits.</p>}
+          {{
+            [HABITS_LOADING]: <p>loading...</p>,
+            [HABITS_LOADED_ERROR]: <p>Error loading habits.</p>,
+            [HABITS_LOADED]: (
+              <HabitWrapper>
+                {Object.keys(habitsGroups).map((key) => {
+                  const { habitID, habitLabel, dateOrder, data } =
+                    habitsGroups[key];
+                  return (
+                    <HabitCell key={key}>
+                      <HabitGroup
+                        groupedData={data}
+                        dateOrder={dateOrder}
+                        habitLabel={habitLabel}
+                        habitID={habitID}
+                        onAddHabit={handleHabitFetches}
+                        onDeleteHabit={handleDeleteHabit}
+                        userID={userID}
+                        habitOptions={habitOptions[habitID]}
+                      />
+                    </HabitCell>
+                  );
+                })}
+              </HabitWrapper>
+            ),
+          }[habitsLoadState] || <p>Error loading habits.</p>}
         </Content>
       </ContentWrapper>
     </PageWrapper>

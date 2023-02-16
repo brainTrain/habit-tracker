@@ -122,8 +122,8 @@ const DetailsBottomContainer = styled.section`
   flex-direction: column;
   align-items: stretch;
   gap: 0.5rem;
-  
-  @media ${mediaQueryDevice.tablet} { 
+
+  @media ${mediaQueryDevice.tablet} {
     flex-direction: row;
   }
 `;
@@ -155,7 +155,7 @@ const Th = styled.th`
     border-right: none;
   }
 
-  @media ${mediaQueryDevice.mobileXL} { 
+  @media ${mediaQueryDevice.mobileXL} {
     padding: 1rem;
   }
 `;
@@ -182,7 +182,7 @@ const Td = styled.td`
   border: 1px solid;
   padding: 0.5rem;
 
-  @media ${mediaQueryDevice.mobileXL} { 
+  @media ${mediaQueryDevice.mobileXL} {
     padding: 1rem;
   }
 `;
@@ -200,7 +200,7 @@ const ChartWrapper = styled.section`
   display: inline-block;
   border: 1px solid;
 
-  @media ${mediaQueryDevice.laptop} { 
+  @media ${mediaQueryDevice.laptop} {
     width: 100%;
   }
 `;
@@ -409,7 +409,8 @@ function HabitGroup({
               isActive={isAtive}
               onClick={() => {
                 handleDateButtonClick(date);
-              }}>
+              }}
+            >
               {date}
             </DateButton>
           );
@@ -439,8 +440,13 @@ function HabitGroup({
 
                     const timeString = format(datetime, 'h:mm');
                     const timeAMPMString = format(datetime, 'a');
-                    const dateString = datetime.toLocaleDateString([], { month: 'short', day: 'numeric'});
-                    const yearString = datetime.toLocaleDateString([], { year: 'numeric' });
+                    const dateString = datetime.toLocaleDateString([], {
+                      month: 'short',
+                      day: 'numeric',
+                    });
+                    const yearString = datetime.toLocaleDateString([], {
+                      year: 'numeric',
+                    });
 
                     return (
                       <Tr key={id}>
@@ -458,7 +464,8 @@ function HabitGroup({
                         </Td>
                         <Td>
                           <DeleteRecordButton
-                            onClick={() => handleDeleteHabitRecord(habit)}>
+                            onClick={() => handleDeleteHabitRecord(habit)}
+                          >
                             x
                           </DeleteRecordButton>
                         </Td>
@@ -473,7 +480,8 @@ function HabitGroup({
             <ChartWrapper>
               <VictoryChart
                 domainPadding={20}
-                containerComponent={<VictoryZoomContainer />}>
+                containerComponent={<VictoryZoomContainer />}
+              >
                 <VictoryBar
                   labelComponent={<VictoryTooltip />}
                   data={habitChartData}
