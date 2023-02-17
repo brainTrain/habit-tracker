@@ -112,7 +112,6 @@ export function formatHabitOptions(params) {
 
   habitOptionsResponse.forEach((doc) => {
     const { habitID, habitOptionsID, negativeTimeOffset } = doc.data();
-    // const { habitID, habitOptionsID, negativeTimeOffset } = doc;
     const parsedTimeOffset = Number(negativeTimeOffset);
     const newHabitOption = {
       negativeTimeOffset: parsedTimeOffset,

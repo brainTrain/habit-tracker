@@ -517,6 +517,8 @@ function HabitGroup({
                 id={`calendar-${habitID}`}
                 isMultiSelection={true}
                 values={calendarValues}
+                start={new Date(currentDate)}
+                value={new Date(currentDate)}
               />
             </CalendarWrapper>
           ) : null}

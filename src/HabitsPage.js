@@ -126,7 +126,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
 
   const handleAddHabit = useCallback(
     (response) => {
-      const newHabit = getHabitData(response);
+      // const newHabit = getHabitData(response);
       handleFetchHabitData();
     },
     [handleFetchHabitData],
