@@ -85,7 +85,7 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
 
         saveHabit(label, count, userID, newDateObj, habitID)
           .then((response) => {
-            onAddHabit(userID);
+            onAddHabit(response);
             setFormSubmissionState(FORM_INITIAL);
             clearInputs();
           })

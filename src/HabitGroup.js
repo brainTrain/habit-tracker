@@ -10,6 +10,7 @@ import {
   VictoryZoomContainer,
 } from 'victory';
 import { format } from 'date-fns';
+import { CalendarComponent } from '@syncfusion/ej2-react-calendars';
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
@@ -205,6 +206,8 @@ const ChartWrapper = styled.section`
   }
 `;
 
+const CalendarWrapper = styled.section``;
+
 function HabitGroup({
   groupedData,
   habitOptions,
@@ -217,6 +220,8 @@ function HabitGroup({
 }) {
   const [areDetailsShown, setAreDetailsShown] = useState(false);
   const [isChartShown, setIsChartShown] = useState(false);
+  const [isCalendarShown, setIsCalendarShown] = useState(false);
+  const [calendarValues, setCalendarValues] = useState([]);
   const [datesList, setDatesList] = useState([]);
   const [currentDate, setCurrentDate] = useState('');
   const [habitChartData, setHabitChartData] = useState([]);
@@ -230,6 +235,14 @@ function HabitGroup({
     setDatesList(datesList);
     setCurrentDate(datesList[0]);
   }, [dateOrder]);
+
+  useEffect(() => {
+    const newCalendarValues = datesList.map((date) => {
+      return new Date(date);
+    });
+
+    setCalendarValues(newCalendarValues);
+  }, [datesList]);
 
   /*
   useEffect(() => {
@@ -278,12 +291,21 @@ function HabitGroup({
     });
   }, []);
 
+  const handleToggleCalendar = useCallback(() => {
+    setIsCalendarShown((prev) => {
+      return !prev;
+    });
+  }, []);
+
   const handleDateButtonClick = useCallback((newDate) => {
     setCurrentDate(newDate);
   }, []);
 
   const toggleDetailsText = areDetailsShown ? 'hide details' : 'show details';
   const toggleChartText = isChartShown ? 'hide chart' : 'show chart';
+  const toggleCalendarText = isCalendarShown
+    ? 'hide calendar'
+    : 'show calendar';
   const handleDeleteHabitByDay = useCallback(() => {
     if (
       window.confirm(
@@ -409,8 +431,7 @@ function HabitGroup({
               isActive={isAtive}
               onClick={() => {
                 handleDateButtonClick(date);
-              }}
-            >
+              }}>
               {date}
             </DateButton>
           );
@@ -421,6 +442,7 @@ function HabitGroup({
           <p>total: {totalCount}</p>
           <button onClick={handleToggleDetails}>{toggleDetailsText}</button>
           <button onClick={handleToggleChart}>{toggleChartText}</button>
+          <button onClick={handleToggleCalendar}>{toggleCalendarText}</button>
         </DetailsTopContainer>
         <DetailsBottomContainer>
           {areDetailsShown ? (
@@ -464,8 +486,7 @@ function HabitGroup({
                         </Td>
                         <Td>
                           <DeleteRecordButton
-                            onClick={() => handleDeleteHabitRecord(habit)}
-                          >
+                            onClick={() => handleDeleteHabitRecord(habit)}>
                             x
                           </DeleteRecordButton>
                         </Td>
@@ -480,8 +501,7 @@ function HabitGroup({
             <ChartWrapper>
               <VictoryChart
                 domainPadding={20}
-                containerComponent={<VictoryZoomContainer />}
-              >
+                containerComponent={<VictoryZoomContainer />}>
                 <VictoryBar
                   labelComponent={<VictoryTooltip />}
                   data={habitChartData}
@@ -490,6 +510,15 @@ function HabitGroup({
                 />
               </VictoryChart>
             </ChartWrapper>
+          ) : null}
+          {isCalendarShown ? (
+            <CalendarWrapper>
+              <CalendarComponent
+                id={`calendar-${habitID}`}
+                isMultiSelection={true}
+                values={calendarValues}
+              />
+            </CalendarWrapper>
           ) : null}
         </DetailsBottomContainer>
       </DetailsContainer>

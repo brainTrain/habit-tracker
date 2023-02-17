@@ -3,6 +3,7 @@ import {
   addDoc,
   updateDoc,
   collection,
+  getDoc,
   getDocs,
   getFirestore,
   query,
@@ -32,7 +33,10 @@ export async function saveHabit(habitLabel, count, userID, date, habitID) {
     habitID: hasHabitID ? habitID : nanoid(),
   };
 
-  return addDoc(collection(db, HABIT_COLLECTION), data);
+  const docRef = await addDoc(collection(db, HABIT_COLLECTION), data);
+  // const newDoc = await getDoc(docRef);
+
+  return docRef;
 }
 
 export async function fetchHabits(userID) {

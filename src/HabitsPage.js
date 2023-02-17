@@ -4,7 +4,11 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 // utils
 import { fetchHabits, fetchHabitOptions } from './firebase/firestore';
-import { formatHabitGroups, formatHabitOptions } from './parsers/habit';
+import {
+  formatHabitGroups,
+  formatHabitOptions,
+  getHabitData,
+} from './parsers/habit';
 import {
   appGutterPadding,
   MAX_PAGE_WIDTH,
@@ -120,26 +124,30 @@ function HabitsPage({ userID, userEmail, onLogout }) {
     }
   }, [userID]);
 
-  const handleHabitFetches = useCallback(() => {
-    handleFetchHabitData();
-  }, [handleFetchHabitData]);
+  const handleAddHabit = useCallback(
+    (response) => {
+      const newHabit = getHabitData(response);
+      handleFetchHabitData();
+    },
+    [handleFetchHabitData],
+  );
 
   // TODO: make this header section its own component and raise it up a level broooooo
   const handleLogout = useCallback(() => {
     onLogout();
   }, [onLogout]);
-  // TODO: try to just pass handleHabitFetches to the delete function prop
+
   const handleDeleteHabit = useCallback(() => {
-    handleHabitFetches();
-  }, [handleHabitFetches]);
+    handleFetchHabitData();
+  }, [handleFetchHabitData]);
 
   const handleToggleCreateFormClick = useCallback(() => {
     setIsCreateFormShown((prev) => !prev);
   }, []);
 
   useEffect(() => {
-    handleHabitFetches();
-  }, [handleHabitFetches]);
+    handleFetchHabitData();
+  }, [handleFetchHabitData]);
 
   return (
     <PageWrapper>
@@ -159,7 +167,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
             </button>
             {isCreateFormShown ? (
               <HabitFormWrapper>
-                <HabitForm userID={userID} onAddHabit={handleHabitFetches} />
+                <HabitForm userID={userID} onAddHabit={handleAddHabit} />
               </HabitFormWrapper>
             ) : null}
           </section>
@@ -182,7 +190,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
                         dateOrder={dateOrder}
                         habitLabel={habitLabel}
                         habitID={habitID}
-                        onAddHabit={handleHabitFetches}
+                        onAddHabit={handleAddHabit}
                         onDeleteHabit={handleDeleteHabit}
                         userID={userID}
                         habitOptions={habitOptions[habitID]}

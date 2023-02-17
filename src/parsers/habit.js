@@ -13,21 +13,28 @@ export function flattenHabitItems(groupedData) {
   return flatHabitItems;
 }
 
+export function getHabitData(doc) {
+  const { count, datetime, habitLabel, publicID, habitID } = doc.data();
+  const parsedCount = Number(count);
+  const newHabit = {
+    count: parsedCount,
+    datetime: datetime.toDate(),
+    habitLabel,
+    habitID,
+    publicID,
+    id: doc.id,
+  };
+
+  return newHabit;
+}
+
 export function formatHabitGroups(params) {
   const { habitsResponse, habitOptions } = params;
   let newHabits = [];
 
   habitsResponse.forEach((doc) => {
-    const { count, datetime, habitLabel, publicID, habitID } = doc.data();
-    const parsedCount = Number(count);
-    const newHabit = {
-      count: parsedCount,
-      datetime: datetime.toDate(),
-      habitLabel,
-      habitID,
-      publicID,
-      id: doc.id,
-    };
+    const newHabit = getHabitData(doc);
+
     newHabits.push(newHabit);
   });
 

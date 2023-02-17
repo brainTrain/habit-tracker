@@ -10,23 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
-    - name: Setup SSH Action
-      uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Setup SSH Action
+        uses: LuisEnMarroquin/setup-ssh-action@v2.0.0
 
-      with:
-        SSHKEY: ${{ secrets.SSH_PRIVATE_KEY }}
-    - name: Github pingzs
-      run: ssh -T git@github.com
-    - name: Install dependencies
-      run: yarn install
-    - name: Configure Git
-      run: git config user.email "abductee@gmail.com" && git config user.name "braintrain"
-    - name: Try git stuffs
-      run: git remote -v
-    - name: Deploy
-      run: yarn deploy
+        with:
+          SSHKEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Github pingzs
+        run: ssh -T git@github.com
+      - name: Install dependencies
+        run: yarn install
+      - name: Configure Git
+        run: git config user.email "abductee@gmail.com" && git config user.name "braintrain"
+      - name: Try git stuffs
+        run: git remote -v
+      - name: Deploy
+        run: yarn deploy
