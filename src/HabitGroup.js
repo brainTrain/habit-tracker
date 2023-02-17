@@ -10,7 +10,7 @@ import {
   VictoryZoomContainer,
 } from 'victory';
 import { format } from 'date-fns';
-import { CalendarComponent } from '@syncfusion/ej2-react-calendars';
+import { Calendar, DateObject } from 'react-multi-date-picker';
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
@@ -513,13 +513,19 @@ function HabitGroup({
           ) : null}
           {isCalendarShown ? (
             <CalendarWrapper>
-              <CalendarComponent
+              <Calendar
                 id={`calendar-${habitID}`}
+                value={calendarValues}
+                currentDate={new DateObject(new Date(currentDate))}
+              />
+              {/*
+              <CalendarComponent
                 isMultiSelection={true}
                 values={calendarValues}
                 start={new Date(currentDate)}
                 value={new Date(currentDate)}
               />
+              */}
             </CalendarWrapper>
           ) : null}
         </DetailsBottomContainer>
