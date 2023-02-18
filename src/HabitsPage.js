@@ -7,7 +7,7 @@ import { fetchHabits, fetchHabitOptions } from './firebase/firestore';
 import {
   formatHabitGroups,
   formatHabitOptions,
-  getHabitData,
+  // getHabitData,
 } from './parsers/habit';
 import {
   appGutterPadding,

@@ -16,6 +16,7 @@ import { habitDetailsGutterPadding } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
 import { deleteHabit } from './firebase/firestore';
 import { flattenHabitItems } from './parsers/habit';
+import { dateStringToObject } from './formatters/datetime';
 import { HABIT_OPTION_EMPTY } from './firebase/models';
 // components
 import HabitForm from './HabitForm';
@@ -223,7 +224,12 @@ function HabitGroup({
   const [isCalendarShown, setIsCalendarShown] = useState(false);
   const [calendarValues, setCalendarValues] = useState([]);
   const [datesList, setDatesList] = useState([]);
-  const [currentDate, setCurrentDate] = useState('');
+  const [currentDate, setCurrentDate] = useState({
+    string: '',
+    year: 1969,
+    month: 4,
+    day: 20,
+  });
   const [habitChartData, setHabitChartData] = useState([]);
   const [habitItems, setHabitItems] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -232,8 +238,10 @@ function HabitGroup({
 
   useEffect(() => {
     const datesList = dateOrder;
+    const newDateObject = dateStringToObject(datesList[0]);
+
     setDatesList(datesList);
-    setCurrentDate(datesList[0]);
+    setCurrentDate(newDateObject);
   }, [dateOrder]);
 
   useEffect(() => {
@@ -270,9 +278,9 @@ function HabitGroup({
   */
 
   useEffect(() => {
-    const currentChartData = groupedData[currentDate]?.chartList || [];
-    const currentTableData = groupedData[currentDate]?.tableList || [];
-    const currentTotalCount = groupedData[currentDate]?.totalCount || 0;
+    const currentChartData = groupedData[currentDate.string]?.chartList || [];
+    const currentTableData = groupedData[currentDate.string]?.tableList || [];
+    const currentTotalCount = groupedData[currentDate.string]?.totalCount || 0;
 
     setHabitChartData(currentChartData);
     setHabitItems(currentTableData);
@@ -298,7 +306,9 @@ function HabitGroup({
   }, []);
 
   const handleDateButtonClick = useCallback((newDate) => {
-    setCurrentDate(newDate);
+    const newDateObject = dateStringToObject(newDate);
+
+    setCurrentDate(newDateObject);
   }, []);
 
   const toggleDetailsText = areDetailsShown ? 'hide details' : 'show details';
@@ -309,7 +319,7 @@ function HabitGroup({
   const handleDeleteHabitByDay = useCallback(() => {
     if (
       window.confirm(
-        `Are you sure you want to delete all ${habitLabel} habits for ${currentDate}?`,
+        `Are you sure you want to delete all ${habitLabel} habits for ${currentDate.string}?`,
       )
     ) {
       deleteHabit(habitItems)
@@ -384,7 +394,7 @@ function HabitGroup({
         <MenuHeaderTop>
           <TitleWrapper>
             <HabitLabel>{habitLabel}</HabitLabel>
-            <HabitCurrentDate>{currentDate}</HabitCurrentDate>
+            <HabitCurrentDate>{currentDate.string}</HabitCurrentDate>
           </TitleWrapper>
           <MenuWrapper ref={menuWrapperRef}>
             <MenuButton onClick={handleMenuButtonClick}>
@@ -393,7 +403,7 @@ function HabitGroup({
             {isMenuOpen ? (
               <MenuContent>
                 <DeleteButton onClick={handleDeleteHabitByDay}>
-                  delete habits for {currentDate}
+                  delete habits for {currentDate.string}
                 </DeleteButton>
                 <DeleteButton onClick={handleDeleteEntireHabit}>
                   delete entire habit
@@ -424,7 +434,8 @@ function HabitGroup({
       </MenuHeader>
       <DatesContainer>
         {datesList.map((date) => {
-          const isAtive = date === currentDate;
+          const isAtive = date === currentDate.string;
+
           return (
             <DateButton
               key={date}
@@ -516,16 +527,15 @@ function HabitGroup({
               <Calendar
                 id={`calendar-${habitID}`}
                 value={calendarValues}
-                currentDate={new DateObject(new Date(currentDate))}
+                currentDate={
+                  new DateObject({
+                    year: currentDate.year,
+                    month: currentDate.month,
+                    day: currentDate.day,
+                  })
+                }
+                readOnly
               />
-              {/*
-              <CalendarComponent
-                isMultiSelection={true}
-                values={calendarValues}
-                start={new Date(currentDate)}
-                value={new Date(currentDate)}
-              />
-              */}
             </CalendarWrapper>
           ) : null}
         </DetailsBottomContainer>
