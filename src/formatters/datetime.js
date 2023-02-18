@@ -1,3 +1,5 @@
+import { DateObject } from 'react-multi-date-picker';
+
 export function minutesToHours(minutes) {
   return minutes / 60;
 }
@@ -14,8 +16,10 @@ export function dateStringToObject(string) {
 
   return {
     string,
-    year,
-    month,
-    day,
+    object: new DateObject({
+      year,
+      month,
+      day,
+    }),
   };
 }

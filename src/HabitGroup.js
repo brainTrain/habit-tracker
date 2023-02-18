@@ -1,5 +1,5 @@
 // libraries
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
@@ -226,15 +226,25 @@ function HabitGroup({
   const [datesList, setDatesList] = useState([]);
   const [currentDate, setCurrentDate] = useState({
     string: '',
-    year: 1969,
-    month: 4,
-    day: 20,
+    object: new DateObject({
+      year: 1969,
+      month: 4,
+      day: 20,
+    }),
   });
   const [habitChartData, setHabitChartData] = useState([]);
   const [habitItems, setHabitItems] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // const [optionsTimeRange, setOptionsTimeRange] = useState();
+
+  const calendarRef = useRef(null);
+
+  useEffect(() => {
+    calendarRef?.current?.set('year', currentDate.object.year);
+    calendarRef?.current?.set('month', currentDate.object.month);
+    calendarRef?.current?.set('day', currentDate.object.day);
+  }, [currentDate]);
 
   useEffect(() => {
     const datesList = dateOrder;
@@ -525,15 +535,9 @@ function HabitGroup({
           {isCalendarShown ? (
             <CalendarWrapper>
               <Calendar
-                id={`calendar-${habitID}`}
+                ref={calendarRef}
                 value={calendarValues}
-                currentDate={
-                  new DateObject({
-                    year: currentDate.year,
-                    month: currentDate.month,
-                    day: currentDate.day,
-                  })
-                }
+                currentDate={currentDate.object}
                 readOnly
               />
             </CalendarWrapper>
