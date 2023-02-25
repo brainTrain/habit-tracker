@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 // utils
 import { fetchHabits, fetchHabitOptions } from './firebase/firestore';
 import {
@@ -15,6 +16,9 @@ import {
   TOP_BOTTOM_PAGE_GUTTER,
 } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
+// redux
+import { fetchHabitsRedux } from './redux/habits';
+import { fetchHabitOptionsRedux } from './redux/habit-options';
 // components
 import HabitGroup from './HabitGroup';
 import HabitForm from './HabitForm';
@@ -101,6 +105,8 @@ function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitOptions, setHabitOptions] = useState({});
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
+  console.log('habitsGroups', habitsGroups);
+  const dispatch = useDispatch();
 
   const handleFetchHabitData = useCallback(async () => {
     try {
@@ -108,8 +114,9 @@ function HabitsPage({ userID, userEmail, onLogout }) {
       const formattedHabitOptions = formatHabitOptions({
         habitOptionsResponse,
       });
-
-      const habitsResponse = await fetchHabits(userID);
+      // await dispatch(fetchHabitOptionsRedux(userID));
+      // await dispatch(fetchHabitsRedux(userID));
+      const habitsResponse = await fetchHabits(userID, formattedHabitOptions);
       const formattedHabits = formatHabitGroups({
         habitsResponse,
         habitOptions: formattedHabitOptions,
@@ -126,6 +133,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
 
   const handleAddHabit = useCallback(
     (response) => {
+      console.log('response', response);
       // const newHabit = getHabitData(response);
       handleFetchHabitData();
     },
