@@ -53,6 +53,7 @@ export function formatHabitGroups(params) {
     const groupedByDate = {};
     const dateOrder = [];
     // date grouping
+    // TODO: do in selector
     groupedNewHabitsList.forEach((newHabit) => {
       const { datetime, count } = newHabit;
       const { negativeTimeOffset } = habitOptions[habitID] || {

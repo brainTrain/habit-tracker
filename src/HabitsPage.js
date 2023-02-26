@@ -114,8 +114,6 @@ function HabitsPage({ userID, userEmail, onLogout }) {
       const formattedHabitOptions = formatHabitOptions({
         habitOptionsResponse,
       });
-      // await dispatch(fetchHabitOptionsRedux(userID));
-      // await dispatch(fetchHabitsRedux(userID));
       const habitsResponse = await fetchHabits(userID, formattedHabitOptions);
       const formattedHabits = formatHabitGroups({
         habitsResponse,
@@ -125,6 +123,9 @@ function HabitsPage({ userID, userEmail, onLogout }) {
       setHabitOptions(formattedHabitOptions);
       setHabitsGroups(formattedHabits);
       setHabitsLoadState(HABITS_LOADED);
+      // TODO
+      await dispatch(fetchHabitOptionsRedux(userID));
+      await dispatch(fetchHabitsRedux(userID));
     } catch (error) {
       console.error('error fetching habits and options', error);
       setHabitsLoadState(HABITS_LOADED_ERROR);
