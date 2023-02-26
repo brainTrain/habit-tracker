@@ -115,7 +115,7 @@ const DatesContainer = styled.div`
   gap: 0.5rem;
 
   ${habitDetailsGutterPadding};
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
 `;
 
 const DetailsBottomContainer = styled.section`
