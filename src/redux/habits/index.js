@@ -20,12 +20,10 @@ export const selectFormattedHabits = createSelector(
   selectHabitEntities,
   selectHabitOptionsEntities,
   (habitEntities, habitOptionsEntities) => {
-    return (
-      formatHabitGroups({
-        habitEntities,
-        habitOptionsEntities,
-      }) || {}
-    );
+    return formatHabitGroups({
+      habitEntities,
+      habitOptionsEntities,
+    });
   },
 );
 

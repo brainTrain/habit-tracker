@@ -101,8 +101,8 @@ const HabitCell = styled.article`
 function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
-  const habitOptions = useSelector(selectHabitOptionsEntities);
   const habitGroups = useSelector(selectFormattedHabits);
+  const habitOptions = useSelector(selectHabitOptionsEntities);
   const dispatch = useDispatch();
 
   const handleFetchHabitData = useCallback(async () => {
