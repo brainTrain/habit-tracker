@@ -12,11 +12,8 @@ import {
 } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
 // redux
-import { fetchHabitsRedux, selectFormattedHabits } from './redux/habits';
-import {
-  fetchHabitOptionsRedux,
-  selectHabitOptionsEntities,
-} from './redux/habit-options';
+import { fetchHabitsRedux, selectHabitIDs } from './redux/habits';
+import { fetchHabitOptionsRedux } from './redux/habit-options';
 // components
 import HabitGroup from './HabitGroup';
 import HabitForm from './HabitForm';
@@ -101,8 +98,7 @@ const HabitCell = styled.article`
 function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
-  const habitGroups = useSelector(selectFormattedHabits);
-  const habitOptions = useSelector(selectHabitOptionsEntities);
+  const habitIDs = useSelector(selectHabitIDs);
   const dispatch = useDispatch();
 
   const handleFetchHabitData = useCallback(async () => {
@@ -175,20 +171,14 @@ function HabitsPage({ userID, userEmail, onLogout }) {
             [HABITS_LOADED_ERROR]: <p>Error loading habits.</p>,
             [HABITS_LOADED]: (
               <HabitWrapper>
-                {Object.keys(habitGroups).map((key) => {
-                  const { habitID, habitLabel, dateOrder, data } =
-                    habitGroups[key];
+                {habitIDs.map((key) => {
                   return (
                     <HabitCell key={key}>
                       <HabitGroup
-                        groupedData={data}
-                        dateOrder={dateOrder}
-                        habitLabel={habitLabel}
-                        habitID={habitID}
+                        userID={userID}
+                        habitID={key}
                         onAddHabit={handleAddHabit}
                         onDeleteHabit={handleDeleteHabit}
-                        userID={userID}
-                        habitOptions={habitOptions[habitID]}
                       />
                     </HabitCell>
                   );

@@ -1,6 +1,7 @@
 // libraries
 import { useState, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import {
@@ -11,13 +12,14 @@ import {
 } from 'victory';
 import { format } from 'date-fns';
 import { Calendar, DateObject } from 'react-multi-date-picker';
+// redux
+import { selectFormattedHabitByID } from './redux/habits';
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
 import { deleteHabit } from './firebase/firestore';
 import { flattenHabitItems } from './parsers/habit';
 import { dateStringToObject } from './formatters/datetime';
-import { HABIT_OPTION_EMPTY } from './firebase/models';
 // components
 import HabitForm from './HabitForm';
 import HabitOptionsForm from './HabitOptionsForm';
@@ -210,15 +212,19 @@ const ChartWrapper = styled.section`
 const CalendarWrapper = styled.section``;
 
 function HabitGroup({
-  groupedData,
   habitOptions,
-  dateOrder,
   habitID,
-  habitLabel,
   onAddHabit,
   onDeleteHabit,
   userID,
 }) {
+  // redux props
+  const {
+    habitLabel,
+    dateOrder,
+    data: groupedData,
+  } = useSelector((state) => selectFormattedHabitByID(state, habitID));
+  // local state
   const [areDetailsShown, setAreDetailsShown] = useState(false);
   const [isChartShown, setIsChartShown] = useState(false);
   const [isCalendarShown, setIsCalendarShown] = useState(false);
@@ -428,7 +434,6 @@ function HabitGroup({
             <HabitOptionsForm
               userID={userID}
               habitID={habitID}
-              habitOptions={habitOptions}
               onAddHabitOption={onAddHabit}
             />
           </section>
@@ -549,24 +554,15 @@ function HabitGroup({
 }
 
 HabitGroup.propTypes = {
-  // TODO: define shape
-  groupedData: PropTypes.object,
-  habitOptions: PropTypes.object,
+  userID: PropTypes.string,
   habitID: PropTypes.string,
-  habitLabel: PropTypes.string,
-  dateOrder: PropTypes.array,
   onAddHabit: PropTypes.func,
   onDeleteHabit: PropTypes.func,
-  userID: PropTypes.string,
 };
 
 HabitGroup.defaultProps = {
-  // TODO: set empty values for keys here
-  groupedData: {},
-  habitOptions: { ...HABIT_OPTION_EMPTY },
+  userID: '',
   habitID: '',
-  habitLabel: '',
-  dateOrder: [],
   onAddHabit: function () {
     console.warn(
       'onAddHabit() prop in <HabitGroup /> component called without a value',
@@ -577,7 +573,6 @@ HabitGroup.defaultProps = {
       'onDeleteHabit() prop in <HabitGroup /> component called without a value',
     );
   },
-  userID: '',
 };
 
 export default HabitGroup;

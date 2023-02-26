@@ -27,6 +27,15 @@ export const selectFormattedHabits = createSelector(
   },
 );
 
+export const selectFormattedHabitByID = createSelector(
+  selectFormattedHabits,
+  (state, habitID) => habitID,
+  (formattedHabits, habitID) => {
+    // TODO: might want to use an empty object as a fallback here
+    return formattedHabits[habitID] || {};
+  },
+);
+
 export const fetchHabitsRedux = createAsyncThunk(
   `${HABITS_NAME}/fetch:all`,
   async (userID, habitOptions) => {

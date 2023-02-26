@@ -1,20 +1,28 @@
 // libraries
 import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-
+import { useSelector } from 'react-redux';
 // utils
 import { saveHabitOptions } from './firebase/firestore';
 import { HABIT_OPTION_EMPTY } from './firebase/models';
 import { minutesToHours, hoursToMinutes } from './formatters/datetime';
+// redux
+import { selectHabitOptionsByID } from './redux/habit-options';
 // constants
 const NEGATIVE_TIME_OFFSET_INPUT = 'negative-time-offset-input';
 const FORM_INITIAL = 'form-initial';
 const FORM_SUBMITTED = 'form-submitted';
 const FORM_SUBMITTED_ERROR = 'form-submitted-error';
 
-function HabitOptionsForm({ userID, onAddHabitOption, habitID, habitOptions }) {
+function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
+  // redux props
+  const habitOptions = useSelector((state) =>
+    selectHabitOptionsByID(state, habitID),
+  );
+  // local state
   const [formSubmissionState, setFormSubmissionState] = useState(FORM_INITIAL);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
+
   const [negativeTimeOffset, setNegativeTimeOffset] = useState(
     minutesToHours(Number(habitOptions?.negativeTimeOffset || 0)),
   );
