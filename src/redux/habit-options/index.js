@@ -1,29 +1,22 @@
 // libraries
-import {
-  createSlice,
-  createAsyncThunk,
-  createSelector,
-} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // utils
 import { fetchHabitOptions } from '../../firebase/firestore';
-import { formatHabitOptions } from '../../parsers/habit';
+import { habitOptionsToEntities } from '../../parsers/habit';
 // constants
 const HABIT_OPTIONS_NAME = 'habit-options';
 
 // selectors
-export const selectHabitOptionEntities = (state) => state.habitOptions.entities;
+export const selectHabitOptionsEntities = (state) => state.habitOptions.entities;
 export const selectHabitOptionIDs = (state) => state.habitOptions.ids;
 
 export const fetchHabitOptionsRedux = createAsyncThunk(
   `${HABIT_OPTIONS_NAME}/fetch:all`,
   async (userID) => {
     const habitOptions = await fetchHabitOptions(userID);
+    const habitOptionsEntities = habitOptionsToEntities(habitOptions);
 
-    const formattedHabitOptions = formatHabitOptions({
-      habitOptions,
-    });
-
-    return formattedHabitOptions;
+    return habitOptionsEntities;
   },
 );
 
@@ -37,6 +30,7 @@ export const habitOptionsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchHabitOptionsRedux.fulfilled, (state, action) => {
       state.entities = action.payload;
+      state.ids = Object.keys(action.payload);
     });
   },
 });

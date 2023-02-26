@@ -28,8 +28,7 @@ export function getHabitData(doc) {
   return newHabit;
 }
 
-export function formatHabitGroups(params) {
-  const { habitsResponse, habitOptions } = params;
+export function habitsToEntities(habitsResponse) {
   let newHabits = [];
 
   habitsResponse.forEach((doc) => {
@@ -38,25 +37,34 @@ export function formatHabitGroups(params) {
     newHabits.push(newHabit);
   });
 
-  const groupedNewHabits = groupBy(newHabits, 'habitID');
+  const habitEntities = groupBy(newHabits, 'habitID');
+
+  return habitEntities;
+}
+
+export function formatHabitGroups(params) {
+  const { habitEntities, habitOptionsEntities } = params;
   const formattedHabits = {};
 
-  Object.keys(groupedNewHabits).forEach((newHabitID) => {
-    const { habitLabel, habitID } = groupedNewHabits[newHabitID][0] || {
+  Object.keys(habitEntities).forEach((newHabitID) => {
+    const { habitLabel, habitID } = habitEntities[newHabitID][0] || {
       habitLabel: '',
       habitID: '',
     };
-
-    const groupedNewHabitsList = groupedNewHabits[newHabitID]?.sort((a, b) => {
-      return b?.datetime - a?.datetime;
-    });
+    // TODO: these are read only when we get them from redux-toolkit, figure out right way to sort in redux toolkit
+    // guessing prolly in a reducer
+    const groupedNewHabitsList = [...habitEntities[newHabitID]]?.sort(
+      (a, b) => {
+        return b?.datetime - a?.datetime;
+      },
+    );
     const groupedByDate = {};
     const dateOrder = [];
     // date grouping
     // TODO: do in selector
     groupedNewHabitsList.forEach((newHabit) => {
       const { datetime, count } = newHabit;
-      const { negativeTimeOffset } = habitOptions[habitID] || {
+      const { negativeTimeOffset } = habitOptionsEntities[habitID] || {
         ...HABIT_OPTION_EMPTY,
       };
       const newHabitTimeString = datetime.toLocaleTimeString();
@@ -107,8 +115,7 @@ export function formatHabitGroups(params) {
   return formattedHabits;
 }
 
-export function formatHabitOptions(params) {
-  const { habitOptionsResponse } = params;
+export function habitOptionsToEntities(habitOptionsResponse) {
   let newHabitOptions = [];
 
   habitOptionsResponse.forEach((doc) => {
