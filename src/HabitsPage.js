@@ -1,20 +1,19 @@
 // libraries
 import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 // utils
-import { fetchHabits, fetchHabitOptions } from './firebase/firestore';
-import {
-  formatHabitGroups,
-  formatHabitOptions,
-  // getHabitData,
-} from './parsers/habit';
 import {
   appGutterPadding,
   MAX_PAGE_WIDTH,
   TOP_BOTTOM_PAGE_GUTTER,
 } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
+// redux
+import { fetchHabitsRedux, selectHabitIDs } from './redux/habits';
+import { fetchHabitOptionsRedux } from './redux/habit-options';
 // components
 import HabitGroup from './HabitGroup';
 import HabitForm from './HabitForm';
@@ -97,35 +96,27 @@ const HabitCell = styled.article`
 `;
 
 function HabitsPage({ userID, userEmail, onLogout }) {
-  const [habitsGroups, setHabitsGroups] = useState({});
-  const [habitOptions, setHabitOptions] = useState({});
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
+  const habitIDs = useSelector(selectHabitIDs);
+  const dispatch = useDispatch();
 
   const handleFetchHabitData = useCallback(async () => {
     try {
-      const habitOptionsResponse = await fetchHabitOptions(userID);
-      const formattedHabitOptions = formatHabitOptions({
-        habitOptionsResponse,
-      });
+      // TODO: figure out right way to do this, prolly shouldn't be awaiting
+      await dispatch(fetchHabitOptionsRedux(userID));
+      await dispatch(fetchHabitsRedux(userID));
 
-      const habitsResponse = await fetchHabits(userID);
-      const formattedHabits = formatHabitGroups({
-        habitsResponse,
-        habitOptions: formattedHabitOptions,
-      });
-
-      setHabitOptions(formattedHabitOptions);
-      setHabitsGroups(formattedHabits);
       setHabitsLoadState(HABITS_LOADED);
     } catch (error) {
       console.error('error fetching habits and options', error);
       setHabitsLoadState(HABITS_LOADED_ERROR);
     }
-  }, [userID]);
+  }, [userID, dispatch]);
 
   const handleAddHabit = useCallback(
     (response) => {
+      console.log('response', response);
       // const newHabit = getHabitData(response);
       handleFetchHabitData();
     },
@@ -180,20 +171,14 @@ function HabitsPage({ userID, userEmail, onLogout }) {
             [HABITS_LOADED_ERROR]: <p>Error loading habits.</p>,
             [HABITS_LOADED]: (
               <HabitWrapper>
-                {Object.keys(habitsGroups).map((key) => {
-                  const { habitID, habitLabel, dateOrder, data } =
-                    habitsGroups[key];
+                {habitIDs.map((key) => {
                   return (
                     <HabitCell key={key}>
                       <HabitGroup
-                        groupedData={data}
-                        dateOrder={dateOrder}
-                        habitLabel={habitLabel}
-                        habitID={habitID}
+                        userID={userID}
+                        habitID={key}
                         onAddHabit={handleAddHabit}
                         onDeleteHabit={handleDeleteHabit}
-                        userID={userID}
-                        habitOptions={habitOptions[habitID]}
                       />
                     </HabitCell>
                   );
