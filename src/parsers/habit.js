@@ -18,7 +18,7 @@ export function getHabitData(doc) {
   const parsedCount = Number(count);
   const newHabit = {
     count: parsedCount,
-    datetime: datetime.toDate(),
+    datetime: datetime.toDate().toString(),
     habitLabel,
     habitID,
     publicID,
@@ -42,12 +42,28 @@ export function habitsToEntities(habitsResponse) {
   return habitEntities;
 }
 
+export function habitsEntityDocumentsToHabits(habitDocuments) {
+  const habitEntities = groupBy(habitDocuments, 'habitID');
+  const normalizedHabitEntities = {};
+
+  Object.keys(habitEntities).forEach((habitID) => {
+    normalizedHabitEntities[habitID] = habitEntities[habitID].map(
+      ({ id }) => id,
+    );
+  });
+
+  return normalizedHabitEntities;
+}
+
 export function formatHabitGroups(params) {
-  const { habitEntities, habitOptionsEntities } = params;
+  const { habitEntities, habitDocumentEntities, habitOptionsEntities } = params;
   const formattedHabits = {};
 
   Object.keys(habitEntities).forEach((newHabitID) => {
-    const { habitLabel, habitID } = habitEntities[newHabitID][0] || {
+    // TODO: There's gotta be a better way to do this entities lookup
+    const { habitLabel, habitID } = habitDocumentEntities[
+      habitEntities[newHabitID][0]
+    ] || {
       habitLabel: '',
       habitID: '',
     };
@@ -55,7 +71,10 @@ export function formatHabitGroups(params) {
     // guessing prolly in a reducer
     const groupedNewHabitsList = [...habitEntities[newHabitID]]?.sort(
       (a, b) => {
-        return b?.datetime - a?.datetime;
+        return (
+          new Date(habitDocumentEntities[b]?.datetime) -
+          new Date(habitDocumentEntities[a]?.datetime)
+        );
       },
     );
     const groupedByDate = {};
@@ -63,21 +82,23 @@ export function formatHabitGroups(params) {
     // date grouping
     // TODO: do in selector
     groupedNewHabitsList.forEach((newHabit) => {
-      const { datetime, count } = newHabit;
+      const { datetime, count } = habitDocumentEntities[newHabit];
+      const datetimeObj = new Date(datetime);
       const { negativeTimeOffset } = habitOptionsEntities[habitID] || {
         ...HABIT_OPTION_EMPTY,
       };
-      const newHabitTimeString = datetime.toLocaleTimeString();
-      const updatedDate = subMinutes(datetime, negativeTimeOffset);
+      const newHabitTimeString = datetimeObj.toLocaleTimeString();
+      const updatedDate = subMinutes(datetimeObj, negativeTimeOffset);
       const updatedDateLocale = updatedDate.toLocaleDateString();
 
       const tableHabit = {
-        ...newHabit,
+        ...habitDocumentEntities[newHabit],
+        datetime: datetimeObj,
       };
       const chartHabit = {
         ...{
           count,
-          datetime,
+          datetimeObj,
           label: `${count} at ${newHabitTimeString}`,
         },
       };

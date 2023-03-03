@@ -12,7 +12,8 @@ import {
 } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
 // redux
-import { fetchHabitsRedux, selectHabitIDs } from './redux/habits';
+import { fetchHabitDocuments } from './redux/habit-documents';
+import { fetchHabitsRedux, createHabits, selectHabitIDs } from './redux/habits';
 import { fetchHabitOptionsRedux } from './redux/habit-options';
 // components
 import HabitGroup from './HabitGroup';
@@ -105,6 +106,9 @@ function HabitsPage({ userID, userEmail, onLogout }) {
     try {
       // TODO: figure out right way to do this, prolly shouldn't be awaiting
       await dispatch(fetchHabitOptionsRedux(userID));
+      const habitDocumentsRes = await dispatch(fetchHabitDocuments(userID));
+      // create habit groups based on fetched habit documents
+      await dispatch(createHabits(habitDocumentsRes.payload));
       await dispatch(fetchHabitsRedux(userID));
 
       setHabitsLoadState(HABITS_LOADED);
@@ -116,7 +120,6 @@ function HabitsPage({ userID, userEmail, onLogout }) {
 
   const handleAddHabit = useCallback(
     (response) => {
-      console.log('response', response);
       // const newHabit = getHabitData(response);
       handleFetchHabitData();
     },

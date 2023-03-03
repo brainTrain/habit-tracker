@@ -1,14 +1,22 @@
 // libraries
 import {
+  createAction,
   createSlice,
   createAsyncThunk,
   createSelector,
+  createEntityAdapter,
 } from '@reduxjs/toolkit';
+// import { selectHabitDocumentEntities } from '../habit-documents';
 // redux
+import { selectHabitDocumentEntities } from '../habit-documents';
 import { selectHabitOptionsEntities } from '../habit-options';
 // utils
 import { fetchHabits } from '../../firebase/firestore';
-import { formatHabitGroups, habitsToEntities } from '../../parsers/habit';
+import {
+  formatHabitGroups,
+  habitsToEntities,
+  habitsEntityDocumentsToHabits,
+} from '../../parsers/habit';
 // constants
 const HABITS_NAME = 'habits';
 
@@ -18,10 +26,12 @@ export const selectHabitIDs = (state) => state.habits.ids;
 
 export const selectFormattedHabits = createSelector(
   selectHabitEntities,
+  selectHabitDocumentEntities,
   selectHabitOptionsEntities,
-  (habitEntities, habitOptionsEntities) => {
+  (habitEntities, habitDocumentEntities, habitOptionsEntities) => {
     return formatHabitGroups({
       habitEntities,
+      habitDocumentEntities,
       habitOptionsEntities,
     });
   },
@@ -36,15 +46,31 @@ export const selectFormattedHabitByID = createSelector(
   },
 );
 
+export const createHabits = createAction(
+  `${HABITS_NAME}/set:all`,
+  (habitDocuments) => {
+    const normalizedHabitEntities =
+      habitsEntityDocumentsToHabits(habitDocuments);
+    const payload = {
+      ids: Object.keys(normalizedHabitEntities),
+      entities: normalizedHabitEntities,
+    };
+
+    return { payload };
+  },
+);
+
 export const fetchHabitsRedux = createAsyncThunk(
   `${HABITS_NAME}/fetch:all`,
-  async (userID, habitOptions) => {
+  async (userID) => {
     const habitsResponse = await fetchHabits(userID);
     const habitEntities = habitsToEntities(habitsResponse);
 
     return habitEntities;
   },
 );
+
+const habitsAdapter = createEntityAdapter();
 
 export const habitsSlice = createSlice({
   name: HABITS_NAME,
@@ -54,9 +80,9 @@ export const habitsSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchHabitsRedux.fulfilled, (state, action) => {
-      state.entities = action.payload;
-      state.ids = Object.keys(action.payload);
+    builder.addCase(createHabits, (state, action) => {
+      state.entities = action.payload.entities;
+      state.ids = action.payload.ids;
     });
   },
 });
