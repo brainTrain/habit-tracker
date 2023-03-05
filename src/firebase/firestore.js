@@ -140,12 +140,8 @@ export async function saveHabitOptions(params) {
 }
 
 async function addHabitOptions(data) {
-  const docRef = addDoc(collection(db, HABIT_OPTIONS_COLLECTION), data);
+  const docRef = await addDoc(collection(db, HABIT_OPTIONS_COLLECTION), data);
   const docSnapshot = await getDoc(docRef);
-  debugger;
-
-  // const docRef = await addDoc(collection(db, HABIT_COLLECTION), data);
-  // const docSnapshot = await getDoc(docRef);
 
   return { docRef, docSnapshot };
 }

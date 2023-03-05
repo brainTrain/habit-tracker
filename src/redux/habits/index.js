@@ -5,7 +5,6 @@ import {
   createSelector,
   createEntityAdapter,
 } from '@reduxjs/toolkit';
-// import { selectHabitDocumentEntities } from '../habit-documents';
 // redux
 import { selectHabitDocumentEntities } from '../habit-documents';
 import { selectHabitOptionsEntities } from '../habit-options';

@@ -20,6 +20,7 @@ import {
   DELETE_HABIT_DOCUMENT,
   CREATE_HABIT_OPTIONS,
   UPDATE_HABIT_OPTIONS,
+  deleteHabitOptions,
 } from './firebase/firestore';
 import { getHabitData, getHabitOptionsData } from './parsers/habit';
 // redux
@@ -234,6 +235,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
         dispatch(habitRemoveOne(habitID));
         // also delete habitOptions if they exist
         if (habitOptions) {
+          deleteHabitOptions(habitOptions.id);
           dispatch(habitOptionsRemoveOne(habitID));
         }
       }
