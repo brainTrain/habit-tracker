@@ -2,7 +2,6 @@
 import {
   createAction,
   createSlice,
-  createAsyncThunk,
   createSelector,
   createEntityAdapter,
 } from '@reduxjs/toolkit';
