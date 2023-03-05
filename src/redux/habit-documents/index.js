@@ -22,7 +22,7 @@ export const fetchHabitDocuments = createAsyncThunk(
     const habitDocuments = [];
 
     habitsResponse.forEach((doc) => {
-      habitDocuments.push(getHabitData(doc));
+      habitDocuments.push(getHabitData(doc.id, doc.data()));
     });
 
     return habitDocuments;
@@ -38,10 +38,21 @@ export const habitDocumentsSlice = createSlice({
     habitDocumentsAddOne: habitDocumentsAdapter.addOne,
     habitDocumentsAddMany: habitDocumentsAdapter.addMany,
     habitDocumentsRemoveOne: habitDocumentsAdapter.removeOne,
+    habitDocumentsRemoveMany: habitDocumentsAdapter.removeMany,
   },
-  extraReducers: {
-    [fetchHabitDocuments.fulfilled]: (state, action) => {
+  extraReducers: (builder) => {
+    builder.addCase(fetchHabitDocuments.fulfilled, (state, action) => {
       habitDocumentsAdapter.addMany(state, action.payload);
-    },
+    });
   },
 });
+// adapter actions
+export const {
+  habitDocumentsAddOne,
+  habitDocumentsAddMany,
+  habitDocumentsRemoveOne,
+  habitDocumentsRemoveMany,
+} = habitDocumentsSlice.actions;
+// adapter selectors
+export const { selectById: selectHabitDocumentById } =
+  habitDocumentsAdapter.getSelectors((state) => state.habitDocuments);

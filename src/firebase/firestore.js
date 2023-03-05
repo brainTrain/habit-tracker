@@ -3,7 +3,7 @@ import {
   addDoc,
   updateDoc,
   collection,
-  // getDoc,
+  getDoc,
   getDocs,
   getFirestore,
   query,
@@ -15,9 +15,17 @@ import { nanoid } from 'nanoid';
 import app from './';
 
 export const db = getFirestore(app);
-
+// firestore collections
 const HABIT_COLLECTION = 'habit';
 const HABIT_OPTIONS_COLLECTION = 'habit-options';
+// async CRUD operation enums
+export const DELETE_HABIT_BY_DAY = 'delete-habit-by-day';
+export const DELETE_ENTIRE_HABIT = 'delete-entire-habit';
+export const DELETE_HABIT_DOCUMENT = 'delete-habit-document';
+// adds new document for an existing habit
+export const ADD_DOCUMENT_UPDATE_HABIT = 'add-document-update-habit';
+// adds new document that creates habit
+export const ADD_DOCUMENT_CREATE_HABIT = 'add-document-create-habit';
 
 // Habit methods
 export async function saveHabit(habitLabel, count, userID, date, habitID) {
@@ -33,11 +41,19 @@ export async function saveHabit(habitLabel, count, userID, date, habitID) {
     habitID: hasHabitID ? habitID : nanoid(),
   };
 
-  return addDoc(collection(db, HABIT_COLLECTION), data);
-  // const docRef = await addDoc(collection(db, HABIT_COLLECTION), data);
-  // const newDoc = await getDoc(docRef);
+  const docRef = await addDoc(collection(db, HABIT_COLLECTION), data);
+  const docSnapshot = await getDoc(docRef);
 
-  // return docRef;
+  return {
+    docRef,
+    habitDocument: {
+      ...docSnapshot.data(),
+      id: docSnapshot.id,
+    },
+    operation: hasHabitID
+      ? ADD_DOCUMENT_UPDATE_HABIT
+      : ADD_DOCUMENT_CREATE_HABIT,
+  };
 }
 
 export async function fetchHabits(userID) {

@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { utcToZonedTime, format } from 'date-fns-tz';
-
 // utils
 import { saveHabit } from './firebase/firestore';
 // constants

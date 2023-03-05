@@ -17,7 +17,12 @@ import { selectFormattedHabitByID } from './redux/habits';
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
-import { deleteHabit } from './firebase/firestore';
+import {
+  deleteHabit,
+  DELETE_HABIT_BY_DAY,
+  DELETE_ENTIRE_HABIT,
+  DELETE_HABIT_DOCUMENT,
+} from './firebase/firestore';
 import { flattenHabitItems } from './parsers/habit';
 import { dateStringToObject } from './formatters/datetime';
 // components
@@ -239,7 +244,7 @@ function HabitGroup({
     }),
   });
   const [habitChartData, setHabitChartData] = useState([]);
-  const [habitItems, setHabitItems] = useState([]);
+  const [habitDocuments, setHabitDocuments] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // const [optionsTimeRange, setOptionsTimeRange] = useState();
@@ -299,7 +304,7 @@ function HabitGroup({
     const currentTotalCount = groupedData[currentDate.string]?.totalCount || 0;
 
     setHabitChartData(currentChartData);
-    setHabitItems(currentTableData);
+    setHabitDocuments(currentTableData);
     setTotalCount(currentTotalCount);
   }, [currentDate, groupedData]);
 
@@ -338,16 +343,20 @@ function HabitGroup({
         `Are you sure you want to delete all ${habitLabel} habits for ${currentDate.string}?`,
       )
     ) {
-      deleteHabit(habitItems)
-        .then(() => {
-          onDeleteHabit();
+      deleteHabit(habitDocuments)
+        .then((bro) => {
+          const deleteResponse = {
+            operation: DELETE_HABIT_BY_DAY,
+            habitDocuments,
+          };
+          onDeleteHabit(deleteResponse);
           setIsMenuOpen(false);
         })
         .catch((error) => {
           console.error('error deleting habit', error);
         });
     }
-  }, [habitLabel, habitItems, onDeleteHabit, currentDate]);
+  }, [habitLabel, habitDocuments, onDeleteHabit, currentDate]);
 
   const handleDeleteEntireHabit = useCallback(() => {
     if (
@@ -359,7 +368,11 @@ function HabitGroup({
 
       deleteHabit(flatHabit)
         .then(() => {
-          onDeleteHabit();
+          const deleteResponse = {
+            operation: DELETE_ENTIRE_HABIT,
+            habitDocuments: flatHabit,
+          };
+          onDeleteHabit(deleteResponse);
           setIsMenuOpen(false);
         })
         .catch((error) => {
@@ -386,7 +399,11 @@ function HabitGroup({
       ) {
         deleteHabit([habit])
           .then(() => {
-            onDeleteHabit();
+            const deleteResponse = {
+              operation: DELETE_HABIT_DOCUMENT,
+              habitDocuments: [habit],
+            };
+            onDeleteHabit(deleteResponse);
           })
           .catch((error) => {
             console.error('error deleting habit record', error);
@@ -483,7 +500,7 @@ function HabitGroup({
                   </tr>
                 </thead>
                 <tbody>
-                  {habitItems.map((habit) => {
+                  {habitDocuments.map((habit) => {
                     const { id, count, datetime } = habit;
 
                     const timeString = format(datetime, 'h:mm');

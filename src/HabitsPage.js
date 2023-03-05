@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import difference from 'lodash/difference';
 // utils
 import {
   appGutterPadding,
@@ -11,9 +12,29 @@ import {
   TOP_BOTTOM_PAGE_GUTTER,
 } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
+import {
+  ADD_DOCUMENT_CREATE_HABIT,
+  ADD_DOCUMENT_UPDATE_HABIT,
+  DELETE_HABIT_BY_DAY,
+  DELETE_ENTIRE_HABIT,
+  DELETE_HABIT_DOCUMENT,
+} from './firebase/firestore';
+import { getHabitData } from './parsers/habit';
 // redux
-import { fetchHabitDocuments } from './redux/habit-documents';
-import { fetchHabitsRedux, createHabits, selectHabitIDs } from './redux/habits';
+import {
+  fetchHabitDocuments,
+  habitDocumentsAddOne,
+  habitDocumentsRemoveMany,
+} from './redux/habit-documents';
+import {
+  fetchHabitsRedux,
+  createHabits,
+  selectHabitIDs,
+  habitAddOne,
+  habitUpdateOne,
+  habitRemoveOne,
+  selectHabitEntities,
+} from './redux/habits';
 import { fetchHabitOptionsRedux } from './redux/habit-options';
 // components
 import HabitGroup from './HabitGroup';
@@ -100,6 +121,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
   const habitIDs = useSelector(selectHabitIDs);
+  const habitEntities = useSelector(selectHabitEntities);
   const dispatch = useDispatch();
 
   const handleFetchHabitData = useCallback(async () => {
@@ -120,10 +142,31 @@ function HabitsPage({ userID, userEmail, onLogout }) {
 
   const handleAddHabit = useCallback(
     (response) => {
-      // const newHabit = getHabitData(response);
-      handleFetchHabitData();
+      const { operation, habitDocument } = response;
+      const newHabitDocument = getHabitData(habitDocument.id, habitDocument);
+      const { habitID } = newHabitDocument;
+      const newHabit = {
+        id: habitID,
+        documentIDList: [newHabitDocument.id],
+      };
+      if (operation === ADD_DOCUMENT_CREATE_HABIT) {
+        dispatch(habitDocumentsAddOne(newHabitDocument));
+        dispatch(habitAddOne(newHabit));
+      }
+      if (operation === ADD_DOCUMENT_UPDATE_HABIT) {
+        const oldHabit = habitEntities[habitID];
+        const newHabitUpdate = {
+          id: habitID,
+          changes: {
+            documentIDList: [newHabitDocument.id, ...oldHabit.documentIDList],
+          },
+        };
+
+        dispatch(habitDocumentsAddOne(newHabitDocument));
+        dispatch(habitUpdateOne(newHabitUpdate));
+      }
     },
-    [handleFetchHabitData],
+    [habitEntities],
   );
 
   // TODO: make this header section its own component and raise it up a level broooooo
@@ -131,9 +174,42 @@ function HabitsPage({ userID, userEmail, onLogout }) {
     onLogout();
   }, [onLogout]);
 
-  const handleDeleteHabit = useCallback(() => {
-    handleFetchHabitData();
-  }, [handleFetchHabitData]);
+  const handleDeleteHabit = useCallback(
+    (response) => {
+      const { operation, habitDocuments } = response;
+      const { habitID } = habitDocuments[0];
+      const oldHabit = habitEntities[habitID];
+      const habitDocumentIDs = habitDocuments.map(({ id }) => id);
+      const newHabitDocumentIDs = difference(
+        oldHabit.documentIDList,
+        habitDocumentIDs,
+      );
+      // if removing these documents from a habit documentIDList results in an
+      // empty array this habit no longer has any documents and should be removed
+      // or if we are explicitly removing all of them
+      const shouldDeleteHabit = Boolean(
+        !newHabitDocumentIDs.length || operation === DELETE_ENTIRE_HABIT,
+      );
+      // always remove documents
+      dispatch(habitDocumentsRemoveMany(habitDocumentIDs));
+
+      if (operation === DELETE_HABIT_DOCUMENT || DELETE_HABIT_BY_DAY) {
+        const newHabitUpdate = {
+          id: habitID,
+          changes: {
+            documentIDList: newHabitDocumentIDs,
+          },
+        };
+
+        dispatch(habitUpdateOne(newHabitUpdate));
+      }
+
+      if (shouldDeleteHabit) {
+        dispatch(habitRemoveOne(habitID));
+      }
+    },
+    [habitEntities],
+  );
 
   const handleToggleCreateFormClick = useCallback(() => {
     setIsCreateFormShown((prev) => !prev);

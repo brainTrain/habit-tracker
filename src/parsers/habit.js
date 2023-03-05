@@ -13,8 +13,8 @@ export function flattenHabitItems(groupedData) {
   return flatHabitItems;
 }
 
-export function getHabitData(doc) {
-  const { count, datetime, habitLabel, publicID, habitID } = doc.data();
+export function getHabitData(id, doc) {
+  const { count, datetime, habitLabel, publicID, habitID } = doc;
   const parsedCount = Number(count);
   const newHabit = {
     count: parsedCount,
@@ -22,7 +22,7 @@ export function getHabitData(doc) {
     habitLabel,
     habitID,
     publicID,
-    id: doc.id,
+    id,
   };
 
   return newHabit;
@@ -32,7 +32,7 @@ export function habitsToEntities(habitsResponse) {
   let newHabits = [];
 
   habitsResponse.forEach((doc) => {
-    const newHabit = getHabitData(doc);
+    const newHabit = getHabitData(doc.id, doc.data());
 
     newHabits.push(newHabit);
   });
@@ -42,17 +42,32 @@ export function habitsToEntities(habitsResponse) {
   return habitEntities;
 }
 
+export function formatHabitEntitiesForAdapter(habitEntities) {}
+
 export function habitsEntityDocumentsToHabits(habitDocuments) {
   const habitEntities = groupBy(habitDocuments, 'habitID');
-  const normalizedHabitEntities = {};
+  const normalizedHabitEntitiesList = [];
 
   Object.keys(habitEntities).forEach((habitID) => {
-    normalizedHabitEntities[habitID] = habitEntities[habitID].map(
-      ({ id }) => id,
+    normalizedHabitEntitiesList.push({
+      id: habitID,
+      // documentIDList: habitEntities[habitID].map(({ publicID }) => publicID),
+      documentIDList: habitEntities[habitID].map(({ id }) => id),
+    });
+  });
+
+  return normalizedHabitEntitiesList;
+}
+
+export function sortHabitsByDate(habitsList, habitDocumentEntities) {
+  const sortedHabitsList = habitsList?.sort((a, b) => {
+    return (
+      new Date(habitDocumentEntities[b]?.datetime) -
+      new Date(habitDocumentEntities[a]?.datetime)
     );
   });
 
-  return normalizedHabitEntities;
+  return sortedHabitsList;
 }
 
 export function formatHabitGroups(params) {
@@ -62,26 +77,22 @@ export function formatHabitGroups(params) {
   Object.keys(habitEntities).forEach((newHabitID) => {
     // TODO: There's gotta be a better way to do this entities lookup
     const { habitLabel, habitID } = habitDocumentEntities[
-      habitEntities[newHabitID][0]
+      habitEntities[newHabitID].documentIDList[0]
     ] || {
       habitLabel: '',
       habitID: '',
     };
     // TODO: these are read only when we get them from redux-toolkit, figure out right way to sort in redux toolkit
     // guessing prolly in a reducer
-    const groupedNewHabitsList = [...habitEntities[newHabitID]]?.sort(
-      (a, b) => {
-        return (
-          new Date(habitDocumentEntities[b]?.datetime) -
-          new Date(habitDocumentEntities[a]?.datetime)
-        );
-      },
+    const sortedHabitsList = sortHabitsByDate(
+      [...habitEntities[newHabitID].documentIDList],
+      habitDocumentEntities,
     );
     const groupedByDate = {};
     const dateOrder = [];
     // date grouping
     // TODO: do in selector
-    groupedNewHabitsList.forEach((newHabit) => {
+    sortedHabitsList.forEach((newHabit) => {
       const { datetime, count } = habitDocumentEntities[newHabit];
       const datetimeObj = new Date(datetime);
       const { negativeTimeOffset } = habitOptionsEntities[habitID] || {

@@ -51,12 +51,8 @@ export const createHabits = createAction(
   (habitDocuments) => {
     const normalizedHabitEntities =
       habitsEntityDocumentsToHabits(habitDocuments);
-    const payload = {
-      ids: Object.keys(normalizedHabitEntities),
-      entities: normalizedHabitEntities,
-    };
 
-    return { payload };
+    return { payload: normalizedHabitEntities };
   },
 );
 
@@ -74,15 +70,23 @@ const habitsAdapter = createEntityAdapter();
 
 export const habitsSlice = createSlice({
   name: HABITS_NAME,
-  initialState: {
-    ids: [],
-    entities: {},
+  initialState: habitsAdapter.getInitialState(),
+  reducers: {
+    habitAddOne: habitsAdapter.addOne,
+    habitAddMany: habitsAdapter.addMany,
+    habitUpdateOne: habitsAdapter.updateOne,
+    habitRemoveOne: habitsAdapter.removeOne,
   },
-  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(createHabits, (state, action) => {
-      state.entities = action.payload.entities;
-      state.ids = action.payload.ids;
+      habitsAdapter.addMany(state, action.payload);
     });
   },
 });
+// adapter actions
+export const { habitAddOne, habitAddMany, habitUpdateOne, habitRemoveOne } =
+  habitsSlice.actions;
+// adapter selectors
+export const { selectById: selectHabitById } = habitsAdapter.getSelectors(
+  (state) => state.habits,
+);
