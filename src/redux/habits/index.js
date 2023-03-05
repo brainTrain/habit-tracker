@@ -37,6 +37,15 @@ export const selectFormattedHabits = createSelector(
   },
 );
 
+export const selectHabitEntityByID = createSelector(
+  selectHabitEntities,
+  (state, habitID) => habitID,
+  (habitEntities, habitID) => {
+    // TODO: might want to use an empty object as a fallback here
+    return habitEntities[habitID] || {};
+  },
+);
+
 export const selectFormattedHabitByID = createSelector(
   selectFormattedHabits,
   (state, habitID) => habitID,

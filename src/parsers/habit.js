@@ -61,10 +61,10 @@ export function habitsEntityDocumentsToHabits(habitDocuments) {
 
 export function sortHabitsByDate(habitsList, habitDocumentEntities) {
   const sortedHabitsList = habitsList?.sort((a, b) => {
-    return (
-      new Date(habitDocumentEntities[b]?.datetime) -
-      new Date(habitDocumentEntities[a]?.datetime)
-    );
+    const dateA = new Date(habitDocumentEntities[b]?.datetime);
+    const dateB = new Date(habitDocumentEntities[a]?.datetime);
+
+    return dateA - dateB;
   });
 
   return sortedHabitsList;
@@ -109,7 +109,7 @@ export function formatHabitGroups(params) {
       const chartHabit = {
         ...{
           count,
-          datetimeObj,
+          datetime: datetimeObj,
           label: `${count} at ${newHabitTimeString}`,
         },
       };

@@ -1,9 +1,13 @@
 // libraries
 import { useCallback, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { utcToZonedTime, format } from 'date-fns-tz';
+import isEqual from 'lodash/isEqual';
 // utils
 import { saveHabit } from './firebase/firestore';
+// redux
+import { selectHabitEntityByID } from './redux/habits';
 // constants
 const COUNT_INPUT_ID = 'habit-count-input';
 const LABEL_INPUT_ID = 'habit-label-input';
@@ -19,6 +23,10 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
   const [hasHabitID, setHasHabitID] = useState(false);
   const [dateTime, setDateTime] = useState('');
   const [showDateTimeInput, setShowDateTimeInput] = useState(false);
+  const habitEntity = useSelector(
+    (state) => selectHabitEntityByID(state, habitID),
+    isEqual,
+  );
 
   useEffect(() => {
     if (showDateTimeInput) {
@@ -84,7 +92,7 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
 
         saveHabit(label, count, userID, newDateObj, habitID)
           .then((response) => {
-            onAddHabit(response);
+            onAddHabit({ ...response, oldHabit: habitEntity });
             setFormSubmissionState(FORM_INITIAL);
             clearInputs();
           })
@@ -94,7 +102,15 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
           });
       }
     },
-    [onAddHabit, userID, clearInputs, habitLabel, dateTime, habitID],
+    [
+      onAddHabit,
+      userID,
+      clearInputs,
+      habitLabel,
+      dateTime,
+      habitID,
+      habitEntity,
+    ],
   );
 
   const handleShowDateTimeInput = useCallback(() => {

@@ -12,8 +12,12 @@ import {
 } from 'victory';
 import { format } from 'date-fns';
 import { Calendar, DateObject } from 'react-multi-date-picker';
+import isEqual from 'lodash/isEqual';
 // redux
-import { selectFormattedHabitByID } from './redux/habits';
+import {
+  selectFormattedHabitByID,
+  selectHabitEntityByID,
+} from './redux/habits';
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
@@ -224,11 +228,15 @@ function HabitGroup({
   userID,
 }) {
   // redux props
+  // NOTE: will probably be able to remove the isEqual deep check when these are flattened
   const {
     habitLabel,
     dateOrder,
     data: groupedData,
-  } = useSelector((state) => selectFormattedHabitByID(state, habitID));
+  } = useSelector((state) => selectFormattedHabitByID(state, habitID), isEqual);
+  const habitEntity = useSelector((state) =>
+    selectHabitEntityByID(state, habitID),
+  );
   // local state
   const [areDetailsShown, setAreDetailsShown] = useState(false);
   const [isChartShown, setIsChartShown] = useState(false);
@@ -348,6 +356,7 @@ function HabitGroup({
           const deleteResponse = {
             operation: DELETE_HABIT_BY_DAY,
             habitDocuments,
+            oldHabit: habitEntity,
           };
           onDeleteHabit(deleteResponse);
           setIsMenuOpen(false);
@@ -356,7 +365,7 @@ function HabitGroup({
           console.error('error deleting habit', error);
         });
     }
-  }, [habitLabel, habitDocuments, onDeleteHabit, currentDate]);
+  }, [habitLabel, habitDocuments, onDeleteHabit, currentDate, habitEntity]);
 
   const handleDeleteEntireHabit = useCallback(() => {
     if (
@@ -371,6 +380,7 @@ function HabitGroup({
           const deleteResponse = {
             operation: DELETE_ENTIRE_HABIT,
             habitDocuments: flatHabit,
+            oldHabit: habitEntity,
           };
           onDeleteHabit(deleteResponse);
           setIsMenuOpen(false);
@@ -379,7 +389,7 @@ function HabitGroup({
           console.error('error deleting habit', error);
         });
     }
-  }, [habitLabel, groupedData, onDeleteHabit]);
+  }, [habitLabel, groupedData, onDeleteHabit, habitEntity]);
 
   const handleMenuButtonClick = useCallback(() => {
     setIsMenuOpen((prev) => {
@@ -402,6 +412,7 @@ function HabitGroup({
             const deleteResponse = {
               operation: DELETE_HABIT_DOCUMENT,
               habitDocuments: [habit],
+              oldHabit: habitEntity,
             };
             onDeleteHabit(deleteResponse);
           })
@@ -410,7 +421,7 @@ function HabitGroup({
           });
       }
     },
-    [onDeleteHabit],
+    [onDeleteHabit, habitEntity],
   );
 
   const menuWrapperRef = useDetectClickOutside({

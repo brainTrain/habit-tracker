@@ -33,7 +33,6 @@ import {
   habitAddOne,
   habitUpdateOne,
   habitRemoveOne,
-  selectHabitEntities,
 } from './redux/habits';
 import { fetchHabitOptionsRedux } from './redux/habit-options';
 // components
@@ -121,12 +120,10 @@ function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
   const [isCreateFormShown, setIsCreateFormShown] = useState(false);
   const habitIDs = useSelector(selectHabitIDs);
-  const habitEntities = useSelector(selectHabitEntities);
   const dispatch = useDispatch();
 
   const handleFetchHabitData = useCallback(async () => {
     try {
-      // TODO: figure out right way to do this, prolly shouldn't be awaiting
       await dispatch(fetchHabitOptionsRedux(userID));
       const habitDocumentsRes = await dispatch(fetchHabitDocuments(userID));
       // create habit groups based on fetched habit documents
@@ -142,7 +139,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
 
   const handleAddHabit = useCallback(
     (response) => {
-      const { operation, habitDocument } = response;
+      const { operation, habitDocument, oldHabit } = response;
       const newHabitDocument = getHabitData(habitDocument.id, habitDocument);
       const { habitID } = newHabitDocument;
       const newHabit = {
@@ -154,7 +151,6 @@ function HabitsPage({ userID, userEmail, onLogout }) {
         dispatch(habitAddOne(newHabit));
       }
       if (operation === ADD_DOCUMENT_UPDATE_HABIT) {
-        const oldHabit = habitEntities[habitID];
         const newHabitUpdate = {
           id: habitID,
           changes: {
@@ -166,7 +162,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
         dispatch(habitUpdateOne(newHabitUpdate));
       }
     },
-    [habitEntities],
+    [dispatch],
   );
 
   // TODO: make this header section its own component and raise it up a level broooooo
@@ -176,9 +172,8 @@ function HabitsPage({ userID, userEmail, onLogout }) {
 
   const handleDeleteHabit = useCallback(
     (response) => {
-      const { operation, habitDocuments } = response;
+      const { operation, habitDocuments, oldHabit } = response;
       const { habitID } = habitDocuments[0];
-      const oldHabit = habitEntities[habitID];
       const habitDocumentIDs = habitDocuments.map(({ id }) => id);
       const newHabitDocumentIDs = difference(
         oldHabit.documentIDList,
@@ -208,7 +203,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
         dispatch(habitRemoveOne(habitID));
       }
     },
-    [habitEntities],
+    [dispatch],
   );
 
   const handleToggleCreateFormClick = useCallback(() => {
