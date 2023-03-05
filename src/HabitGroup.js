@@ -4,12 +4,6 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
-import {
-  VictoryBar,
-  VictoryChart,
-  VictoryTooltip,
-  VictoryZoomContainer,
-} from 'victory';
 import { format } from 'date-fns';
 import { Calendar, DateObject } from 'react-multi-date-picker';
 import isEqual from 'lodash/isEqual';
@@ -33,6 +27,7 @@ import { dateStringToObject } from './formatters/datetime';
 // components
 import HabitForm from './HabitForm';
 import HabitOptionsForm from './HabitOptionsForm';
+import HabitChart from './HabitChart';
 // constants
 const TABLE_COLUMNS = ['Count', 'Time', 'Date'];
 // styles
@@ -207,18 +202,6 @@ const TableYear = styled.p``;
 const TableTime = styled.p``;
 const TableAMPM = styled.p``;
 
-const ChartWrapper = styled.section`
-  width: auto;
-  height: 20rem;
-  user-select: none;
-  display: inline-block;
-  border: 1px solid;
-
-  @media ${mediaQueryDevice.laptop} {
-    width: 100%;
-  }
-`;
-
 const CalendarWrapper = styled.section``;
 
 function HabitGroup({
@@ -255,7 +238,6 @@ function HabitGroup({
       day: 20,
     }),
   });
-  const [habitChartData, setHabitChartData] = useState([]);
   const [habitDocuments, setHabitDocuments] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -311,11 +293,9 @@ function HabitGroup({
   */
 
   useEffect(() => {
-    const currentChartData = groupedData[currentDate.string]?.chartList || [];
     const currentTableData = groupedData[currentDate.string]?.tableList || [];
     const currentTotalCount = groupedData[currentDate.string]?.totalCount || 0;
 
-    setHabitChartData(currentChartData);
     setHabitDocuments(currentTableData);
     setTotalCount(currentTotalCount);
   }, [currentDate, groupedData]);
@@ -566,18 +546,7 @@ function HabitGroup({
             </TableWrapper>
           ) : null}
           {isChartShown ? (
-            <ChartWrapper>
-              <VictoryChart
-                domainPadding={20}
-                containerComponent={<VictoryZoomContainer />}>
-                <VictoryBar
-                  labelComponent={<VictoryTooltip />}
-                  data={habitChartData}
-                  x="datetime"
-                  y="count"
-                />
-              </VictoryChart>
-            </ChartWrapper>
+            <HabitChart habitID={habitID} dateString={currentDate.string} />
           ) : null}
           {isCalendarShown ? (
             <CalendarWrapper>
