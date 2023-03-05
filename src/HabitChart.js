@@ -26,7 +26,6 @@ const ChartWrapper = styled.section`
 `;
 
 function HabitChart({ habitID, dateString }) {
-  console.log(dateString);
   // redux props
   const chartData = useSelector((state) =>
     selectHabitChartDataByID(state, { habitID, dateString }),

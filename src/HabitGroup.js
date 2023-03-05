@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
-import { format } from 'date-fns';
 import { Calendar, DateObject } from 'react-multi-date-picker';
 import isEqual from 'lodash/isEqual';
 // redux
@@ -28,8 +27,9 @@ import { dateStringToObject } from './formatters/datetime';
 import HabitForm from './HabitForm';
 import HabitOptionsForm from './HabitOptionsForm';
 import HabitChart from './HabitChart';
-// constants
-const TABLE_COLUMNS = ['Count', 'Time', 'Date'];
+import HabitTable from './HabitTable';
+// component styles
+import { MenuButton } from './styles/components';
 // styles
 const MenuHeader = styled.section`
   display: flex;
@@ -65,19 +65,6 @@ const MenuWrapper = styled.section`
   flex-direction: column;
   height: 100%;
   position: relative;
-`;
-
-const MenuButton = styled.button`
-  font-size: 1rem;
-  height: 2rem;
-  width: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const DeleteRecordButton = styled(MenuButton)`
-  margin: 0 auto;
 `;
 
 const DateButton = styled.button`
@@ -136,71 +123,6 @@ const DetailsBottomContainer = styled.section`
     flex-direction: row;
   }
 `;
-
-const TableWrapper = styled.section`
-  width: 100%;
-  max-height: 20rem;
-  overflow: auto;
-  border: 1px solid;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  height: 100%;
-  text-align: left;
-  border-collapse: collapse;
-`;
-
-const Th = styled.th`
-  border: 1px solid;
-  border-top: none;
-  padding: 0.5rem;
-
-  &:first-of-type {
-    border-left: none;
-  }
-
-  &:last-of-type {
-    border-right: none;
-  }
-
-  @media ${mediaQueryDevice.mobileXL} {
-    padding: 1rem;
-  }
-`;
-
-const Tr = styled.tr`
-  &:last-of-type {
-    td {
-      border-bottom: none;
-    }
-  }
-
-  td {
-    &:first-of-type {
-      border-left: none;
-    }
-
-    &:last-of-type {
-      border-right: none;
-    }
-  }
-`;
-
-const Td = styled.td`
-  border: 1px solid;
-  padding: 0.5rem;
-
-  @media ${mediaQueryDevice.mobileXL} {
-    padding: 1rem;
-  }
-`;
-
-const TableCount = styled.p``;
-const TableDate = styled.p``;
-const TableYear = styled.p``;
-const TableTime = styled.p``;
-const TableAMPM = styled.p``;
 
 const CalendarWrapper = styled.section``;
 
@@ -494,56 +416,11 @@ function HabitGroup({
         </DetailsTopContainer>
         <DetailsBottomContainer>
           {areDetailsShown ? (
-            <TableWrapper>
-              <Table border={1}>
-                <thead>
-                  <tr>
-                    {TABLE_COLUMNS.map((columnName) => {
-                      return <Th key={columnName}>{columnName}</Th>;
-                    })}
-                    <Th>Delete</Th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {habitDocuments.map((habit) => {
-                    const { id, count, datetime } = habit;
-
-                    const timeString = format(datetime, 'h:mm');
-                    const timeAMPMString = format(datetime, 'a');
-                    const dateString = datetime.toLocaleDateString([], {
-                      month: 'short',
-                      day: 'numeric',
-                    });
-                    const yearString = datetime.toLocaleDateString([], {
-                      year: 'numeric',
-                    });
-
-                    return (
-                      <Tr key={id}>
-                        <Td>
-                          <TableCount>{count}</TableCount>
-                        </Td>
-                        {/* empty array instead of locale string in first param defaults to default local */}
-                        <Td>
-                          <TableTime>{timeString}</TableTime>
-                          <TableAMPM>{timeAMPMString}</TableAMPM>
-                        </Td>
-                        <Td>
-                          <TableDate>{dateString}</TableDate>
-                          <TableYear>{yearString}</TableYear>
-                        </Td>
-                        <Td>
-                          <DeleteRecordButton
-                            onClick={() => handleDeleteHabitRecord(habit)}>
-                            x
-                          </DeleteRecordButton>
-                        </Td>
-                      </Tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
-            </TableWrapper>
+            <HabitTable
+              habitID={habitID}
+              dateString={currentDate.string}
+              onDeleteHabitRecord={handleDeleteHabitRecord}
+            />
           ) : null}
           {isChartShown ? (
             <HabitChart habitID={habitID} dateString={currentDate.string} />

@@ -62,6 +62,17 @@ export const selectHabitChartDataByID = createSelector(
   },
 );
 
+export const selectHabitTableDataByID = createSelector(
+  selectFormattedHabits,
+  (state, payload) => payload,
+  (formattedHabits, { habitID, dateString }) => {
+    const formattedHabit = formattedHabits[habitID] || {};
+    const tableData = formattedHabit?.data[dateString]?.tableList || [];
+
+    return tableData;
+  },
+);
+
 export const createHabits = createAction(
   `${HABITS_NAME}/set:all`,
   (habitDocuments) => {
