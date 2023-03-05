@@ -63,7 +63,7 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
           habitOptions: newHabitOptions,
         })
           .then((response) => {
-            onAddHabitOption();
+            onAddHabitOption(response);
             setFormSubmissionState(FORM_INITIAL);
           })
           .catch((error) => {

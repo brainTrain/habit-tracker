@@ -147,30 +147,27 @@ export function formatHabitGroups(params) {
   return formattedHabits;
 }
 
-export function habitOptionsToEntities(habitOptionsResponse) {
-  let newHabitOptions = [];
+export function getHabitOptionsData(id, doc) {
+  const { habitID, habitOptionsID, negativeTimeOffset } = doc;
+  const parsedTimeOffset = Number(negativeTimeOffset);
+  const newHabitOptions = {
+    negativeTimeOffset: parsedTimeOffset,
+    habitID,
+    habitOptionsID,
+    id,
+  };
+
+  return newHabitOptions;
+}
+
+export function habitOptionsToList(habitOptionsResponse) {
+  let newHabitOptionsList = [];
 
   habitOptionsResponse.forEach((doc) => {
-    const { habitID, habitOptionsID, negativeTimeOffset } = doc.data();
-    const parsedTimeOffset = Number(negativeTimeOffset);
-    const newHabitOption = {
-      negativeTimeOffset: parsedTimeOffset,
-      habitID,
-      habitOptionsID,
-      id: doc.id,
-    };
+    const newHabitOptions = getHabitOptionsData(doc.id, doc.data());
 
-    newHabitOptions.push(newHabitOption);
+    newHabitOptionsList.push(newHabitOptions);
   });
 
-  const groupedNewHabitOptions = groupBy(newHabitOptions, 'habitID');
-  const reducedNewHabitOptions = {};
-
-  Object.keys(groupedNewHabitOptions).forEach((habitID) => {
-    reducedNewHabitOptions[habitID] = groupedNewHabitOptions[habitID][0] || {
-      ...HABIT_OPTION_EMPTY,
-    };
-  });
-
-  return reducedNewHabitOptions;
+  return newHabitOptionsList;
 }

@@ -10,6 +10,7 @@ import {
   where,
   writeBatch,
   doc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
 import app from './';
@@ -26,6 +27,8 @@ export const DELETE_HABIT_DOCUMENT = 'delete-habit-document';
 export const ADD_DOCUMENT_UPDATE_HABIT = 'add-document-update-habit';
 // adds new document that creates habit
 export const ADD_DOCUMENT_CREATE_HABIT = 'add-document-create-habit';
+export const CREATE_HABIT_OPTIONS = 'create-habit-options';
+export const UPDATE_HABIT_OPTIONS = 'update-habit-options';
 
 // Habit methods
 export async function saveHabit(habitLabel, count, userID, date, habitID) {
@@ -108,24 +111,60 @@ export async function saveHabitOptions(params) {
     habitID,
     ...habitOptions,
   };
-
+  let habitOptionsResponse = {};
   if (hasID) {
-    return updateHabitOptions(id, habitOptions);
+    const { docRef, docSnapshot } = await updateHabitOptions(id, habitOptions);
+    // TODO: this is silly lol
+    habitOptionsResponse = {
+      docRef,
+      habitOptionsDocument: {
+        ...docSnapshot.data(),
+        id: docSnapshot.id,
+      },
+      operation: UPDATE_HABIT_OPTIONS,
+    };
   } else {
     data.habitOptionsID = nanoid();
-
-    return addHabitOptions(data);
+    const { docRef, docSnapshot } = await addHabitOptions(data);
+    habitOptionsResponse = {
+      docRef,
+      habitOptionsDocument: {
+        ...docSnapshot.data(),
+        id: docSnapshot.id,
+      },
+      operation: CREATE_HABIT_OPTIONS,
+    };
   }
+
+  return habitOptionsResponse;
 }
 
 async function addHabitOptions(data) {
-  return addDoc(collection(db, HABIT_OPTIONS_COLLECTION), data);
+  const docRef = addDoc(collection(db, HABIT_OPTIONS_COLLECTION), data);
+  const docSnapshot = await getDoc(docRef);
+  debugger;
+
+  // const docRef = await addDoc(collection(db, HABIT_COLLECTION), data);
+  // const docSnapshot = await getDoc(docRef);
+
+  return { docRef, docSnapshot };
 }
 
 async function updateHabitOptions(id, data) {
+  const docRef = await doc(db, HABIT_OPTIONS_COLLECTION, id);
+  await updateDoc(docRef, data);
+  const docSnapshot = await getDoc(docRef);
+
+  return {
+    docRef,
+    docSnapshot,
+  };
+}
+
+export async function deleteHabitOptions(id) {
   const docRef = doc(db, HABIT_OPTIONS_COLLECTION, id);
 
-  return updateDoc(docRef, data);
+  return await deleteDoc(docRef);
 }
 
 export async function fetchHabitOptions(userID) {

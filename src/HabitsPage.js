@@ -18,8 +18,10 @@ import {
   DELETE_HABIT_BY_DAY,
   DELETE_ENTIRE_HABIT,
   DELETE_HABIT_DOCUMENT,
+  CREATE_HABIT_OPTIONS,
+  UPDATE_HABIT_OPTIONS,
 } from './firebase/firestore';
-import { getHabitData } from './parsers/habit';
+import { getHabitData, getHabitOptionsData } from './parsers/habit';
 // redux
 import {
   fetchHabitDocuments,
@@ -27,13 +29,17 @@ import {
   habitDocumentsRemoveMany,
 } from './redux/habit-documents';
 import {
-  fetchHabitsRedux,
   createHabits,
   selectHabitIDs,
   habitAddOne,
   habitUpdateOne,
   habitRemoveOne,
 } from './redux/habits';
+import {
+  habitOptionsAddOne,
+  habitOptionsUpdateOne,
+  habitOptionsRemoveOne,
+} from './redux/habit-options';
 import { fetchHabitOptionsRedux } from './redux/habit-options';
 // components
 import HabitGroup from './HabitGroup';
@@ -128,7 +134,6 @@ function HabitsPage({ userID, userEmail, onLogout }) {
       const habitDocumentsRes = await dispatch(fetchHabitDocuments(userID));
       // create habit groups based on fetched habit documents
       await dispatch(createHabits(habitDocumentsRes.payload));
-      await dispatch(fetchHabitsRedux(userID));
 
       setHabitsLoadState(HABITS_LOADED);
     } catch (error) {
@@ -165,6 +170,32 @@ function HabitsPage({ userID, userEmail, onLogout }) {
     [dispatch],
   );
 
+  const handleAddHabitOption = useCallback(
+    (response) => {
+      const { operation, habitOptionsDocument } = response;
+      const newHabitOptionsDocument = getHabitOptionsData(
+        habitOptionsDocument.id,
+        habitOptionsDocument,
+      );
+      const { habitID } = newHabitOptionsDocument;
+
+      if (operation === CREATE_HABIT_OPTIONS) {
+        dispatch(habitOptionsAddOne(newHabitOptionsDocument));
+      }
+      if (operation === UPDATE_HABIT_OPTIONS) {
+        const newHabitOptionsUpdate = {
+          id: habitID,
+          changes: {
+            ...newHabitOptionsDocument,
+          },
+        };
+
+        dispatch(habitOptionsUpdateOne(newHabitOptionsUpdate));
+      }
+    },
+    [dispatch],
+  );
+
   // TODO: make this header section its own component and raise it up a level broooooo
   const handleLogout = useCallback(() => {
     onLogout();
@@ -172,7 +203,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
 
   const handleDeleteHabit = useCallback(
     (response) => {
-      const { operation, habitDocuments, oldHabit } = response;
+      const { operation, habitDocuments, oldHabit, habitOptions } = response;
       const { habitID } = habitDocuments[0];
       const habitDocumentIDs = habitDocuments.map(({ id }) => id);
       const newHabitDocumentIDs = difference(
@@ -201,6 +232,10 @@ function HabitsPage({ userID, userEmail, onLogout }) {
 
       if (shouldDeleteHabit) {
         dispatch(habitRemoveOne(habitID));
+        // also delete habitOptions if they exist
+        if (habitOptions) {
+          dispatch(habitOptionsRemoveOne(habitID));
+        }
       }
     },
     [dispatch],
@@ -253,6 +288,7 @@ function HabitsPage({ userID, userEmail, onLogout }) {
                         habitID={key}
                         onAddHabit={handleAddHabit}
                         onDeleteHabit={handleDeleteHabit}
+                        onAddHabitOption={handleAddHabitOption}
                       />
                     </HabitCell>
                   );

@@ -11,10 +11,8 @@ import {
 import { selectHabitDocumentEntities } from '../habit-documents';
 import { selectHabitOptionsEntities } from '../habit-options';
 // utils
-import { fetchHabits } from '../../firebase/firestore';
 import {
   formatHabitGroups,
-  habitsToEntities,
   habitsEntityDocumentsToHabits,
 } from '../../parsers/habit';
 // constants
@@ -62,16 +60,6 @@ export const createHabits = createAction(
       habitsEntityDocumentsToHabits(habitDocuments);
 
     return { payload: normalizedHabitEntities };
-  },
-);
-
-export const fetchHabitsRedux = createAsyncThunk(
-  `${HABITS_NAME}/fetch:all`,
-  async (userID) => {
-    const habitsResponse = await fetchHabits(userID);
-    const habitEntities = habitsToEntities(habitsResponse);
-
-    return habitEntities;
   },
 );
 

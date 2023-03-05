@@ -23,6 +23,7 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
   const [hasHabitID, setHasHabitID] = useState(false);
   const [dateTime, setDateTime] = useState('');
   const [showDateTimeInput, setShowDateTimeInput] = useState(false);
+  // redux props
   const habitEntity = useSelector(
     (state) => selectHabitEntityByID(state, habitID),
     isEqual,

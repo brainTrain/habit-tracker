@@ -18,6 +18,7 @@ import {
   selectFormattedHabitByID,
   selectHabitEntityByID,
 } from './redux/habits';
+import { selectHabitOptionsById } from './redux/habit-options';
 // utils
 import { habitDetailsGutterPadding } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
@@ -221,10 +222,10 @@ const ChartWrapper = styled.section`
 const CalendarWrapper = styled.section``;
 
 function HabitGroup({
-  habitOptions,
   habitID,
   onAddHabit,
   onDeleteHabit,
+  onAddHabitOption,
   userID,
 }) {
   // redux props
@@ -236,6 +237,9 @@ function HabitGroup({
   } = useSelector((state) => selectFormattedHabitByID(state, habitID), isEqual);
   const habitEntity = useSelector((state) =>
     selectHabitEntityByID(state, habitID),
+  );
+  const habitOptions = useSelector((state) =>
+    selectHabitOptionsById(state, habitID),
   );
   // local state
   const [areDetailsShown, setAreDetailsShown] = useState(false);
@@ -357,6 +361,7 @@ function HabitGroup({
             operation: DELETE_HABIT_BY_DAY,
             habitDocuments,
             oldHabit: habitEntity,
+            habitOptions,
           };
           onDeleteHabit(deleteResponse);
           setIsMenuOpen(false);
@@ -365,7 +370,14 @@ function HabitGroup({
           console.error('error deleting habit', error);
         });
     }
-  }, [habitLabel, habitDocuments, onDeleteHabit, currentDate, habitEntity]);
+  }, [
+    habitLabel,
+    habitDocuments,
+    onDeleteHabit,
+    currentDate,
+    habitEntity,
+    habitOptions,
+  ]);
 
   const handleDeleteEntireHabit = useCallback(() => {
     if (
@@ -381,6 +393,7 @@ function HabitGroup({
             operation: DELETE_ENTIRE_HABIT,
             habitDocuments: flatHabit,
             oldHabit: habitEntity,
+            habitOptions,
           };
           onDeleteHabit(deleteResponse);
           setIsMenuOpen(false);
@@ -389,7 +402,7 @@ function HabitGroup({
           console.error('error deleting habit', error);
         });
     }
-  }, [habitLabel, groupedData, onDeleteHabit, habitEntity]);
+  }, [habitLabel, groupedData, onDeleteHabit, habitEntity, habitOptions]);
 
   const handleMenuButtonClick = useCallback(() => {
     setIsMenuOpen((prev) => {
@@ -413,6 +426,7 @@ function HabitGroup({
               operation: DELETE_HABIT_DOCUMENT,
               habitDocuments: [habit],
               oldHabit: habitEntity,
+              habitOptions,
             };
             onDeleteHabit(deleteResponse);
           })
@@ -421,7 +435,7 @@ function HabitGroup({
           });
       }
     },
-    [onDeleteHabit, habitEntity],
+    [onDeleteHabit, habitEntity, habitOptions],
   );
 
   const menuWrapperRef = useDetectClickOutside({
@@ -462,7 +476,7 @@ function HabitGroup({
             <HabitOptionsForm
               userID={userID}
               habitID={habitID}
-              onAddHabitOption={onAddHabit}
+              onAddHabitOption={onAddHabitOption}
             />
           </section>
           <FormWrapper>
@@ -585,6 +599,7 @@ HabitGroup.propTypes = {
   userID: PropTypes.string,
   habitID: PropTypes.string,
   onAddHabit: PropTypes.func,
+  onAddHabitOption: PropTypes.func,
   onDeleteHabit: PropTypes.func,
 };
 
@@ -599,6 +614,11 @@ HabitGroup.defaultProps = {
   onDeleteHabit: function () {
     console.warn(
       'onDeleteHabit() prop in <HabitGroup /> component called without a value',
+    );
+  },
+  onAddHabitOption: function () {
+    console.warn(
+      'onAddHabitOption() prop in <HabitGroup /> component called without a value',
     );
   },
 };
