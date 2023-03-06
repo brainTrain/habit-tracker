@@ -1,10 +1,9 @@
 // libraries
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
-import { Calendar } from 'react-multi-date-picker';
 import isEqual from 'lodash/isEqual';
 // redux
 import {
@@ -22,12 +21,12 @@ import {
   DELETE_HABIT_DOCUMENT,
 } from './firebase/firestore';
 import { flattenHabitItems } from './parsers/habit';
-import { dateStringToObject } from './formatters/datetime';
 // components
 import HabitForm from './HabitForm';
 import HabitOptionsForm from './HabitOptionsForm';
 import HabitChart from './HabitChart';
 import HabitTable from './HabitTable';
+import HabitCalendar from './HabitCalendar';
 // component styles
 import { MenuButton } from './styles/components';
 // styles
@@ -124,8 +123,6 @@ const DetailsBottomContainer = styled.section`
   }
 `;
 
-const CalendarWrapper = styled.section``;
-
 function HabitGroup({
   habitID,
   onAddHabit,
@@ -150,30 +147,11 @@ function HabitGroup({
   const [isTableShown, setIsTableShown] = useState(false);
   const [isChartShown, setIsChartShown] = useState(false);
   const [isCalendarShown, setIsCalendarShown] = useState(false);
-  const [calendarValues, setCalendarValues] = useState([]);
-  const [currentDate, setCurrentDate] = useState({
-    ...dateStringToObject(dateOrder[0]),
-  });
+  const [currentDateString, setCurrentDateString] = useState(dateOrder[0]);
   const [habitDocuments, setHabitDocuments] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // const [optionsTimeRange, setOptionsTimeRange] = useState();
-
-  const calendarRef = useRef(null);
-
-  useEffect(() => {
-    calendarRef?.current?.set('year', currentDate.object.year);
-    calendarRef?.current?.set('month', currentDate.object.month);
-    calendarRef?.current?.set('day', currentDate.object.day);
-  }, [currentDate]);
-
-  useEffect(() => {
-    const newCalendarValues = dateOrder.map((date) => {
-      return new Date(date);
-    });
-
-    setCalendarValues(newCalendarValues);
-  }, [dateOrder]);
 
   /*
   useEffect(() => {
@@ -201,12 +179,12 @@ function HabitGroup({
   */
 
   useEffect(() => {
-    const currentTableData = groupedData[currentDate.string]?.tableList || [];
-    const currentTotalCount = groupedData[currentDate.string]?.totalCount || 0;
+    const currentTableData = groupedData[currentDateString]?.tableList || [];
+    const currentTotalCount = groupedData[currentDateString]?.totalCount || 0;
 
     setHabitDocuments(currentTableData);
     setTotalCount(currentTotalCount);
-  }, [currentDate, groupedData]);
+  }, [currentDateString, groupedData]);
 
   const handleToggleDetails = useCallback(() => {
     setIsTableShown((prev) => {
@@ -227,9 +205,7 @@ function HabitGroup({
   }, []);
 
   const handleDateButtonClick = useCallback((newDate) => {
-    const newDateObject = dateStringToObject(newDate);
-
-    setCurrentDate(newDateObject);
+    setCurrentDateString(newDate);
   }, []);
 
   const toggleDetailsText = isTableShown ? 'hide details' : 'show details';
@@ -240,7 +216,7 @@ function HabitGroup({
   const handleDeleteHabitByDay = useCallback(() => {
     if (
       window.confirm(
-        `Are you sure you want to delete all ${habitLabel} habits for ${currentDate.string}?`,
+        `Are you sure you want to delete all ${habitLabel} habits for ${currentDateString}?`,
       )
     ) {
       deleteHabit(habitDocuments)
@@ -262,7 +238,7 @@ function HabitGroup({
     habitLabel,
     habitDocuments,
     onDeleteHabit,
-    currentDate,
+    currentDateString,
     habitEntity,
     habitOptions,
   ]);
@@ -340,7 +316,7 @@ function HabitGroup({
         <MenuHeaderTop>
           <TitleWrapper>
             <HabitLabel>{habitLabel}</HabitLabel>
-            <HabitCurrentDate>{currentDate.string}</HabitCurrentDate>
+            <HabitCurrentDate>{currentDateString}</HabitCurrentDate>
           </TitleWrapper>
           <MenuWrapper ref={menuWrapperRef}>
             <MenuButton onClick={handleMenuButtonClick}>
@@ -349,7 +325,7 @@ function HabitGroup({
             {isMenuOpen ? (
               <MenuContent>
                 <DeleteButton onClick={handleDeleteHabitByDay}>
-                  delete habits for {currentDate.string}
+                  delete habits for {currentDateString}
                 </DeleteButton>
                 <DeleteButton onClick={handleDeleteEntireHabit}>
                   delete entire habit
@@ -379,12 +355,12 @@ function HabitGroup({
       </MenuHeader>
       <DatesContainer>
         {dateOrder.map((date) => {
-          const isAtive = date === currentDate.string;
+          const isActive = date === currentDateString;
 
           return (
             <DateButton
               key={date}
-              isActive={isAtive}
+              isActive={isActive}
               onClick={() => {
                 handleDateButtonClick(date);
               }}>
@@ -404,22 +380,18 @@ function HabitGroup({
           {isTableShown ? (
             <HabitTable
               habitID={habitID}
-              dateString={currentDate.string}
+              dateString={currentDateString}
               onDeleteHabitRecord={handleDeleteHabitRecord}
             />
           ) : null}
           {isChartShown ? (
-            <HabitChart habitID={habitID} dateString={currentDate.string} />
+            <HabitChart habitID={habitID} dateString={currentDateString} />
           ) : null}
           {isCalendarShown ? (
-            <CalendarWrapper>
-              <Calendar
-                ref={calendarRef}
-                value={calendarValues}
-                currentDate={currentDate.object}
-                readOnly
-              />
-            </CalendarWrapper>
+            <HabitCalendar
+              dateOrder={dateOrder}
+              currentDateString={currentDateString}
+            />
           ) : null}
         </DetailsBottomContainer>
       </DetailsContainer>

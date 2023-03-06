@@ -14,12 +14,9 @@ export function dateStringToObject(string) {
   const month = Number(splitString[0]);
   const day = Number(splitString[1]);
 
-  return {
-    string,
-    object: new DateObject({
-      year,
-      month,
-      day,
-    }),
-  };
+  return new DateObject({
+    year,
+    month,
+    day,
+  });
 }
