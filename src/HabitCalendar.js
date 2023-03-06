@@ -33,7 +33,6 @@ function HabitCalendar({ currentDateString, dateOrder }) {
     const newCalendarValues = dateOrder.map((date) => {
       return new Date(date);
     });
-    console.log('newCalendarValues', newCalendarValues);
 
     setCalendarValues(newCalendarValues);
   }, [dateOrder]);
