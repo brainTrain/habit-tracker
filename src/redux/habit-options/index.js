@@ -8,8 +8,8 @@ import {
 // utils
 import { fetchHabitOptions } from '../../firebase/firestore';
 import { habitOptionsToList } from '../../parsers/habit';
-import { HABIT_OPTION_EMPTY } from '../../firebase/models';
 // constants
+import { HABIT_OPTION_EMPTY } from '../../firebase/models';
 const HABIT_OPTIONS_NAME = 'habit-options';
 
 // selectors

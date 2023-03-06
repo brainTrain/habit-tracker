@@ -28,22 +28,6 @@ export function getHabitData(id, doc) {
   return newHabit;
 }
 
-export function habitsToEntities(habitsResponse) {
-  let newHabits = [];
-
-  habitsResponse.forEach((doc) => {
-    const newHabit = getHabitData(doc.id, doc.data());
-
-    newHabits.push(newHabit);
-  });
-
-  const habitEntities = groupBy(newHabits, 'habitID');
-
-  return habitEntities;
-}
-
-export function formatHabitEntitiesForAdapter(habitEntities) {}
-
 export function habitsEntityDocumentsToHabits(habitDocuments) {
   const habitEntities = groupBy(habitDocuments, 'habitID');
   const normalizedHabitEntitiesList = [];
@@ -51,7 +35,6 @@ export function habitsEntityDocumentsToHabits(habitDocuments) {
   Object.keys(habitEntities).forEach((habitID) => {
     normalizedHabitEntitiesList.push({
       id: habitID,
-      // documentIDList: habitEntities[habitID].map(({ publicID }) => publicID),
       documentIDList: habitEntities[habitID].map(({ id }) => id),
     });
   });

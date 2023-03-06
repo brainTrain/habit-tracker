@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
-import { Calendar, DateObject } from 'react-multi-date-picker';
+import { Calendar } from 'react-multi-date-picker';
 import isEqual from 'lodash/isEqual';
 // redux
 import {
@@ -147,18 +147,12 @@ function HabitGroup({
     selectHabitOptionsById(state, habitID),
   );
   // local state
-  const [areDetailsShown, setAreDetailsShown] = useState(false);
+  const [isTableShown, setIsTableShown] = useState(false);
   const [isChartShown, setIsChartShown] = useState(false);
   const [isCalendarShown, setIsCalendarShown] = useState(false);
   const [calendarValues, setCalendarValues] = useState([]);
-  const [datesList, setDatesList] = useState([]);
   const [currentDate, setCurrentDate] = useState({
-    string: '',
-    object: new DateObject({
-      year: 1969,
-      month: 4,
-      day: 20,
-    }),
+    ...dateStringToObject(dateOrder[0]),
   });
   const [habitDocuments, setHabitDocuments] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -174,20 +168,12 @@ function HabitGroup({
   }, [currentDate]);
 
   useEffect(() => {
-    const datesList = dateOrder;
-    const newDateObject = dateStringToObject(datesList[0]);
-
-    setDatesList(datesList);
-    setCurrentDate(newDateObject);
-  }, [dateOrder]);
-
-  useEffect(() => {
-    const newCalendarValues = datesList.map((date) => {
+    const newCalendarValues = dateOrder.map((date) => {
       return new Date(date);
     });
 
     setCalendarValues(newCalendarValues);
-  }, [datesList]);
+  }, [dateOrder]);
 
   /*
   useEffect(() => {
@@ -223,7 +209,7 @@ function HabitGroup({
   }, [currentDate, groupedData]);
 
   const handleToggleDetails = useCallback(() => {
-    setAreDetailsShown((prev) => {
+    setIsTableShown((prev) => {
       return !prev;
     });
   }, []);
@@ -246,7 +232,7 @@ function HabitGroup({
     setCurrentDate(newDateObject);
   }, []);
 
-  const toggleDetailsText = areDetailsShown ? 'hide details' : 'show details';
+  const toggleDetailsText = isTableShown ? 'hide details' : 'show details';
   const toggleChartText = isChartShown ? 'hide chart' : 'show chart';
   const toggleCalendarText = isCalendarShown
     ? 'hide calendar'
@@ -392,7 +378,7 @@ function HabitGroup({
         </MenuHeaderBottom>
       </MenuHeader>
       <DatesContainer>
-        {datesList.map((date) => {
+        {dateOrder.map((date) => {
           const isAtive = date === currentDate.string;
 
           return (
@@ -415,7 +401,7 @@ function HabitGroup({
           <button onClick={handleToggleCalendar}>{toggleCalendarText}</button>
         </DetailsTopContainer>
         <DetailsBottomContainer>
-          {areDetailsShown ? (
+          {isTableShown ? (
             <HabitTable
               habitID={habitID}
               dateString={currentDate.string}

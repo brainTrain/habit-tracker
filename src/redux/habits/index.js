@@ -15,7 +15,6 @@ import {
 } from '../../parsers/habit';
 // constants
 const HABITS_NAME = 'habits';
-
 // selectors
 export const selectHabitEntities = (state) => state.habits.entities;
 export const selectHabitIDs = (state) => state.habits.ids;
