@@ -43,8 +43,8 @@ import {
 } from './redux/habit-options';
 import { fetchHabitOptionsRedux } from './redux/habit-options';
 // components
+import HabitsPageHeader from './HabitsPageHeader';
 import HabitGroup from './HabitGroup';
-import HabitForm from './HabitForm';
 // constants
 const HABITS_LOADING = 'habits-loading';
 const HABITS_LOADED = 'habits-loaded';
@@ -55,38 +55,6 @@ const PageWrapper = styled.section`
   width: 100%;
   display: flex;
   flex-direction: column;
-`;
-
-const AppHeader = styled.header`
-  ${appGutterPadding};
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-
-  border-bottom: 1px solid;
-`;
-
-const AppHeaderContent = styled.header`
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-width: ${MAX_PAGE_WIDTH};
-`;
-
-const AppHeaderTopSection = styled.section`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const AppHeaderTitle = styled.h1`
-  margin: 0;
-`;
-
-const HabitFormWrapper = styled.section`
-  padding-top: 0.5rem;
 `;
 
 const ContentWrapper = styled.section`
@@ -125,7 +93,6 @@ const HabitCell = styled.article`
 
 function HabitsPage({ userID, userEmail, onLogout }) {
   const [habitsLoadState, setHabitsLoadState] = useState(HABITS_LOADING);
-  const [isCreateFormShown, setIsCreateFormShown] = useState(false);
   const habitIDs = useSelector(selectHabitIDs);
   const dispatch = useDispatch();
 
@@ -197,11 +164,6 @@ function HabitsPage({ userID, userEmail, onLogout }) {
     [dispatch],
   );
 
-  // TODO: make this header section its own component and raise it up a level broooooo
-  const handleLogout = useCallback(() => {
-    onLogout();
-  }, [onLogout]);
-
   const handleDeleteHabit = useCallback(
     (response) => {
       const { operation, habitDocuments, oldHabit, habitOptions } = response;
@@ -243,38 +205,18 @@ function HabitsPage({ userID, userEmail, onLogout }) {
     [dispatch],
   );
 
-  const handleToggleCreateFormClick = useCallback(() => {
-    setIsCreateFormShown((prev) => !prev);
-  }, []);
-
   useEffect(() => {
     handleFetchHabitData();
   }, [handleFetchHabitData]);
 
   return (
     <PageWrapper>
-      <AppHeader>
-        <AppHeaderContent>
-          <AppHeaderTopSection>
-            <span>
-              <AppHeaderTitle>Habits for:</AppHeaderTitle>
-              <span>{userEmail}</span>
-            </span>
-            <button onClick={handleLogout}>logout</button>
-          </AppHeaderTopSection>
-          <section>
-            <label>Create Habit Form: </label>
-            <button onClick={handleToggleCreateFormClick}>
-              {isCreateFormShown ? 'hide' : 'show'}
-            </button>
-            {isCreateFormShown ? (
-              <HabitFormWrapper>
-                <HabitForm userID={userID} onAddHabit={handleAddHabit} />
-              </HabitFormWrapper>
-            ) : null}
-          </section>
-        </AppHeaderContent>
-      </AppHeader>
+      <HabitsPageHeader
+        userID={userID}
+        userEmail={userEmail}
+        onLogout={onLogout}
+        onAddHabit={handleAddHabit}
+      />
       <ContentWrapper>
         <Content>
           {{

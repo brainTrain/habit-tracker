@@ -75,6 +75,14 @@ export async function updateHabit(habitItems, key, value) {
   return batch.commit();
 }
 
+// NOTE: not consumed anywhere, but considering a flow where I just re-fetch one habit group
+export async function fetchHabitGroup(habitID) {
+  const habitRef = collection(db, HABIT_COLLECTION);
+  const q = query(habitRef, where('habitID', '==', habitID));
+
+  return getDocs(q);
+}
+
 /*
 example usage of above api
 const handleUpdate = () => {
@@ -101,6 +109,43 @@ export async function deleteHabit(habitItems) {
 
   return batch.commit();
 }
+
+// TODO FIRST: see if websockets will be a better option for what I'm trying to do with checksums
+// TODO: Try a checksum for possibly cheaper lookup for habits to determine if a fetch is needed or not
+// possible steps:
+// * get list of habit IDs for habit group
+// * TODO: decide if habit options make sense there too
+// * possible data shape:
+//    const checksumData = {
+//      habitID: 'fasdff-22fasdf-2fasdf',
+//      habitDocumentIDs: ['fasd-fafsf-fdaf', 'fasdf-fsdfsd-fsdfsf'],
+//    }
+//  * if a habit document is deleted or added the checksum should be different
+//  * const hash = await crypto.subtle.digest('SHA-256', data);
+//  * check habit options checksum, compare it with hash var
+//  * if same, do nothing
+//  * if different, fetch habits
+//  * once habits have been fetched, create a new checksumData obj with new data
+//  * create new hash with new checksumData obj
+//  * update habit options for that habit with new checksum
+
+// example from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest#basic_example
+/*
+const text =
+  "An obscure body in the S-K System, your majesty. The inhabitants refer to it as the planet Earth.";
+
+async function digestMessage(message) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(message);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return hash;
+}
+
+digestMessage(text).then((digestBuffer) =>
+  console.log(digestBuffer.byteLength)
+);
+
+*/
 
 // Habit Option methods
 export async function saveHabitOptions(params) {
