@@ -142,6 +142,7 @@ function HabitForm({ userID, onAddHabit, habitLabel, habitID }) {
           id={COUNT_INPUT_ID}
           name={COUNT_INPUT_ID}
           type="number"
+          step={0.1}
           placeholder={habitCountPlaceholder}
           min={0}
           required
