@@ -20,7 +20,7 @@ import {
   DELETE_ENTIRE_HABIT,
   DELETE_HABIT_DOCUMENT,
 } from './firebase/firestore';
-import { flattenHabitItems } from './parsers/habit';
+import { flattenHabitItems, TIME_INTERVAL_EMPTY } from './parsers/habit';
 // components
 import HabitForm from './HabitForm';
 import HabitOptionsForm from './HabitOptionsForm';
@@ -150,6 +150,7 @@ function HabitGroup({
   const [currentDateString, setCurrentDateString] = useState(dateOrder[0]);
   const [habitDocuments, setHabitDocuments] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [timeInterval, setTimeInterval] = useState({ ...TIME_INTERVAL_EMPTY });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // const [optionsTimeRange, setOptionsTimeRange] = useState();
 
@@ -179,20 +180,14 @@ function HabitGroup({
   */
 
   useEffect(() => {
-    // if all habits in a day are deleted, set current date to first date in array
-    const areHabitDocumentsEmpty = Boolean(habitDocuments.length);
-
-    if (areHabitDocumentsEmpty) {
-      setCurrentDateString(dateOrder[0]);
-    }
-  }, [habitDocuments, dateOrder]);
-
-  useEffect(() => {
-    const currentTableData = groupedData[currentDateString]?.tableList || [];
-    const currentTotalCount = groupedData[currentDateString]?.totalCount || 0;
+    const currentGroupedData = groupedData[currentDateString];
+    const currentTableData = currentGroupedData?.tableList || [];
+    const currentTotalCount = currentGroupedData?.totalCount || 0;
+    const currentTimeInterval = currentGroupedData?.timeInterval;
 
     setHabitDocuments(currentTableData);
     setTotalCount(currentTotalCount);
+    setTimeInterval(currentTimeInterval);
   }, [currentDateString, groupedData]);
 
   const handleToggleDetails = useCallback(() => {
@@ -381,6 +376,10 @@ function HabitGroup({
       <DetailsContainer>
         <DetailsTopContainer>
           <p>total: {totalCount}</p>
+          <p>
+            time interval: {timeInterval.hours}:{timeInterval.minutes}:
+            {timeInterval.seconds}
+          </p>
           <button onClick={handleToggleDetails}>{toggleDetailsText}</button>
           <button onClick={handleToggleChart}>{toggleChartText}</button>
           <button onClick={handleToggleCalendar}>{toggleCalendarText}</button>

@@ -1,8 +1,14 @@
 // libraries
 import groupBy from 'lodash/groupBy';
-import { subMinutes } from 'date-fns';
+import { subMinutes, intervalToDuration } from 'date-fns';
 // utils
 import { HABIT_OPTION_EMPTY } from '../firebase/models';
+// constants
+export const TIME_INTERVAL_EMPTY = {
+  hours: '00',
+  seconds: '00',
+  minutes: '00',
+};
 
 export function flattenHabitItems(groupedData) {
   const flatHabitItems = Object.keys(groupedData).reduce((prev, habitDate) => {
@@ -110,12 +116,33 @@ export function formatHabitGroups(params) {
       }
     });
     // get total counts for each date and update the totalCount value for each
+    // also get time delta
     Object.keys(groupedByDate).forEach((dateString) => {
       const data = groupedByDate[dateString].tableList;
       const totalCount = data.reduce((previousCount, { count }) => {
         return previousCount + count;
       }, 0);
       groupedByDate[dateString].totalCount = totalCount;
+
+      let timeInterval = { ...TIME_INTERVAL_EMPTY };
+      if (data.length > 1) {
+        // assume dates are sorted most recent to least recent
+        const latestDate = data[0].datetime;
+        const earliestDate = data[data.length - 1].datetime;
+        timeInterval = intervalToDuration({
+          start: earliestDate,
+          end: latestDate,
+        });
+      }
+      const hours = String(timeInterval.hours);
+      const minutes = String(timeInterval.minutes);
+      const seconds = String(timeInterval.seconds);
+
+      groupedByDate[dateString].timeInterval = {
+        hours: hours.length === 1 ? `0${hours}` : hours,
+        minutes: minutes.length === 1 ? `0${minutes}` : minutes,
+        seconds: seconds.length === 1 ? `0${seconds}` : seconds,
+      };
     });
 
     // get total for date group?
