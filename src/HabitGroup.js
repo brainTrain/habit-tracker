@@ -377,7 +377,7 @@ function HabitGroup({
         <DetailsTopContainer>
           <p>total: {totalCount}</p>
           <p>
-            time interval: {timeInterval.hours}:{timeInterval.minutes}:
+            duration: {timeInterval.hours}:{timeInterval.minutes}:
             {timeInterval.seconds}
           </p>
           <button onClick={handleToggleDetails}>{toggleDetailsText}</button>
