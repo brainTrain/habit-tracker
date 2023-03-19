@@ -179,6 +179,15 @@ function HabitGroup({
   */
 
   useEffect(() => {
+    // if all habits in a day are deleted, set current date to first date in array
+    const areHabitDocumentsEmpty = Boolean(habitDocuments.length);
+
+    if (areHabitDocumentsEmpty) {
+      setCurrentDateString(dateOrder[0]);
+    }
+  }, [habitDocuments, dateOrder]);
+
+  useEffect(() => {
     const currentTableData = groupedData[currentDateString]?.tableList || [];
     const currentTotalCount = groupedData[currentDateString]?.totalCount || 0;
 

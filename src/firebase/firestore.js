@@ -112,6 +112,10 @@ export async function deleteHabit(habitItems) {
 
 // TODO FIRST: see if websockets will be a better option for what I'm trying to do with checksums
 // TODO: Try a checksum for possibly cheaper lookup for habits to determine if a fetch is needed or not
+// NOTE: may need previous and new checksum for validation
+// NOTE: would need to re-fetch new option on every add/delete except for last/full delete and initial habit creation
+// NOTE: would a different store be better?
+//
 // possible steps:
 // * get list of habit IDs for habit group
 // * TODO: decide if habit options make sense there too
