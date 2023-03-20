@@ -180,10 +180,22 @@ function HabitGroup({
   */
 
   useEffect(() => {
+    const doesDateExist =
+      dateOrder.indexOf(currentDateString) === -1 ? false : true;
+    // if date doesn't exist then all documents for that group
+    // have been deleted and we should set a date that does exist
+    if (!doesDateExist) {
+      setCurrentDateString(dateOrder[0]);
+    }
+  }, [dateOrder, currentDateString]);
+
+  useEffect(() => {
     const currentGroupedData = groupedData[currentDateString];
     const currentTableData = currentGroupedData?.tableList || [];
     const currentTotalCount = currentGroupedData?.totalCount || 0;
-    const currentTimeInterval = currentGroupedData?.timeInterval;
+    const currentTimeInterval = currentGroupedData?.timeInterval || {
+      ...TIME_INTERVAL_EMPTY,
+    };
 
     setHabitDocuments(currentTableData);
     setTotalCount(currentTotalCount);
