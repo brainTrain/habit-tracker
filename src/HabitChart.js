@@ -2,6 +2,7 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { useTheme } from '@nivo/core';
 import { ResponsiveBar } from '@nivo/bar';
 import { format } from 'date-fns';
 // redux
@@ -22,18 +23,28 @@ const ChartWrapper = styled.section`
 `;
 
 const localeTimeFormat = (datetime) => {
-  const timeString = format(datetime, 'h:mm:ss');
+  const timeString = format(datetime, 'h:mm');
   const timeAMPMString = format(datetime, 'a');
 
   return `${timeString} ${timeAMPMString}`;
 };
+
+function CustomToolTip({ value }) {
+  const {
+    data: { label },
+  } = value;
+  const theme = useTheme();
+
+  return <div style={{ ...theme.tooltip.container }}>{label}</div>;
+}
+
+// return <div style={{ ...theme.tooltip.container }}>bruh</div>;
 
 function HabitChart({ habitID, dateString }) {
   // redux props
   const chartData = useSelector((state) =>
     selectHabitChartDataByID(state, { habitID, dateString }),
   );
-  console.log('chartData', chartData);
 
   return (
     <ChartWrapper>
@@ -41,6 +52,7 @@ function HabitChart({ habitID, dateString }) {
         data={chartData}
         keys={['count']}
         indexBy="datetime"
+        tooltipFormat={(value) => 'bruh'}
         margin={{ top: 5, right: 5, bottom: 30, left: 30 }}
         padding={0.3}
         valueFormat={localeTimeFormat}
@@ -49,7 +61,7 @@ function HabitChart({ habitID, dateString }) {
           format: '%Y-%m-%d %H:%M:%S.%L',
           type: 'time',
         }}
-        yScale={{ type: 'linear', stacked: true, min: 0.0, max: 1.0 }}
+        yScale={{ type: 'linear' }}
         axisLeft={{
           tickSize: 5,
           tickPadding: 5,
@@ -61,6 +73,8 @@ function HabitChart({ habitID, dateString }) {
         axisTop={null}
         axisRight={null}
         colors={{ scheme: 'nivo' }}
+        enableLabel={false}
+        tooltip={(value) => <CustomToolTip value={value} />}
       />
     </ChartWrapper>
   );
