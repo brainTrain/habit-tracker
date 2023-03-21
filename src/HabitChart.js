@@ -45,13 +45,10 @@ function HabitChart({ habitID, dateString }) {
     }
   }, [dateString]);
 
-  const handleZoom = useCallback(
-    (domain, props) => {
-      // we need this handler for victory charts to honor the local zoomDomain state value
-      setZoomDomain(domain);
-    },
-    [dateString],
-  );
+  const handleZoom = useCallback((domain, props) => {
+    // we need this handler for victory charts to honor the local zoomDomain state value
+    setZoomDomain(domain);
+  }, []);
 
   return (
     <ChartWrapper>
@@ -68,6 +65,11 @@ function HabitChart({ habitID, dateString }) {
           data={chartData}
           x="datetime"
           y="count"
+          style={{
+            data: {
+              fill: '#520F9A',
+            },
+          }}
         />
       </VictoryChart>
     </ChartWrapper>
