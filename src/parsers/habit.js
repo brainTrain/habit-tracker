@@ -112,7 +112,9 @@ export function formatHabitGroups(params) {
         };
       } else {
         groupedByDate[updatedDateLocale].tableList.push(tableHabit);
-        groupedByDate[updatedDateLocale].chartList.push(chartHabit);
+        // TODO: look into separating these sorts
+        // we want opposite sorting for each of these
+        groupedByDate[updatedDateLocale].chartList.unshift(chartHabit);
       }
     });
     // get total counts for each date and update the totalCount value for each

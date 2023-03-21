@@ -145,7 +145,9 @@ function HabitGroup({
   );
   // local state
   const [isTableShown, setIsTableShown] = useState(false);
-  const [isChartShown, setIsChartShown] = useState(false);
+  // TODO: put back
+  // const [isChartShown, setIsChartShown] = useState(false);
+  const [isChartShown, setIsChartShown] = useState(true);
   const [isCalendarShown, setIsCalendarShown] = useState(false);
   const [currentDateString, setCurrentDateString] = useState(dateOrder[0]);
   const [habitDocuments, setHabitDocuments] = useState([]);
