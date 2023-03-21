@@ -20,10 +20,24 @@ const ChartWrapper = styled.section`
   user-select: none;
   display: inline-block;
   border: 1px solid;
+  position: relative;
+  padding-bottom: 1rem;
 
   @media ${mediaQueryDevice.laptop} {
     width: 100%;
   }
+`;
+
+const ResetZoomButtonWrapper = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+const ResetZoomButton = styled.button`
+  margin: 0 auto;
 `;
 
 function HabitChart({ habitID, dateString }) {
@@ -50,6 +64,10 @@ function HabitChart({ habitID, dateString }) {
     setZoomDomain(domain);
   }, []);
 
+  const handleResetZoomClick = useCallback(() => {
+    setZoomDomain(null);
+  }, []);
+
   return (
     <ChartWrapper>
       <VictoryChart
@@ -72,6 +90,11 @@ function HabitChart({ habitID, dateString }) {
           }}
         />
       </VictoryChart>
+      <ResetZoomButtonWrapper>
+        <ResetZoomButton onClick={handleResetZoomClick}>
+          Reset Zoom
+        </ResetZoomButton>
+      </ResetZoomButtonWrapper>
     </ChartWrapper>
   );
 }
