@@ -1,10 +1,11 @@
 // libraries
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import isEqual from 'lodash/isEqual';
+import difference from 'lodash/difference';
 // redux
 import {
   selectFormattedHabitByID,
@@ -152,6 +153,7 @@ function HabitGroup({
   const [totalCount, setTotalCount] = useState(0);
   const [timeInterval, setTimeInterval] = useState({ ...TIME_INTERVAL_EMPTY });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const prevDateOrderRef = useRef(dateOrder);
   // const [optionsTimeRange, setOptionsTimeRange] = useState();
 
   /*
@@ -187,6 +189,17 @@ function HabitGroup({
     if (!doesDateExist) {
       setCurrentDateString(dateOrder[0]);
     }
+
+    // if date order array grows, assume we have created an entry
+    // for a new date and switch to that one this logic will switch
+    // to the new entry in the array, even if it occurs before the latest
+    const newDateOrder = difference(dateOrder, prevDateOrderRef.current);
+    const hasNewDate = Boolean(newDateOrder.length);
+    if (hasNewDate) {
+      setCurrentDateString(newDateOrder[0]);
+    }
+
+    prevDateOrderRef.current = dateOrder;
   }, [dateOrder, currentDateString]);
 
   useEffect(() => {
