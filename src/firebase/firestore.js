@@ -1,4 +1,5 @@
 import {
+  and,
   Timestamp,
   addDoc,
   updateDoc,
@@ -76,9 +77,15 @@ export async function updateHabit(habitItems, key, value) {
 }
 
 // NOTE: not consumed anywhere, but considering a flow where I just re-fetch one habit group
-export async function fetchHabitGroup(habitID) {
+export async function fetchHabitGroup(habitID, userID) {
+  console.log('habitID', habitID);
   const habitRef = collection(db, HABIT_COLLECTION);
-  const q = query(habitRef, where('habitID', '==', habitID));
+  console.log('habitRef', habitRef);
+  const q = query(
+    habitRef,
+    and(where('userID', '==', userID), where('habitID', '==', habitID)),
+  );
+  console.log('q', q);
 
   return getDocs(q);
 }

@@ -28,6 +28,7 @@ import HabitOptionsForm from './HabitOptionsForm';
 import HabitChart from './HabitChart';
 import HabitTable from './HabitTable';
 import HabitCalendar from './HabitCalendar';
+import RefreshHabitButton from './RefreshHabitButton';
 // component styles
 import { MenuButton } from './styles/components';
 // styles
@@ -42,6 +43,10 @@ const MenuHeader = styled.section`
 const MenuHeaderTop = styled.section`
   display: flex;
   justify-content: space-between;
+`;
+
+const MenuHeaderRight = styled.section`
+  display: flex;
 `;
 
 const HabitLabel = styled.h3`
@@ -347,21 +352,24 @@ function HabitGroup({
             <HabitLabel>{habitLabel}</HabitLabel>
             <HabitCurrentDate>{currentDateString}</HabitCurrentDate>
           </TitleWrapper>
-          <MenuWrapper ref={menuWrapperRef}>
-            <MenuButton onClick={handleMenuButtonClick}>
-              {menuButtonContent}
-            </MenuButton>
-            {isMenuOpen ? (
-              <MenuContent>
-                <DeleteButton onClick={handleDeleteHabitByDay}>
-                  delete habits for {currentDateString}
-                </DeleteButton>
-                <DeleteButton onClick={handleDeleteEntireHabit}>
-                  delete entire habit
-                </DeleteButton>
-              </MenuContent>
-            ) : null}
-          </MenuWrapper>
+          <MenuHeaderRight>
+            <RefreshHabitButton habitID={habitID} userID={userID} />
+            <MenuWrapper ref={menuWrapperRef}>
+              <MenuButton onClick={handleMenuButtonClick}>
+                {menuButtonContent}
+              </MenuButton>
+              {isMenuOpen ? (
+                <MenuContent>
+                  <DeleteButton onClick={handleDeleteHabitByDay}>
+                    delete habits for {currentDateString}
+                  </DeleteButton>
+                  <DeleteButton onClick={handleDeleteEntireHabit}>
+                    delete entire habit
+                  </DeleteButton>
+                </MenuContent>
+              ) : null}
+            </MenuWrapper>
+          </MenuHeaderRight>
         </MenuHeaderTop>
         <MenuHeaderBottom>
           <section>
