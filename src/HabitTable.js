@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { selectHabitTableDataByID } from './redux/habits';
 // utils
 import { mediaQueryDevice } from './styles/constants';
-// component styles
+// reusable styles
 import { MenuButton } from './styles/components';
 // constants
 const TABLE_COLUMNS = ['Count', 'Time', 'Date'];
