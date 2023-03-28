@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { useDetectClickOutside } from 'react-detect-click-outside';
 import isEqual from 'lodash/isEqual';
 import difference from 'lodash/difference';
 // redux
@@ -13,7 +12,6 @@ import {
 } from './redux/habits';
 import { selectHabitOptionsById } from './redux/habit-options';
 // utils
-import { habitDetailsGutterPadding } from './styles/layout';
 import { mediaQueryDevice } from './styles/constants';
 import {
   deleteHabit,
@@ -23,69 +21,16 @@ import {
 } from './firebase/firestore';
 import { flattenHabitItems, TIME_INTERVAL_EMPTY } from './parsers/habit';
 // components
-import HabitForm from './HabitForm';
-import HabitOptionsForm from './HabitOptionsForm';
+import HabitGroupHeader from './HabitGroupHeader';
+import HabitGroupOptions from './HabitGroupOptions';
 import HabitChart from './HabitChart';
 import HabitTable from './HabitTable';
 import HabitCalendar from './HabitCalendar';
-// component styles
-import { MenuButton } from './styles/components';
+// reusable styles
+import { habitDetailsGutterPadding } from './styles/layout';
 // styles
-const MenuHeader = styled.section`
-  display: flex;
-  flex-direction: column;
-
-  ${habitDetailsGutterPadding};
-  padding-bottom: 1rem;
-`;
-
-const MenuHeaderTop = styled.section`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const HabitLabel = styled.h3`
-  margin: 0;
-`;
-
-const HabitCurrentDate = styled.h4`
-  margin: 0;
-`;
-
-const MenuHeaderBottom = styled.section``;
-
-const TitleWrapper = styled.section``;
-
-const FormWrapper = styled.section`
-  margin-top: 1rem;
-`;
-
-const MenuWrapper = styled.section`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
-`;
-
 const DateButton = styled.button`
   ${({ isActive }) => isActive && 'background-color: #FFF'};
-`;
-
-const DeleteButton = styled.button`
-  white-space: nowrap;
-`;
-
-const MenuContent = styled.section`
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 0.2rem;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 `;
 
 const DetailsContainer = styled.section`
@@ -297,10 +242,12 @@ function HabitGroup({
     }
   }, [habitLabel, groupedData, onDeleteHabit, habitEntity, habitOptions]);
 
-  const handleMenuButtonClick = useCallback(() => {
-    setIsMenuOpen((prev) => {
-      return !prev;
-    });
+  const handleOpenHabitOptions = useCallback(() => {
+    setIsMenuOpen(true);
+  }, []);
+
+  const handleCloseHabitOptions = useCallback(() => {
+    setIsMenuOpen(false);
   }, []);
 
   const handleDeleteHabitRecord = useCallback(
@@ -331,57 +278,32 @@ function HabitGroup({
     [onDeleteHabit, habitEntity, habitOptions],
   );
 
-  const menuWrapperRef = useDetectClickOutside({
-    onTriggered: () => {
-      setIsMenuOpen(false);
-    },
-  });
-
-  const menuButtonContent = isMenuOpen ? '✕' : '⋯';
-
   return (
     <section>
-      <MenuHeader>
-        <MenuHeaderTop>
-          <TitleWrapper>
-            <HabitLabel>{habitLabel}</HabitLabel>
-            <HabitCurrentDate>{currentDateString}</HabitCurrentDate>
-          </TitleWrapper>
-          <MenuWrapper ref={menuWrapperRef}>
-            <MenuButton onClick={handleMenuButtonClick}>
-              {menuButtonContent}
-            </MenuButton>
-            {isMenuOpen ? (
-              <MenuContent>
-                <DeleteButton onClick={handleDeleteHabitByDay}>
-                  delete habits for {currentDateString}
-                </DeleteButton>
-                <DeleteButton onClick={handleDeleteEntireHabit}>
-                  delete entire habit
-                </DeleteButton>
-              </MenuContent>
-            ) : null}
-          </MenuWrapper>
-        </MenuHeaderTop>
-        <MenuHeaderBottom>
-          <section>
-            <p>options:</p>
-            <HabitOptionsForm
-              userID={userID}
-              habitID={habitID}
-              onAddHabitOption={onAddHabitOption}
-            />
-          </section>
-          <FormWrapper>
-            <HabitForm
-              userID={userID}
-              habitID={habitID}
-              habitLabel={habitLabel}
-              onAddHabit={onAddHabit}
-            />
-          </FormWrapper>
-        </MenuHeaderBottom>
-      </MenuHeader>
+      <section>
+        {!isMenuOpen ? (
+          <HabitGroupHeader
+            userID={userID}
+            habitID={habitID}
+            onAddHabitOption={onAddHabitOption}
+            habitLabel={habitLabel}
+            currentDateString={currentDateString}
+            onAddHabit={onAddHabit}
+            onDeleteHabitByDay={handleDeleteHabitByDay}
+            onDeleteEntireHabit={handleDeleteEntireHabit}
+            onOpenHabitOptions={handleOpenHabitOptions}
+          />
+        ) : (
+          <HabitGroupOptions
+            userID={userID}
+            habitID={habitID}
+            onAddHabitOption={onAddHabitOption}
+            habitLabel={habitLabel}
+            currentDateString={currentDateString}
+            onCloseHabitOptions={handleCloseHabitOptions}
+          />
+        )}
+      </section>
       <DatesContainer>
         {dateOrder.map((date) => {
           const isActive = date === currentDateString;
@@ -451,11 +373,6 @@ HabitGroup.defaultProps = {
   onDeleteHabit: function () {
     console.warn(
       'onDeleteHabit() prop in <HabitGroup /> component called without a value',
-    );
-  },
-  onAddHabitOption: function () {
-    console.warn(
-      'onAddHabitOption() prop in <HabitGroup /> component called without a value',
     );
   },
 };
