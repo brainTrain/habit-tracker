@@ -127,6 +127,7 @@ function HabitGroup({
   */
 
   useEffect(() => {
+    console.log('I uhhh');
     const doesDateExist =
       dateOrder.indexOf(currentDateString) === -1 ? false : true;
     // if date doesn't exist then all documents for that group
@@ -145,6 +146,8 @@ function HabitGroup({
     }
 
     prevDateOrderRef.current = dateOrder;
+
+    setIsMenuOpen(false);
   }, [dateOrder, currentDateString]);
 
   useEffect(() => {

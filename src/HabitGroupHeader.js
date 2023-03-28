@@ -1,6 +1,5 @@
 // libraries
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 // components
 import HabitForm from './HabitForm';
 // reusable styles
@@ -10,11 +9,8 @@ import {
   HabitLabel,
   HabitCurrentDate,
   MenuButton,
+  MenuHeaderBottom,
 } from './styles/components';
-// styles
-const FormWrapper = styled.section`
-  margin-top: 1rem;
-`;
 
 function HabitGroupHeader({
   userID,
@@ -34,16 +30,14 @@ function HabitGroupHeader({
         </section>
         <MenuButton onClick={onOpenHabitOptions}>⋯</MenuButton>
       </MenuHeaderTop>
-      <section>
-        <FormWrapper>
-          <HabitForm
-            userID={userID}
-            habitID={habitID}
-            habitLabel={habitLabel}
-            onAddHabit={onAddHabit}
-          />
-        </FormWrapper>
-      </section>
+      <MenuHeaderBottom>
+        <HabitForm
+          userID={userID}
+          habitID={habitID}
+          habitLabel={habitLabel}
+          onAddHabit={onAddHabit}
+        />
+      </MenuHeaderBottom>
     </MenuHeader>
   );
 }

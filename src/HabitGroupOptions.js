@@ -10,8 +10,17 @@ import {
   HabitLabel,
   HabitCurrentDate,
   MenuButton,
+  MenuHeaderBottom,
 } from './styles/components';
 // styles
+const OptionsMenuHeaderBottom = styled(MenuHeaderBottom)`
+  display: flex;
+  justify-content: space-between;
+`;
+const DeleteButtonsWrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+`;
 const DeleteButton = styled.button`
   white-space: nowrap;
 `;
@@ -30,25 +39,29 @@ function HabitGroupOptions({
     <MenuHeader>
       <MenuHeaderTop>
         <section>
-          <HabitLabel>{habitLabel}</HabitLabel>
+          <HabitLabel>{habitLabel} options menu</HabitLabel>
           <HabitCurrentDate>{currentDateString}</HabitCurrentDate>
         </section>
         <MenuButton onClick={onCloseHabitOptions}>✕</MenuButton>
       </MenuHeaderTop>
-      <section>
-        <DeleteButton onClick={onDeleteHabitByDay}>
-          delete habits for {currentDateString}
-        </DeleteButton>
-        <DeleteButton onClick={onDeleteEntireHabit}>
-          delete entire habit
-        </DeleteButton>
-        <p>options:</p>
-        <HabitOptionsForm
-          userID={userID}
-          habitID={habitID}
-          onAddHabitOption={onAddHabitOption}
-        />
-      </section>
+      <OptionsMenuHeaderBottom>
+        <section>
+          <p>options:</p>
+          <HabitOptionsForm
+            userID={userID}
+            habitID={habitID}
+            onAddHabitOption={onAddHabitOption}
+          />
+        </section>
+        <DeleteButtonsWrapper>
+          <DeleteButton onClick={onDeleteHabitByDay}>
+            delete habits for {currentDateString}
+          </DeleteButton>
+          <DeleteButton onClick={onDeleteEntireHabit}>
+            delete entire habit
+          </DeleteButton>
+        </DeleteButtonsWrapper>
+      </OptionsMenuHeaderBottom>
     </MenuHeader>
   );
 }

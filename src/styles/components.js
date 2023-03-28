@@ -31,3 +31,7 @@ export const MenuHeader = styled.section`
   ${habitDetailsGutterPadding};
   padding-bottom: 1rem;
 `;
+
+export const MenuHeaderBottom = styled.section`
+  margin-top: 1rem;
+`;
