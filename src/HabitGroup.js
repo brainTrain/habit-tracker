@@ -99,35 +99,8 @@ function HabitGroup({
   const [timeInterval, setTimeInterval] = useState({ ...TIME_INTERVAL_EMPTY });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const prevDateOrderRef = useRef(dateOrder);
-  // const [optionsTimeRange, setOptionsTimeRange] = useState();
-
-  /*
-  useEffect(() => {
-   0: midnight - midnight
-   1: 1am - 1am
-   2: 2am - 2am
-   3: 3am - 3am
-   4: 4am - 4am
-   5: 5am - 5am
-   6: 6am - 6am
-   7: 7am - 7am
-   8: 8am - 8am
-   9: 9am - 9am
-   10: 10am - 10am
-   11: 11am - 11am
-   12: 12pm - 12pm
-   13: noon - noon
-   14: 1pm - 1pm
-   .
-   .
-   .
-   24: 
-    setTimeRange();
-  }, []);
-  */
 
   useEffect(() => {
-    console.log('I uhhh');
     const doesDateExist =
       dateOrder.indexOf(currentDateString) === -1 ? false : true;
     // if date doesn't exist then all documents for that group
@@ -292,8 +265,6 @@ function HabitGroup({
             habitLabel={habitLabel}
             currentDateString={currentDateString}
             onAddHabit={onAddHabit}
-            onDeleteHabitByDay={handleDeleteHabitByDay}
-            onDeleteEntireHabit={handleDeleteEntireHabit}
             onOpenHabitOptions={handleOpenHabitOptions}
           />
         ) : (
@@ -304,6 +275,8 @@ function HabitGroup({
             habitLabel={habitLabel}
             currentDateString={currentDateString}
             onCloseHabitOptions={handleCloseHabitOptions}
+            onDeleteHabitByDay={handleDeleteHabitByDay}
+            onDeleteEntireHabit={handleDeleteEntireHabit}
           />
         )}
       </section>

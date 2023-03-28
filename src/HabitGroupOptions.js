@@ -20,6 +20,7 @@ const OptionsMenuHeaderBottom = styled(MenuHeaderBottom)`
 const DeleteButtonsWrapper = styled.section`
   display: flex;
   flex-direction: column;
+  gap: 1rem;
 `;
 const DeleteButton = styled.button`
   white-space: nowrap;
