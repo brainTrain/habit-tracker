@@ -16,6 +16,7 @@ import {
 const OptionsMenuHeaderBottom = styled(MenuHeaderBottom)`
   display: flex;
   justify-content: space-between;
+  gap: 0.5rem;
 `;
 const DeleteButtonsWrapper = styled.section`
   display: flex;
@@ -43,14 +44,11 @@ function HabitGroupOptions({
         <MenuButton onClick={onCloseHabitOptions}>✕</MenuButton>
       </MenuHeaderTop>
       <OptionsMenuHeaderBottom>
-        <section>
-          <p>options:</p>
-          <HabitOptionsForm
-            userID={userID}
-            habitID={habitID}
-            onAddHabitOption={onAddHabitOption}
-          />
-        </section>
+        <HabitOptionsForm
+          userID={userID}
+          habitID={habitID}
+          onAddHabitOption={onAddHabitOption}
+        />
         <DeleteButtonsWrapper>
           <button onClick={onDeleteHabitByDay}>
             delete habits for {currentDateString}

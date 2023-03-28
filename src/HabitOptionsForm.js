@@ -1,6 +1,7 @@
 // libraries
 import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 // utils
 import { saveHabitOptions } from './firebase/firestore';
@@ -13,6 +14,11 @@ const NEGATIVE_TIME_OFFSET_INPUT = 'negative-time-offset-input';
 const FORM_INITIAL = 'form-initial';
 const FORM_SUBMITTED = 'form-submitted';
 const FORM_SUBMITTED_ERROR = 'form-submitted-error';
+// styles
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
 
 function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
   // redux props
@@ -77,7 +83,7 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
 
   return (
     <section>
-      <form id={`habit-options-form-${habitID}`} onSubmit={handleSubmit}>
+      <Form id={`habit-options-form-${habitID}`} onSubmit={handleSubmit}>
         <label htmlFor={NEGATIVE_TIME_OFFSET_INPUT}>Hours Offset</label>
         <input
           id={NEGATIVE_TIME_OFFSET_INPUT}
@@ -93,7 +99,7 @@ function HabitOptionsForm({ userID, onAddHabitOption, habitID }) {
         <button type="submit" disabled={isFormDisabled}>
           submit habit options
         </button>
-      </form>
+      </Form>
     </section>
   );
 }
