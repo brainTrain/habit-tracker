@@ -20,10 +20,7 @@ const OptionsMenuHeaderBottom = styled(MenuHeaderBottom)`
 const DeleteButtonsWrapper = styled.section`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-`;
-const DeleteButton = styled.button`
-  white-space: nowrap;
+  gap: 0.5rem;
 `;
 
 function HabitGroupOptions({
@@ -55,12 +52,10 @@ function HabitGroupOptions({
           />
         </section>
         <DeleteButtonsWrapper>
-          <DeleteButton onClick={onDeleteHabitByDay}>
+          <button onClick={onDeleteHabitByDay}>
             delete habits for {currentDateString}
-          </DeleteButton>
-          <DeleteButton onClick={onDeleteEntireHabit}>
-            delete entire habit
-          </DeleteButton>
+          </button>
+          <button onClick={onDeleteEntireHabit}>delete entire habit</button>
         </DeleteButtonsWrapper>
       </OptionsMenuHeaderBottom>
     </MenuHeader>
