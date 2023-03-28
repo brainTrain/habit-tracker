@@ -39,7 +39,7 @@ function HabitGroupOptions({
     <MenuHeader>
       <MenuHeaderTop>
         <section>
-          <HabitLabel>{habitLabel} options menu</HabitLabel>
+          <HabitLabel>{habitLabel} menu</HabitLabel>
           <HabitCurrentDate>{currentDateString}</HabitCurrentDate>
         </section>
         <MenuButton onClick={onCloseHabitOptions}>✕</MenuButton>
