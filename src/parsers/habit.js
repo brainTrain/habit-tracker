@@ -1,6 +1,6 @@
 // libraries
 import groupBy from 'lodash/groupBy';
-import { subMinutes, intervalToDuration } from 'date-fns';
+import { subMinutes, intervalToDuration, max } from 'date-fns';
 // utils
 import { HABIT_OPTION_EMPTY } from '../firebase/models';
 // constants
@@ -24,6 +24,7 @@ export function getHabitData(id, doc) {
   const parsedCount = Number(count);
   const newHabit = {
     count: parsedCount,
+    // .toDate() is a firestore datetime object method that converts to js date object
     datetime: datetime.toDate().toString(),
     habitLabel,
     habitID,
@@ -37,11 +38,27 @@ export function getHabitData(id, doc) {
 export function habitsEntityDocumentsToHabits(habitDocuments) {
   const habitEntities = groupBy(habitDocuments, 'habitID');
   const normalizedHabitEntitiesList = [];
+  const documentIDList = [];
+  const datetimeList = [];
+  const { habitLabel, habitID } = habitDocuments[0] || {
+    habitLabel: '',
+    habitID: '',
+  };
+
+  habitEntities[habitID].forEach(({ id, datetime }) => {
+    documentIDList.push(id);
+    datetimeList.push(new Date(datetime));
+  });
+
+  const latestDate = max(datetimeList)?.toString();
 
   Object.keys(habitEntities).forEach((habitID) => {
     normalizedHabitEntitiesList.push({
       id: habitID,
-      documentIDList: habitEntities[habitID].map(({ id }) => id),
+      habitLabel,
+      habitID,
+      latestDate,
+      documentIDList,
     });
   });
 
