@@ -24,15 +24,15 @@
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.6",
     "victory": "^36.6.8",
-    "web-vitals": "^2.1.0"
+    "web-vitals": "^2.1.0",
+    "webpack-bundle-analyzer": "^4.9.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -d build"
+    "analyze-build": "yarn run build --stats && webpack-bundle-analyzer ./build/bundle-stats.json"
   },
   "eslintConfig": {
     "extends": ["react-app", "react-app/jest"]
